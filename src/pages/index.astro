@@ -187,6 +187,16 @@ const journalIndexSchema = {
                   <a href={pdfUrl} target="_blank" download class="classic-btn-action-solid">
                     Download Official Galley (PDF)
                   </a>
+                  <div class="entry-live-stats" data-zenodo-id={doi.split('.').pop()}>
+                    <span class="stat-pill" title="Live Article Readers">
+                      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                      <strong class="stat-views-val">...</strong> Pembaca
+                    </span>
+                    <span class="stat-pill" title="Live Galley Downloads">
+                      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                      <strong class="stat-dl-val">...</strong> Unduhan
+                    </span>
+                  </div>
                   <span class="entry-license-tag">CC BY 4.0 Open Access</span>
                 </div>
               </article>
@@ -638,6 +648,32 @@ const journalIndexSchema = {
     border-color: #333333;
   }
 
+  .entry-live-stats {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.72rem;
+  }
+
+  .stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    padding: 0.25rem 0.55rem;
+    border-radius: 4px;
+    color: #475569;
+    font-weight: 500;
+  }
+
+  .stat-pill strong {
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
   .entry-license-tag {
     margin-left: auto;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -820,3 +856,47 @@ const journalIndexSchema = {
     }
   }
 </style>
+
+<script>
+  function loadIndexTelemetry() {
+    const statBlocks = document.querySelectorAll('.entry-live-stats');
+    statBlocks.forEach(block => {
+      const zenodoId = block.getAttribute('data-zenodo-id');
+      if (!zenodoId) return;
+
+      const storageKeyViews = 'jcfad_v_' + zenodoId;
+      const storageKeyDl = 'jcfad_d_' + zenodoId;
+      const localViews = parseInt(localStorage.getItem(storageKeyViews) || '0', 10);
+      const localDl = parseInt(localStorage.getItem(storageKeyDl) || '0', 10);
+
+      const viewsEl = block.querySelector('.stat-views-val');
+      const dlEl = block.querySelector('.stat-dl-val');
+
+      let views = Math.max(1, localViews);
+      let dl = localDl;
+
+      if (viewsEl) viewsEl.textContent = views.toLocaleString();
+      if (dlEl) dlEl.textContent = dl.toLocaleString();
+
+      if (zenodoId && zenodoId !== '14022601') {
+        fetch('https://zenodo.org/api/records/' + zenodoId)
+          .then(r => r.json())
+          .then(data => {
+            if (data && data.stats) {
+              views = (data.stats.views || 0) + localViews;
+              dl = (data.stats.downloads || 0) + localDl;
+              if (viewsEl) viewsEl.textContent = views.toLocaleString();
+              if (dlEl) dlEl.textContent = dl.toLocaleString();
+            }
+          })
+          .catch(() => {});
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadIndexTelemetry);
+  } else {
+    loadIndexTelemetry();
+  }
+</script>
