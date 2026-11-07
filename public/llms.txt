@@ -1,6 +1,6 @@
 # Journal of Coastal Frontiers & Applied Development (JCFAD)
 
-> Journal of Coastal Frontiers & Applied Development (JCFAD) is an international open-access, peer-reviewed scientific periodical (ISSN pending) published by PT Chain Asia Conect. It focuses on coastal engineering, 3T frontier logistics, IoT-blockchain cold-storage, maritime transportation, and applied socio-legal frameworks in conservation buffer zones (TNBBS & Pesisir Barat, Indonesia).
+> Journal of Coastal Frontiers & Applied Development (JCFAD) is an international open-access, peer-reviewed scientific periodical (e-ISSN: In Process / BRIN National ISSN Registry) published by PT Chain Asia Conect. It focuses on coastal engineering, 3T frontier logistics, IoT-blockchain cold-storage, maritime transportation, and applied socio-legal frameworks in conservation buffer zones (TNBBS & Pesisir Barat, Indonesia).
 
 - **Canonical URL:** https://journal.chainasiaconnect.co.id
 - **Publisher:** PT Chain Asia Conect
