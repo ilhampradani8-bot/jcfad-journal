@@ -24,6 +24,7 @@ interface Props {
     abstract?: string;
     pdfUrl?: string;
     references?: string[];
+    language?: string;
   };
   extraSchema?: Record<string, any>;
 }
@@ -232,7 +233,7 @@ const schemaData = isJournalContext
         {scholarlyMeta.doi && (
           <meta name="citation_doi" content={scholarlyMeta.doi} />
         )}
-        <meta name="citation_language" content="id" />
+        <meta name="citation_language" content={scholarlyMeta.language || "en"} />
         {scholarlyMeta.abstract && (
           <meta name="citation_abstract" content={scholarlyMeta.abstract} />
         )}
@@ -260,7 +261,7 @@ const schemaData = isJournalContext
         )}
         <meta name="DC.type" content="Text.Serial.Journal" />
         <meta name="DC.format" content="application/pdf" />
-        <meta name="DC.language" content="id" />
+        <meta name="DC.language" content={scholarlyMeta.language || "en"} />
         <meta name="DC.rights" content="https://creativecommons.org/licenses/by/4.0/" />
       </>
     )}

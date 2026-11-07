@@ -1,0 +1,88 @@
+# Journal of Coastal Frontiers & Applied Development (JCFAD)
+
+> Journal of Coastal Frontiers & Applied Development (JCFAD) is an international open-access, peer-reviewed scientific periodical (ISSN pending) published by PT Chain Asia Conect. It focuses on coastal engineering, 3T frontier logistics, IoT-blockchain cold-storage, maritime transportation, and applied socio-legal frameworks in conservation buffer zones (TNBBS & Pesisir Barat, Indonesia).
+
+- **Canonical URL:** https://journal.chainasiaconnect.co.id
+- **Publisher:** PT Chain Asia Conect
+- **Publication Frequency:** Biannual (March & September)
+- **License:** Creative Commons Attribution 4.0 International (CC BY 4.0)
+- **Access Model:** Diamond Open Access (No Article Processing Charges / APC)
+- **Primary PIDs:** DataCite DOI (Zenodo CERN) & Crossref / OSF Global Registry
+
+---
+
+## Published Papers (Volume 1, Issue 1 — March 2026)
+
+### 1. A Multi-Layered Force-Majeure Risk-Allocation Model Integrating Geohazard Analytics, Civil-Law Mapping, and Blockchain Execution for the Liwa-Krui Corridor
+- **Author:** Mij (ORCID: 0009-0008-1310-6169)
+- **Affiliation:** PT Chain Asia Conect Research & Development Division
+- **DOI:** https://doi.org/10.5281/zenodo.24032991
+- **Article URL:** https://journal.chainasiaconnect.co.id/a-multi-layered-force-majeure-risk-allocation-model-integrating-geohazard-analytics-civil-law-mapping-and-blockchain-execution-for-the-liwa-krui-corridor
+- **PDF Full-Text:** https://journal.chainasiaconnect.co.id/docs/Vol1-Iss1-JCFAD-01-Liwa-Krui-Geohazard.pdf
+- **Topics:** Landslide geohazard modeling, Indonesian Civil Code (KUHPerdata Arts. 1244-1245), smart legal contracts, Liwa-Krui logistics artery.
+
+### 2. A Stochastic Optimization Framework Integrating Real-Time Wave Forecasting, Probabilistic Cargo-Loss Assessment, and Performance-Linked Subsidy Allocation for Small-Scale Jukung Operators in Pulau Pisang, Pesisir Barat
+- **Author:** Mij (ORCID: 0009-0008-1310-6169)
+- **Affiliation:** PT Chain Asia Conect Research & Development Division
+- **DOI:** https://doi.org/10.5281/zenodo.24029072
+- **Article URL:** https://journal.chainasiaconnect.co.id/a-stochastic-optimization-framework-integrating-real-time-wave-forecasting-probabilistic-cargo-loss-assessment-and-performance-linked-subsidy-allocation-for-small-scale-jukung-operators-in-pulau-pisang-pesisir-barat
+- **PDF Full-Text:** https://journal.chainasiaconnect.co.id/docs/Vol1-Iss1-JCFAD-02-Pulau-Pisang-Maritime.pdf
+- **Topics:** Stochastic maritime routing, SWAN ocean wave modeling, Jukung outrigger safety, performance-linked maritime subsidies.
+
+### 3. Hybrid Digital Invoice Financing Model Based on Civil Obligations and Staple Food Inventory Collateralization for Traditional Market Merchants in Krui
+- **Author:** Mij (ORCID: 0009-0008-1310-6169)
+- **Affiliation:** PT Chain Asia Conect Research & Development Division
+- **DOI:** https://doi.org/10.5281/zenodo.24028618
+- **Article URL:** https://journal.chainasiaconnect.co.id/hybrid-model-pembiayaan-faktur-digital-berbasis-perikatan-perdata-dan-jaminan-stok-sembako-untuk-pedagang-pasar-tradisional-krui
+- **PDF Full-Text:** https://journal.chainasiaconnect.co.id/docs/Vol1-Iss1-JCFAD-03-Krui-Invoice-Financing.pdf
+- **Topics:** Fintech microfinance, Indonesian Civil Code collateralization, staple food inventory audit, traditional retail liquidity.
+
+### 4. Integrative Physical-Digital Twin Model with Legal Ontology and Multi-Agent Reinforcement Learning for Dual-Temperature Micro Cold-Storage in TNBBS, Krui
+- **Author:** Mij (ORCID: 0009-0008-1310-6169)
+- **Affiliation:** PT Chain Asia Conect Research & Development Division
+- **DOI:** https://doi.org/10.5281/zenodo.24028621
+- **Article URL:** https://journal.chainasiaconnect.co.id/model-integratif-physical-digital-twin-dengan-legal-ontology-dan-marl-untuk-optimasi-dual-temperature-cold-storage-mikro-di-tnbbs-krui
+- **PDF Full-Text:** https://journal.chainasiaconnect.co.id/docs/Vol1-Iss1-JCFAD-04-TNBBS-Cold-Storage-Twin.pdf
+- **Topics:** Physical-Digital Twin, Multi-Agent Reinforcement Learning (MARL), legal ontology, national park conservation buffer regulations (Law No. 5/1990).
+
+### 5. Hybrid DAG-Edge-IoT Temperature-Credit Token Model for Routing Optimization of Micro Cold-Storage in the TNBBS Conservation Corridor
+- **Author:** Mij (ORCID: 0009-0008-1310-6169)
+- **Affiliation:** PT Chain Asia Conect Research & Development Division
+- **DOI:** https://doi.org/10.5281/zenodo.24028626
+- **Article URL:** https://journal.chainasiaconnect.co.id/model-hybrid-dagedgeiot-temperaturecredit-token-untuk-optimasi-routing-mikro-coldstorage-di-koridor-konservasi-tnbbs
+- **PDF Full-Text:** https://journal.chainasiaconnect.co.id/docs/Vol1-Iss1-JCFAD-05-TNBBS-DAG-Edge-IoT.pdf
+- **Topics:** Directed Acyclic Graph (DAG) distributed ledger, Edge IoT sensing, temperature-credit tokenomics, cold-chain logistics routing.
+
+### 6. Hybrid Edge-AI-Enabled Thermodynamic Control with Smart Contract Incentives for Dual-Temperature Micro Cold-Storage in the TNBBS Conservation Buffer Zone
+- **Author:** Mij (ORCID: 0009-0008-1310-6169)
+- **Affiliation:** PT Chain Asia Conect Research & Development Division
+- **DOI:** https://doi.org/10.5281/zenodo.24028629
+- **Article URL:** https://journal.chainasiaconnect.co.id/model-hybrid-edgeaienabled-thermodynamic-control-dengan-smartcontract-incentive-untuk-optimasi-mikrocoldstorage-dualtemp-di-koridor-konservasi-tnbbs
+- **PDF Full-Text:** https://journal.chainasiaconnect.co.id/docs/Vol1-Iss1-JCFAD-06-TNBBS-Edge-AI-Control.pdf
+- **Topics:** Edge-AI thermodynamic control, COP refrigeration efficiency, automated smart contract SLA incentives.
+
+### 7. Three-Dimensional Integrative Model (Thermal, Technical, and Juridical) for Blockchain-Enabled Dual-Temperature Micro Cold-Storage Nodes in the TNBBS Corridor
+- **Author:** Mij (ORCID: 0009-0008-1310-6169)
+- **Affiliation:** PT Chain Asia Conect Research & Development Division
+- **DOI:** https://doi.org/10.5281/zenodo.24028633
+- **Article URL:** https://journal.chainasiaconnect.co.id/model-integratif-3dimensi-thermalteknisyuridis-untuk-mikronode-coldstorage-dualtemperature-berbasis-blockchain-di-koridor-konservasi-tnbbs
+- **PDF Full-Text:** https://journal.chainasiaconnect.co.id/docs/Vol1-Iss1-JCFAD-07-TNBBS-3D-Micro-Node.pdf
+- **Topics:** Thermal enthalpy preservation, solar-PV microgrid reliability, environmental compliance licensing, cold-node architecture.
+
+### 8. Hospitality Raw Material Distribution Logistics and Supply Contract Certainty Reconstruction in Frontier 3T Regions: Empirical Case of Krui, Pesisir Barat
+- **Author:** Mij (ORCID: 0009-0008-1310-6169)
+- **Affiliation:** PT Chain Asia Conect Research & Development Division
+- **DOI:** https://doi.org/10.5281/zenodo.24028640
+- **Article URL:** https://journal.chainasiaconnect.co.id/model-distribusi-bahan-baku-hospitality-di-kawasan-3t-studi-kasus-krui-kabupaten-pesisir-barat
+- **PDF Full-Text:** https://journal.chainasiaconnect.co.id/docs/Vol1-Iss1-JCFAD-08-Krui-Hospitality-Supply.pdf
+- **Topics:** Frontier 3T supply chain, resort and homestay food security, breach-of-contract mitigation, Krui tourism corridor.
+
+---
+
+## Technical Interfaces & Machine Endpoints
+- **Sitemap XML:** https://journal.chainasiaconnect.co.id/sitemap.xml
+- **Robots.txt:** https://journal.chainasiaconnect.co.id/robots.txt
+- **LLMs Guide:** https://journal.chainasiaconnect.co.id/llms.txt
+- **Open Science Framework Project:** https://osf.io/64xda/
+- **Zenodo Community Archive:** https://zenodo.org/communities/jcfad
+

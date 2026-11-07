@@ -231,9 +231,10 @@ const scholarlyArticleSchema = {
   "image": [dynamicArticleImage],
   "datePublished": isoPublishedDate,
   "dateModified": isoPublishedDate,
-  "inLanguage": "id",
+  "inLanguage": ["en", "id"],
   "license": "https://creativecommons.org/licenses/by/4.0/",
   "isAccessibleForFree": true,
+  "citation": (referencesList || []).map(r => r.replace(/<[^>]*>/g, '').trim()),
   "identifier": [
     {
       "@type": "PropertyValue",
@@ -358,7 +359,8 @@ const newsArticleSchema = {
     issn: "",
     abstract: cleanExcerpt,
     pdfUrl: `https://journal.chainasiaconnect.co.id${articlePdfPath}`,
-    references: referencesList
+    references: referencesList,
+    language: "en"
   } : undefined}
   extraSchema={isAcademicPaper ? scholarlyArticleSchema : newsArticleSchema}
 >

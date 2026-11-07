@@ -14,12 +14,88 @@ const journalTitle = "Journal of Coastal Frontiers & Applied Development";
 const journalAbbr = "JCFAD";
 const currentIssue = "Vol. 1 No. 1 (2026): Empirical Regional Studies, Contractual Governance, and Frontier Resource Optimization in Pesisir Barat (Krui)";
 const publisherName = "PT CHAIN ASIA CONECT Research & Development Division";
+
+// Rich Schema.org Structured Data for Scholarly Journal Indexing
+const journalIndexSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Periodical",
+      "@id": "https://journal.chainasiaconnect.co.id/#periodical",
+      "name": journalTitle,
+      "alternateName": journalAbbr,
+      "url": "https://journal.chainasiaconnect.co.id/",
+      "description": "An open access peer-reviewed working paper series focusing on Pesisir Barat (Krui) regional development, commercial contract law under Indonesian Civil Code, and applied frontier field research.",
+      "inLanguage": ["en", "id"],
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "publishingPrinciples": "https://journal.chainasiaconnect.co.id/ethics",
+      "editor": {
+        "@type": "Person",
+        "name": "Ilham Pradani, S.H.",
+        "jobTitle": "Editor-in-Chief & Lead Investigator",
+        "identifier": "https://orcid.org/0009-0008-1310-6169",
+        "sameAs": [
+          "https://orcid.org/0009-0008-1310-6169",
+          "https://ilhampradani.me"
+        ]
+      },
+      "publisher": {
+        "@type": "Organization",
+        "@id": "https://journal.chainasiaconnect.co.id/#publisher",
+        "name": publisherName,
+        "url": "https://journal.chainasiaconnect.co.id/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://journal.chainasiaconnect.co.id/images/jcfad-seal.png"
+        }
+      },
+      "hasPart": {
+        "@type": "PublicationVolume",
+        "volumeNumber": "1",
+        "hasPart": {
+          "@type": "PublicationIssue",
+          "issueNumber": "1",
+          "datePublished": "2026-11",
+          "name": currentIssue,
+          "hasPart": articles.map(art => ({
+            "@type": "ScholarlyArticle",
+            "headline": decodeHtmlEntities(art.title),
+            "url": `https://journal.chainasiaconnect.co.id/${art.slug}`,
+            "sameAs": `https://doi.org/${art.doi || '10.5281/zenodo.14022601'}`,
+            "datePublished": "2026-11-02",
+            "inLanguage": "en",
+            "isAccessibleForFree": true,
+            "license": "https://creativecommons.org/licenses/by/4.0/",
+            "author": {
+              "@type": "Person",
+              "name": art.author || "Ilham Pradani",
+              "identifier": "https://orcid.org/0009-0008-1310-6169",
+              "sameAs": "https://orcid.org/0009-0008-1310-6169"
+            }
+          }))
+        }
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://journal.chainasiaconnect.co.id/#website",
+      "url": "https://journal.chainasiaconnect.co.id/",
+      "name": `${journalTitle} (${journalAbbr})`,
+      "publisher": {
+        "@id": "https://journal.chainasiaconnect.co.id/#publisher"
+      },
+      "inLanguage": "id-ID"
+    }
+  ]
+};
 ---
 
 <Layout
   title={`${journalTitle} (${journalAbbr}) | Official Open Access Journal`}
   description="An open access peer-reviewed working paper series focusing on Pesisir Barat (Krui) regional development, commercial contract law under Indonesian Civil Code, and applied frontier field research."
   canonical="https://journal.chainasiaconnect.co.id"
+  extraSchema={journalIndexSchema}
 >
   <JournalHeader />
 
@@ -78,27 +154,27 @@ const publisherName = "PT CHAIN ASIA CONECT Research & Development Division";
             const readUrl = `https://journal.chainasiaconnect.co.id/${art.slug}`;
 
             return (
-              <article class="classic-article-entry">
+              <article class="classic-article-entry" itemscope itemtype="https://schema.org/ScholarlyArticle">
                 <div class="entry-meta-top">
                   <span class="entry-index-num">#{idx + 1}</span>
                   <span class="entry-category-text">{art.tag || 'EMPIRICAL RESEARCH ARTICLE'}</span>
-                  <span class="entry-doi-text">DOI: <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer">{doi}</a></span>
+                  <span class="entry-doi-text">DOI: <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer" itemprop="sameAs">{doi}</a></span>
                 </div>
 
-                <h4 class="entry-title">
-                  <a href={readUrl}>{cleanTitle}</a>
+                <h4 class="entry-title" itemprop="headline">
+                  <a href={readUrl} itemprop="url">{cleanTitle}</a>
                 </h4>
 
-                <div class="entry-author-row">
-                  <span class="author-primary"><strong>Ilham Pradani</strong></span>
-                  <a href="https://orcid.org/0009-0008-1310-6169" target="_blank" rel="noopener noreferrer" class="classic-orcid-badge" title="Verified ORCID iD: 0009-0008-1310-6169">
+                <div class="entry-author-row" itemprop="author" itemscope itemtype="https://schema.org/Person">
+                  <span class="author-primary"><strong itemprop="name">Ilham Pradani</strong></span>
+                  <a href="https://orcid.org/0009-0008-1310-6169" target="_blank" rel="noopener noreferrer" class="classic-orcid-badge" title="Verified ORCID iD: 0009-0008-1310-6169" itemprop="identifier">
                     <img src="/images/indexes/orcid.png" alt="ORCID" class="orcid-icon-img" />
                     <span>0009-0008-1310-6169</span>
                   </a>
                   <span class="author-affil-text">— Research &amp; Development Division, PT CHAIN ASIA CONECT</span>
                 </div>
 
-                <p class="entry-abstract-text">
+                <p class="entry-abstract-text" itemprop="description">
                   {cleanExcerpt}
                 </p>
 
@@ -151,6 +227,11 @@ const publisherName = "PT CHAIN ASIA CONECT Research & Development Division";
             <!-- 2. Zenodo CERN -->
             <a href="https://zenodo.org" target="_blank" rel="noopener noreferrer" class="index-logo-tile" title="Zenodo Open Science Archive (CERN)">
               <img src="/images/indexes/zenodo.png" alt="Zenodo" />
+            </a>
+
+            <!-- 2b. Open Science Framework (OSF) -->
+            <a href="https://osf.io/64xda/" target="_blank" rel="noopener noreferrer" class="index-logo-tile" title="Open Science Framework (OSF)">
+              <img src="/images/indexes/osf.png" alt="OSF" />
             </a>
 
             <!-- 3. ResearchGate -->

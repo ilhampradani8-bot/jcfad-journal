@@ -64,6 +64,19 @@ const journalAbbr = "JCFAD";
           </div>
         </div>
 
+        <!-- 2b. Open Science Framework (OSF) -->
+        <div class="index-row-card">
+          <div class="index-logo-wrapper">
+            <img src="/images/indexes/osf.png" alt="Open Science Framework" />
+          </div>
+          <div class="index-details">
+            <h3>Open Science Framework (Center for Open Science)</h3>
+            <p>
+              All published journal articles, data preprints, and open science artifacts are registered on OSF Global Registry under project node <a href="https://osf.io/64xda/" target="_blank" rel="noopener noreferrer">osf.io/64xda/</a> with assigned Crossref/DataCite DOIs.
+            </p>
+          </div>
+        </div>
+
         <!-- 3. ResearchGate -->
         <div class="index-row-card">
           <div class="index-logo-wrapper">
@@ -114,6 +127,83 @@ const journalAbbr = "JCFAD";
               Publication format, editorial structures, and peer review methodologies conform to Kemendikbudristek SINTA editorial standards for scientific periodicals.
             </p>
           </div>
+        </div>
+
+        <!-- 7. OpenAlex Global Scholarly Graph -->
+        <div class="index-row-card">
+          <div class="index-logo-wrapper">
+            <img src="/images/indexes/openalex.svg" alt="OpenAlex" style="max-height: 38px;" />
+          </div>
+          <div class="index-details">
+            <h3>OpenAlex Global Scholarly Graph</h3>
+            <p>
+              OpenAlex indexes JCFAD works, author entities, institutional affiliations, and concept taxonomies into the open citation graph used by AI discovery platforms worldwide.
+            </p>
+          </div>
+        </div>
+
+        <!-- 8. Semantic Scholar (Allen AI) -->
+        <div class="index-row-card">
+          <div class="index-logo-wrapper">
+            <img src="/images/indexes/semanticscholar.svg" alt="Semantic Scholar" style="max-height: 38px;" />
+          </div>
+          <div class="index-details">
+            <h3>Semantic Scholar (Allen Institute for AI)</h3>
+            <p>
+              AI-driven citation analysis, influential citation tracking, and automated TL;DR summaries for published research papers via machine-readable Highwire and DOI endpoints.
+            </p>
+          </div>
+        </div>
+
+        <!-- 9. Dimensions.ai -->
+        <div class="index-row-card">
+          <div class="index-logo-wrapper">
+            <img src="/images/indexes/dimensions.svg" alt="Dimensions" style="max-height: 36px;" />
+          </div>
+          <div class="index-details">
+            <h3>Dimensions (Digital Science)</h3>
+            <p>
+              Cross-disciplinary citation metrics, research grant tracking, and policy document linkages indexed via open DataCite and Crossref metadata feeds.
+            </p>
+          </div>
+        </div>
+
+        <!-- 10. BASE (Bielefeld Academic Search Engine) -->
+        <div class="index-row-card">
+          <div class="index-logo-wrapper">
+            <img src="/images/indexes/base.svg" alt="BASE Bielefeld" style="max-height: 36px;" />
+          </div>
+          <div class="index-details">
+            <h3>BASE (Bielefeld Academic Search Engine)</h3>
+            <p>
+              Operated by Bielefeld University Library (Germany), BASE harvests OAI-PMH compliant metadata and open-access full-text PDFs across global research repositories.
+            </p>
+          </div>
+        </div>
+
+        <!-- 11. Garuda Kemendikbudristek -->
+        <div class="index-row-card">
+          <div class="index-logo-wrapper">
+            <img src="/images/indexes/garuda.svg" alt="Garuda" style="max-height: 38px;" />
+          </div>
+          <div class="index-details">
+            <h3>Garuda (Garba Rujukan Digital - Kemendikbudristek / BRIN)</h3>
+            <p>
+              National Indonesian scientific digital repository and citation gateway preparing JCFAD for formal multi-tier national accreditation.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Machine Readability Notice -->
+      <div class="ai-indexer-box">
+        <div class="ai-box-badge">AI DISCOVERY &amp; LLM INDEXING</div>
+        <h3 class="ai-box-title">Machine-Readable Discovery Standard for LLMs</h3>
+        <p class="ai-box-text">
+          JCFAD implements the open web standard <code>llms.txt</code> allowing automated discovery, synthesis, and citation attribution by scientific AI agents including <strong>Consensus.app</strong>, <strong>Scite.ai</strong>, <strong>Elicit</strong>, <strong>Perplexity</strong>, and large multimodal language models.
+        </p>
+        <div class="ai-box-action">
+          <a href="/llms.txt" target="_blank" class="ai-btn-view">Inspect /llms.txt Manifest &rarr;</a>
         </div>
       </div>
     </div>
@@ -217,6 +307,64 @@ const journalAbbr = "JCFAD";
     text-decoration: underline;
   }
 
+  .ai-indexer-box {
+    margin-top: 3rem;
+    padding: 2rem;
+    border: 2px solid #0f172a;
+    background: #f8fafc;
+  }
+
+  .ai-box-badge {
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #ffffff;
+    background: #0f172a;
+    padding: 0.25rem 0.6rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .ai-box-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin: 0 0 0.6rem;
+    color: #0f172a;
+  }
+
+  .ai-box-text {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: #334155;
+    margin: 0 0 1.25rem;
+  }
+
+  .ai-box-text code {
+    background: #e2e8f0;
+    padding: 0.15rem 0.35rem;
+    font-size: 0.9em;
+    font-family: monospace;
+    font-weight: 700;
+  }
+
+  .ai-btn-view {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background: #0f172a;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    transition: background 0.15s ease;
+  }
+
+  .ai-btn-view:hover {
+    background: #334155;
+  }
+
   @media (max-width: 600px) {
     .index-row-card {
       flex-direction: column;
@@ -224,6 +372,9 @@ const journalAbbr = "JCFAD";
     .index-logo-wrapper {
       width: 100%;
       justify-content: flex-start;
+    }
+    .ai-indexer-box {
+      padding: 1.25rem;
     }
   }
 </style>

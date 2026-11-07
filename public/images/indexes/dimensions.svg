@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 40" height="40" width="170">
+  <g fill="none" fill-rule="evenodd">
+    <!-- Dimensions 4-dot diamond -->
+    <circle cx="14" cy="20" r="4.5" fill="#2563EB"/>
+    <circle cx="23" cy="11" r="4.5" fill="#0D9488"/>
+    <circle cx="23" cy="29" r="4.5" fill="#F59E0B"/>
+    <circle cx="32" cy="20" r="4.5" fill="#E11D48"/>
+    <!-- Text -->
+    <text x="44" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" fill="#1E293B" letter-spacing="-0.3">Dimensions</text>
+  </g>
+</svg>
+

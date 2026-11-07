@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 40" height="40" width="190">
+  <g fill="none" fill-rule="evenodd">
+    <!-- Academic Cap / Polygon -->
+    <path d="M10 18 L25 10 L40 18 L25 25 Z" fill="#185FBC"/>
+    <path d="M16 21.5 L16 28 C16 31 34 31 34 28 L34 21.5" fill="#185FBC"/>
+    <path d="M38 19 L38 28" stroke="#185FBC" stroke-width="2"/>
+    <circle cx="38" cy="29" r="1.5" fill="#185FBC"/>
+    <!-- Text -->
+    <text x="48" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#222222">Semantic</text>
+    <text x="48" y="33" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#185FBC">Scholar</text>
+  </g>
+</svg>
+

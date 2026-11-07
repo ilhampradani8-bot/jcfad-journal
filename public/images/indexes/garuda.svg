@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 40" height="40" width="150">
+  <g fill="none" fill-rule="evenodd">
+    <!-- Garuda Wing/Shield Icon -->
+    <path d="M22 8 L32 14 L30 26 L22 32 L14 26 L12 14 Z" fill="#DC2626"/>
+    <path d="M22 13 L27 18 L25 24 L22 27 L19 24 L17 18 Z" fill="#FBBF24"/>
+    <!-- Text -->
+    <text x="40" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="900" fill="#111827" letter-spacing="0.5">GARUDA</text>
+    <text x="40" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="8" font-weight="700" fill="#DC2626">KEMENDIKBUDRISTEK</text>
+  </g>
+</svg>
+
