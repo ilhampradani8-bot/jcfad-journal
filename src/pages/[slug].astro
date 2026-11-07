@@ -986,6 +986,200 @@ const newsArticleSchema = {
           </div>
 
         </aside>
+
+        <!-- ── MOBILE DOCK & SLIDE-UP DRAWERS (ACTIVE ONLY ON MOBILE <= 768px) ── -->
+        <nav class="mobile-bottom-dock" aria-label="Navigasi Aksi Cepat Mobile">
+          <button type="button" class="btn-dock-item" id="btn-open-mobile-toc" aria-label="Buka Daftar Isi">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            <span>Daftar Isi</span>
+          </button>
+          <button type="button" class="btn-dock-item" id="btn-open-mobile-meta" aria-label="Buka Metadata dan Indeks">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>Metadata &amp; Indeks</span>
+          </button>
+          <a href={articlePdfPath} target="_blank" download={articleDownloadName} class="btn-dock-item dock-pdf-btn" title="Unduh Galley PDF">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Unduh PDF</span>
+          </a>
+        </nav>
+
+        <!-- Drawer Backdrop Overlay -->
+        <div class="mobile-sheet-backdrop" id="mobile-sheet-backdrop"></div>
+
+        <!-- Drawer 1: TOC (Daftar Isi & Versi Naskah) -->
+        <div class="mobile-slide-sheet" id="mobile-toc-sheet" role="dialog" aria-modal="true" aria-label="Daftar Isi &amp; Navigasi Naskah">
+          <div class="sheet-header">
+            <div class="sheet-title-group">
+              <span class="sheet-kicker">NAVIGASI NASKAH</span>
+              <h3 class="sheet-title">Daftar Isi &amp; Versi Naskah</h3>
+            </div>
+            <button type="button" class="btn-close-sheet" id="btn-close-toc-sheet" aria-label="Tutup Menu">&times;</button>
+          </div>
+          <div class="sheet-body">
+            <div class="sheet-toc-nav">
+              <a href="#abstrak" class="sheet-toc-item">
+                <span class="sheet-num">01</span>
+                <span>Abstrak &amp; Kata Kunci Riset</span>
+                <span class="sheet-arrow">&rarr;</span>
+              </a>
+              <a href="#pembaca-pdf" class="sheet-toc-item">
+                <span class="sheet-num">02</span>
+                <span>Pembaca PDF Resmi</span>
+                <span class="sheet-arrow">&rarr;</span>
+              </a>
+              <a href="#naskah-prose" class="sheet-toc-item">
+                <span class="sheet-num">03</span>
+                <span>Naskah Lengkap (IMRAD Structure)</span>
+                <span class="sheet-arrow">&rarr;</span>
+              </a>
+              <a href="#pustaka" class="sheet-toc-item">
+                <span class="sheet-num">04</span>
+                <span>Daftar Pustaka Primer</span>
+                <span class="sheet-arrow">&rarr;</span>
+              </a>
+              <a href="#sitasi-akademik" class="sheet-toc-item">
+                <span class="sheet-num">05</span>
+                <span>Sitasi &amp; Format Rujukan</span>
+                <span class="sheet-arrow">&rarr;</span>
+              </a>
+            </div>
+
+            {hasMultipleVersions && (
+              <div class="sheet-versions-section">
+                <span class="sheet-kicker">RIWAYAT VERSI RESMI (ZENODO)</span>
+                <div class="sheet-versions-list">
+                  {versionData.versions.map((ver: any) => (
+                    <button
+                      type="button"
+                      class={`sheet-version-btn ${ver.isLatest ? 'active' : ''}`}
+                      data-version-target={ver.versionNum}
+                    >
+                      <span class="sh-v-badge">{ver.version}</span>
+                      <span class="sh-v-doi">doi:{ver.doi}</span>
+                      <span class="sh-v-tag">{ver.isLatest ? 'LATEST' : 'ARCHIVED'}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <!-- Drawer 2: Metadata, Sitasi & Indeksasi -->
+        <div class="mobile-slide-sheet" id="mobile-meta-sheet" role="dialog" aria-modal="true" aria-label="Metadata Publikasi &amp; Indeks">
+          <div class="sheet-header">
+            <div class="sheet-title-group">
+              <span class="sheet-kicker">METADATA PUBLIKASI</span>
+              <h3 class="sheet-title">Sitasi, Indeks &amp; Dokumen</h3>
+            </div>
+            <button type="button" class="btn-close-sheet" id="btn-close-meta-sheet" aria-label="Tutup Menu">&times;</button>
+          </div>
+          <div class="sheet-body">
+            <!-- Action Sitasi Cepat -->
+            <div class="sheet-section">
+              <span class="sheet-kicker">SALIN SITASI CEPAT</span>
+              <div class="sheet-citation-btns">
+                <button type="button" class="sheet-btn-cite primary" id="btn-sheet-copy-apa">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span id="label-sheet-copy-apa">Salin Format APA</span>
+                </button>
+                <button type="button" class="sheet-btn-cite secondary" id="btn-sheet-copy-bibtex">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                  </svg>
+                  <span id="label-sheet-copy-bibtex">Salin Format BibTeX</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Metadata Singkat -->
+            <div class="sheet-section">
+              <span class="sheet-kicker">RINGKASAN METADATA</span>
+              <div class="sheet-meta-rows">
+                <div class="sh-meta-row">
+                  <span class="sh-meta-lbl">CERN Zenodo DOI:</span>
+                  <a href={`https://doi.org/${articleDoi}`} target="_blank" rel="noopener noreferrer" class="sh-meta-link">
+                    {articleDoi} ↗
+                  </a>
+                </div>
+                {osfRecord && (
+                  <div class="sh-meta-row">
+                    <span class="sh-meta-lbl">OSF Global DOI:</span>
+                    <a href={`https://doi.org/${osfRecord.osfDoi}`} target="_blank" rel="noopener noreferrer" class="sh-meta-link">
+                      {osfRecord.osfDoi} ↗
+                    </a>
+                  </div>
+                )}
+                <div class="sh-meta-row">
+                  <span class="sh-meta-lbl">Tanggal Submisi (Created):</span>
+                  <span>{historyDates.received}</span>
+                </div>
+                <div class="sh-meta-row">
+                  <span class="sh-meta-lbl">Tanggal Terbit (Modified):</span>
+                  <span class="font-bold">{historyDates.published}</span>
+                </div>
+                <div class="sh-meta-row">
+                  <span class="sh-meta-lbl">Penulis &amp; ORCID:</span>
+                  <span>{displayAuthors.join(', ')} (ORCID 0009-0008-1310-6169)</span>
+                </div>
+                <div class="sh-meta-row">
+                  <span class="sh-meta-lbl">Lisensi:</span>
+                  <span class="meta-license-pill">CC BY 4.0 Open Access</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Indexing Logos -->
+            <div class="sheet-section">
+              <span class="sheet-kicker">STANDAR INDEKS TERVERIFIKASI</span>
+              <div class="sheet-indexing-grid">
+                <a href="https://www.scopus.com" target="_blank" rel="noopener noreferrer" class="right-sb-logo-card">
+                  <img src="/images/indexes/scopus.png" alt="Scopus" class="right-sb-logo-img scopus-img" />
+                </a>
+                <a href="https://zenodo.org" target="_blank" rel="noopener noreferrer" class="right-sb-logo-card">
+                  <img src="/images/indexes/zenodo.png" alt="Zenodo" class="right-sb-logo-img" />
+                </a>
+                <a href="https://crossref.org" target="_blank" rel="noopener noreferrer" class="right-sb-logo-card">
+                  <img src="/images/indexes/crossref.png" alt="Crossref" class="right-sb-logo-img" />
+                </a>
+                <a href="https://scholar.google.com" target="_blank" rel="noopener noreferrer" class="right-sb-logo-card">
+                  <img src="/images/indexes/google-scholar.webp" alt="Google Scholar" class="right-sb-logo-img" />
+                </a>
+                <a href="https://www.researchgate.net" target="_blank" rel="noopener noreferrer" class="right-sb-logo-card">
+                  <img src="/images/indexes/researchgate.svg" alt="ResearchGate" class="right-sb-logo-img" />
+                </a>
+                <a href={osfRecord ? osfRecord.osfUrl : "https://osf.io/64xda/"} target="_blank" rel="noopener noreferrer" class="right-sb-logo-card">
+                  <img src="/images/indexes/osf.png" alt="OSF" class="right-sb-logo-img" />
+                </a>
+                <a href="https://orcid.org/0009-0008-1310-6169" target="_blank" rel="noopener noreferrer" class="right-sb-logo-card">
+                  <img src="/images/indexes/orcid.png" alt="ORCID" class="right-sb-logo-img" />
+                </a>
+                <a href="https://sinta.kemdikbud.go.id" target="_blank" rel="noopener noreferrer" class="right-sb-logo-card">
+                  <img src="/images/indexes/sinta.png" alt="SINTA" class="right-sb-logo-img" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     ) : (
@@ -3699,6 +3893,13 @@ const newsArticleSchema = {
     background: #525659;
   }
 
+  /* ── MOBILE ACTION DOCK & BOTTOM SHEETS (DEFAULT HIDDEN ON DESKTOP) ── */
+  .mobile-bottom-dock,
+  .mobile-slide-sheet,
+  .mobile-sheet-backdrop {
+    display: none;
+  }
+
   @media (max-width: 1180px) {
     .scholarly-workspace-layout {
       flex-direction: column;
@@ -3732,12 +3933,360 @@ const newsArticleSchema = {
     .right-sb-indexing-grid {
       grid-template-columns: repeat(2, 1fr);
     }
+    .sheet-indexing-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
   }
 
   @media (max-width: 768px) {
-    .scholarly-workspace-wrapper {
-      padding: 1.5rem 0.75rem 3.5rem 0.75rem;
+    body {
+      padding-bottom: 64px;
     }
+
+    .scholarly-workspace-wrapper {
+      padding: 1.25rem 0.65rem 4.5rem 0.65rem;
+    }
+
+    /* Urutan Mobile: Artikel Utama Paling Pertama, Lalu Metadata di Bawah */
+    .scholarly-workspace-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .article-main-column {
+      order: 1;
+      width: 100%;
+    }
+
+    .journal-right-sidebar {
+      order: 2;
+      width: 100%;
+      border-top: 2px solid #111111;
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    /* Sidebar kiri inline disembunyikan di layar HP karena digantikan oleh Bottom Sheet Dock */
+    .journal-sticky-sidebar {
+      display: none;
+    }
+
+    /* Sticky Mobile Bottom Dock */
+    .mobile-bottom-dock {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: #0f172a;
+      border-top: 1.5px solid #334155;
+      z-index: 9998;
+      box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.25);
+    }
+
+    .btn-dock-item {
+      flex: 1;
+      height: 100%;
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      padding: 0 0.25rem;
+    }
+
+    .btn-dock-item:hover,
+    .btn-dock-item:active {
+      color: #ffffff;
+      background: #1e293b;
+    }
+
+    .btn-dock-item.dock-pdf-btn {
+      background: #dc2626;
+      color: #ffffff;
+    }
+
+    .btn-dock-item.dock-pdf-btn:hover,
+    .btn-dock-item.dock-pdf-btn:active {
+      background: #b91c1c;
+    }
+
+    /* Backdrop */
+    .mobile-sheet-backdrop {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+      backdrop-filter: blur(2px);
+    }
+
+    .mobile-sheet-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Slide-Up Bottom Sheet */
+    .mobile-slide-sheet {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-height: 84vh;
+      background: #ffffff;
+      border-top: 2.5px solid #0f172a;
+      border-radius: 12px 12px 0 0;
+      z-index: 10000;
+      transform: translateY(105%);
+      transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+    }
+
+    .mobile-slide-sheet.open {
+      transform: translateY(0);
+    }
+
+    .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1.15rem;
+      background: #f8fafc;
+      border-bottom: 1.5px solid #e2e8f0;
+      flex-shrink: 0;
+    }
+
+    .sheet-kicker {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: #dc2626;
+      display: block;
+      margin-bottom: 0.15rem;
+      text-transform: uppercase;
+    }
+
+    .sheet-title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0;
+    }
+
+    .btn-close-sheet {
+      background: transparent;
+      border: none;
+      font-size: 1.75rem;
+      line-height: 1;
+      color: #64748b;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+    }
+
+    .btn-close-sheet:hover {
+      color: #dc2626;
+    }
+
+    .sheet-body {
+      padding: 1rem 1.15rem 2.5rem 1.15rem;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* TOC Nav Items */
+    .sheet-toc-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sheet-toc-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 0.85rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      text-decoration: none;
+      color: #0f172a;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.12s ease;
+    }
+
+    .sheet-toc-item:active,
+    .sheet-toc-item:hover {
+      background: #0f172a;
+      border-color: #0f172a;
+      color: #ffffff;
+    }
+
+    .sheet-num {
+      font-family: 'JetBrains Mono', Consolas, monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+      background: #e2e8f0;
+      color: #0f172a;
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+    }
+
+    .sheet-toc-item:active .sheet-num,
+    .sheet-toc-item:hover .sheet-num {
+      background: #dc2626;
+      color: #ffffff;
+    }
+
+    .sheet-arrow {
+      margin-left: auto;
+      font-weight: 700;
+    }
+
+    /* Sheet Versions */
+    .sheet-versions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      margin-top: 0.45rem;
+    }
+
+    .sheet-version-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.55rem 0.75rem;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .sheet-version-btn.active {
+      border-color: #0f172a;
+      background: #f1f5f9;
+      font-weight: 700;
+    }
+
+    .sh-v-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .sh-v-doi {
+      font-family: monospace;
+      font-size: 0.68rem;
+      color: #64748b;
+    }
+
+    .sh-v-tag {
+      font-size: 0.65rem;
+      font-weight: 800;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+    }
+
+    /* Sheet Citation Buttons */
+    .sheet-citation-btns {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.35rem;
+    }
+
+    .sheet-btn-cite {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.55rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .sheet-btn-cite.primary {
+      background: #0f172a;
+      border: 1.5px solid #0f172a;
+      color: #ffffff;
+    }
+
+    .sheet-btn-cite.secondary {
+      background: #ffffff;
+      border: 1.5px solid #0f172a;
+      color: #0f172a;
+    }
+
+    /* Sheet Metadata Rows */
+    .sheet-meta-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      margin-top: 0.45rem;
+      background: #f8fafc;
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      font-size: 0.78rem;
+    }
+
+    .sh-meta-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 0.35rem;
+    }
+
+    .sh-meta-lbl {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: #64748b;
+      letter-spacing: 0.04em;
+    }
+
+    .sh-meta-link {
+      color: #0284c7;
+      text-decoration: none;
+      font-family: monospace;
+      font-size: 0.72rem;
+    }
+
+    /* Sheet Indexing Grid */
+    .sheet-indexing-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      margin-top: 0.45rem;
+    }
+
     .pdf-version-tabs-right {
       width: 100%;
       justify-content: flex-start;
@@ -4227,6 +4776,9 @@ const newsArticleSchema = {
     const rightCopyApaBtn = document.getElementById('btn-right-copy-apa');
     if (rightCopyApaBtn) handleCopyApa(rightCopyApaBtn, 'label-right-copy-apa');
 
+    const sheetCopyApaBtn = document.getElementById('btn-sheet-copy-apa');
+    if (sheetCopyApaBtn) handleCopyApa(sheetCopyApaBtn, 'label-sheet-copy-apa');
+
     const rightCopyBibBtn = document.getElementById('btn-right-copy-bibtex');
     if (rightCopyBibBtn) {
       rightCopyBibBtn.addEventListener('click', () => {
@@ -4242,6 +4794,66 @@ const newsArticleSchema = {
         });
       });
     }
+
+    const sheetCopyBibBtn = document.getElementById('btn-sheet-copy-bibtex');
+    if (sheetCopyBibBtn) {
+      sheetCopyBibBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(bibtexText).then(() => {
+          const label = document.getElementById('label-sheet-copy-bibtex');
+          if (label) {
+            const original = label.textContent;
+            label.textContent = '✓ BibTeX Tersalin!';
+            setTimeout(() => {
+              label.textContent = original;
+            }, 2000);
+          }
+        });
+      });
+    }
+
+    // Mobile Bottom Dock & Slide-Up Drawers Controller
+    const btnOpenToc = document.getElementById('btn-open-mobile-toc');
+    const btnOpenMeta = document.getElementById('btn-open-mobile-meta');
+    const tocSheet = document.getElementById('mobile-toc-sheet');
+    const metaSheet = document.getElementById('mobile-meta-sheet');
+    const backdrop = document.getElementById('mobile-sheet-backdrop');
+    const btnCloseToc = document.getElementById('btn-close-toc-sheet');
+    const btnCloseMeta = document.getElementById('btn-close-meta-sheet');
+
+    function closeAllSheets() {
+      if (tocSheet) tocSheet.classList.remove('open');
+      if (metaSheet) metaSheet.classList.remove('open');
+      if (backdrop) backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    if (btnOpenToc && tocSheet && backdrop) {
+      btnOpenToc.addEventListener('click', () => {
+        if (metaSheet) metaSheet.classList.remove('open');
+        tocSheet.classList.add('open');
+        backdrop.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+    }
+
+    if (btnOpenMeta && metaSheet && backdrop) {
+      btnOpenMeta.addEventListener('click', () => {
+        if (tocSheet) tocSheet.classList.remove('open');
+        metaSheet.classList.add('open');
+        backdrop.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+    }
+
+    if (btnCloseToc) btnCloseToc.addEventListener('click', closeAllSheets);
+    if (btnCloseMeta) btnCloseMeta.addEventListener('click', closeAllSheets);
+    if (backdrop) backdrop.addEventListener('click', closeAllSheets);
+
+    document.querySelectorAll('.sheet-toc-item').forEach(item => {
+      item.addEventListener('click', () => {
+        closeAllSheets();
+      });
+    });
   }
 
   if (document.readyState === 'loading') {
@@ -4293,7 +4905,7 @@ const newsArticleSchema = {
         layerV1.style.display = isV1 ? 'block' : 'none';
       }
 
-      // 2. Toggle active state on Sidebar version buttons
+      // 2. Toggle active state on Sidebar version buttons & Sheet buttons
       document.querySelectorAll('.sidebar-version-item-btn').forEach(btn => {
         const btnVer = btn.getAttribute('data-version-target');
         const hint = btn.querySelector('.sb-indicator-text');
@@ -4303,6 +4915,15 @@ const newsArticleSchema = {
         } else {
           btn.classList.remove('active');
           if (hint) hint.textContent = '↗ Muat Naskah Versi Ini';
+        }
+      });
+
+      document.querySelectorAll('.sheet-version-btn').forEach(btn => {
+        const btnVer = btn.getAttribute('data-version-target');
+        if (btnVer === String(verNum)) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
         }
       });
 
@@ -4390,12 +5011,17 @@ const newsArticleSchema = {
       } catch (_) {}
     }
 
-    // Bind event listeners to Sidebar version buttons
-    document.querySelectorAll('.sidebar-version-item-btn').forEach(btn => {
+    // Bind event listeners to Sidebar & Mobile Sheet version buttons
+    document.querySelectorAll('.sidebar-version-item-btn, .sheet-version-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         const v = btn.getAttribute('data-version-target');
         switchVersion(v);
+        const tocSheet = document.getElementById('mobile-toc-sheet');
+        const backdrop = document.getElementById('mobile-sheet-backdrop');
+        if (tocSheet) tocSheet.classList.remove('open');
+        if (backdrop) backdrop.classList.remove('open');
+        document.body.style.overflow = '';
       });
     });
 
