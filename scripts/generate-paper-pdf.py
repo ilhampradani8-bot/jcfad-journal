@@ -278,12 +278,15 @@ def build_article_pdf(article, out_pdf_path, max_attempts=3, header_mode="univer
         body_text = markdown_to_typst(raw_content, aggressive_unbold=aggressive_unbold, relax_notes=relax_notes)
         formatted_refs = "\n".join([f"- {clean_inline(r, is_body=True, aggressive_unbold=aggressive_unbold)}" for r in parsed_refs])
 
+        osf_logo_path = os.path.join(PROJECT_ROOT, "public/images/osf-logo.png")
+        jcfad_seal_path = os.path.join(PROJECT_ROOT, "public/images/jcfad-seal.png")
+
         # Header Configuration: OSF Flexible vs Universal Academic (Zenodo/JCFAD)
         if header_mode == "osf" and osf_id:
             bar_color = "rgb(\"#0284c7\")"
             running_header_markup = f"""#grid(
         columns: (1fr, 1fr),
-        align(left)[_OSF Preprints • Center for Open Science (osf.io/{osf_id})_],
+        align(left)[_OSF Journal Article • Center for Open Science (osf.io/{osf_id})_],
         align(right)[_JCFAD Research Series (Vol. 1 No. 1)_]
       )"""
             footer_markup = f"""#grid(
@@ -295,10 +298,10 @@ def build_article_pdf(article, out_pdf_path, max_attempts=3, header_mode="univer
     columns: (62pt, 1fr, auto),
     gutter: 10pt,
     align: (horizon, horizon, horizon),
-    image(os.path.join(PROJECT_ROOT, "public/images/osf-logo.png"), width: 56pt),
+    image("{osf_logo_path}", width: 56pt),
     align(left)[
-      #text(size: 8.5pt, weight: "bold", tracking: 0.05em)[OPEN SCIENCE FRAMEWORK (OSF) • PREPRINTS & REPOSITORY] \\
-      #text(size: 7.2pt, fill: luma(80))[Center for Open Science (COS) • Public Node: osf.io/{osf_id} • JCFAD Series]
+      #text(size: 8.5pt, weight: "bold", tracking: 0.05em)[OPEN SCIENCE FRAMEWORK (OSF) • JOURNAL ARTICLE & REPOSITORY] \\
+      #text(size: 7.2pt, fill: luma(80))[Center for Open Science (COS) • Public Node: osf.io/{osf_id} • JCFAD Journal Series]
     ],
     align(right)[
       #text(size: 7.5pt, weight: "bold", fill: rgb("#0284c7"))[OPEN ACCESS] \\
@@ -317,11 +320,11 @@ def build_article_pdf(article, out_pdf_path, max_attempts=3, header_mode="univer
       align(left)[DOI: {doi} | Journal of Coastal Frontiers & Applied Development (JCFAD)],
       align(right)[Page #counter(page).display() of #counter(page).final().first()]
     )"""
-            masthead_markup = """#grid(
+            masthead_markup = f"""#grid(
     columns: (32pt, 1fr, auto),
     gutter: 8pt,
     align: (horizon, horizon, horizon),
-    image(os.path.join(PROJECT_ROOT, "public/images/jcfad-seal.png"), width: 28pt),
+    image("{jcfad_seal_path}", width: 28pt),
     align(left)[
       #text(size: 8.5pt, weight: "bold", tracking: 0.06em)[JOURNAL OF COASTAL FRONTIERS & APPLIED DEVELOPMENT (JCFAD)] \\
       #text(size: 7.2pt, fill: luma(80))[Vol. 1 No. 1 (2026) • Peer-Reviewed Journal Article • Official ISSN: Pending]
@@ -742,5 +745,23 @@ if __name__ == "__main__":
                 print(f"✅ Generated & synced OSF PDF: {osf_copy}")
         else:
             print(f"❌ Article slug not found in D1: {target_slug}")
+    elif "--all-osf" in sys.argv:
+        with open(os.path.join(PROJECT_ROOT, "src/data/osf_records.json"), "r", encoding="utf-8") as f:
+            osf_map = json.load(f)
+        req = urllib.request.Request('https://api.chainasiaconnect.co.id/', headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode('utf-8'))
+        articles = data.get('articles', [])
+        print(f"🚀 Rebuilding {len(osf_map)} OSF PDFs with official OSF Journal Article Header...")
+        for slug in osf_map.keys():
+            target_art = next((a for a in articles if a.get('slug') == slug), None)
+            if target_art:
+                out_file = os.path.join(DOCS_DIR, f"{slug}.pdf")
+                build_article_pdf(target_art, out_file, header_mode="osf")
+                osf_copy = os.path.join(DOCS_DIR, f"{slug}-osf.pdf")
+                shutil.copyfile(out_file, osf_copy)
+                print(f"✅ Generated & synced OSF PDF: {osf_copy}\n")
+            else:
+                print(f"⚠️ Article slug not found in D1: {slug}")
     else:
         build_all()
