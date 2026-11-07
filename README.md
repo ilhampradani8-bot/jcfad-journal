@@ -17,3 +17,4 @@ npm run build
 # Deploy directly to Cloudflare Pages Edge
 npx wrangler pages deploy dist --project-name=jcfad-journal
 ```
+
