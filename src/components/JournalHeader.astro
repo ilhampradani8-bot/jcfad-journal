@@ -530,29 +530,30 @@ try {
 
   .journal-search-modal-box {
     background: #ffffff;
-    border: 2px solid #111111;
+    border: 2px solid #0f172a;
+    border-radius: 8px;
     width: 100%;
-    max-width: 760px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+    max-width: 840px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - 8rem);
+    max-height: calc(100vh - 6rem);
     overflow: hidden;
   }
 
   .search-modal-header {
     display: flex;
     align-items: center;
-    border-bottom: 1.5px solid #111111;
-    padding: 0.85rem 1.25rem;
-    gap: 0.75rem;
+    border-bottom: 2px solid #0f172a;
+    padding: 1rem 1.35rem;
+    gap: 0.85rem;
     background: #ffffff;
   }
 
   .search-input-group {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.85rem;
     flex: 1;
   }
 
@@ -565,15 +566,15 @@ try {
     border: none;
     outline: none;
     font-family: Georgia, 'Times New Roman', serif;
-    font-size: 1.15rem;
-    color: #111111;
+    font-size: 1.25rem;
+    color: #0f172a;
     background: transparent;
   }
 
   .journal-search-field::placeholder {
-    color: #888888;
+    color: #94a3b8;
     font-style: italic;
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
 
   .btn-close-search {
@@ -705,14 +706,14 @@ try {
   .search-result-card {
     display: flex;
     flex-direction: column;
-    margin: 0 1.25rem 0.85rem 1.25rem;
-    padding: 1rem 1.15rem;
+    margin: 0 1.35rem 1rem 1.35rem;
+    padding: 1.25rem 1.35rem;
     background: #ffffff;
     border: 1.5px solid #cbd5e1;
-    border-radius: 6px;
+    border-radius: 8px;
     text-decoration: none;
     color: inherit;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
     cursor: pointer;
     position: relative;
@@ -722,7 +723,7 @@ try {
   .search-result-card.selected {
     border-color: #0f172a;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.1);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
     background: #ffffff;
   }
 
@@ -736,7 +737,7 @@ try {
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.55rem;
     flex-wrap: wrap;
   }
 
@@ -748,13 +749,14 @@ try {
   }
 
   .card-num-badge {
-    font-size: 0.65rem;
+    font-size: 0.68rem;
     font-weight: 800;
     font-family: 'JetBrains Mono', Consolas, monospace;
     background: #0f172a;
     color: #ffffff;
-    padding: 0.1rem 0.35rem;
-    border-radius: 3px;
+    padding: 0.12rem 0.45rem;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
   }
 
   .card-tag-badge {
@@ -762,35 +764,36 @@ try {
     color: #ffffff;
     font-size: 0.65rem;
     font-weight: 800;
-    padding: 0.1rem 0.45rem;
-    border-radius: 3px;
+    padding: 0.12rem 0.45rem;
+    border-radius: 4px;
     letter-spacing: 0.03em;
     text-transform: uppercase;
   }
 
   .card-date-badge {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     color: #64748b;
     font-weight: 600;
   }
 
   .card-doi-pill {
     font-family: 'JetBrains Mono', Consolas, monospace;
-    font-size: 0.68rem;
+    font-size: 0.7rem;
     color: #0284c7;
     background: #eff6ff;
     border: 1px solid #bfdbfe;
-    padding: 0.1rem 0.45rem;
-    border-radius: 3px;
+    padding: 0.12rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 700;
   }
 
   .card-title-text {
     font-family: Georgia, 'Times New Roman', serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    line-height: 1.35;
-    color: #0f172a;
-    margin: 0 0 0.45rem 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+    line-height: 1.4;
+    color: #000000;
+    margin: 0 0 0.55rem 0;
   }
 
   .card-title-text a {
@@ -803,10 +806,11 @@ try {
   }
 
   .card-excerpt-text {
-    font-size: 0.8rem;
-    color: #475569;
-    line-height: 1.5;
-    margin: 0 0 0.75rem 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.88rem;
+    color: #1e293b;
+    line-height: 1.6;
+    margin: 0 0 0.85rem 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -818,9 +822,9 @@ try {
     align-items: center;
     justify-content: space-between;
     border-top: 1px solid #f1f5f9;
-    padding-top: 0.6rem;
+    padding-top: 0.65rem;
     margin-top: auto;
-    font-size: 0.72rem;
+    font-size: 0.74rem;
     gap: 0.5rem;
   }
 
@@ -837,7 +841,7 @@ try {
 
   .author-name {
     font-weight: 700;
-    color: #334155;
+    color: #1e293b;
     font-style: normal;
   }
 
@@ -845,12 +849,12 @@ try {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    font-size: 0.72rem;
+    font-size: 0.76rem;
     font-weight: 700;
     color: #ffffff;
     background: #0f172a;
-    padding: 0.25rem 0.65rem;
-    border-radius: 3px;
+    padding: 0.35rem 0.85rem;
+    border-radius: 4px;
     text-decoration: none;
     transition: background 0.12s ease;
     flex-shrink: 0;
@@ -1059,12 +1063,12 @@ try {
         <article class="search-result-card ${idx === selectedIdx ? 'selected' : ''}" data-idx="${idx}" data-url="${item.url}">
           <div class="card-meta-top">
             <div class="card-meta-left">
-              <span class="card-num-badge">#${idx + 1}</span>
+              <span class="card-num-badge">Art. ID: ${item.doi ? item.doi.split('.').pop() : 'JCFAD'}</span>
               <span class="card-tag-badge">${item.tag || 'RISET EMPIRIS'}</span>
               <span class="card-date-badge">${item.date}</span>
             </div>
             <div class="card-meta-right">
-              ${item.hasOsf ? '<span class="card-doi-pill" style="margin-right: 0.35rem; background: #f0fdf4; border-color: #bbf7d0; color: #166534;">OSF Verified</span>' : ''}
+              ${item.hasOsf ? '<span class="card-doi-pill" style="margin-right: 0.35rem; background: #f0fdf4; border-color: #bbf7d0; color: #166534;">OSF Global</span>' : ''}
               <span class="card-doi-pill">DOI: ${item.doi}</span>
             </div>
           </div>
@@ -1072,9 +1076,9 @@ try {
           ${item.excerpt ? `<p class="card-excerpt-text">${item.excerpt}...</p>` : ''}
           <div class="card-footer-row">
             <div class="card-author-info">
-              Penulis: <span class="author-name">${item.author}</span> &bull; Laboratorium JCFAD
+              Penulis: <span class="author-name">${item.author}</span> &bull; Divisi R&amp;D JCFAD
             </div>
-            <a href="${item.url}" class="card-cta-btn">Buka Naskah &rarr;</a>
+            <a href="${item.url}" class="card-cta-btn">Baca Naskah (HTML &amp; PDF) &rarr;</a>
           </div>
         </article>
       `).join('');
