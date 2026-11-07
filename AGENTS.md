@@ -14,3 +14,4 @@ This repository (`/root/journal`) contains the complete standalone code and asse
 - `npm run build`: Build production static files into `dist/`
 - `npx wrangler pages deploy dist --project-name=jcfad-journal`: Deploy to Cloudflare Pages
 - `autopush "<message>"`: Dual-push to GitHub + trigger deploy + notify Telegram
+

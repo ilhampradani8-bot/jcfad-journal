@@ -1,0 +1,94 @@
+[
+  {
+    "title": "A Multi‑Layered Force‑Majeure Risk‑Allocation Model Integrating Geohazard Analytics, Civil‑Law Mapping, and Blockchain Execution for the Liwa‑Krui Corridor",
+    "slug": "a-multi-layered-force-majeure-risk-allocation-model-integrating-geohazard-analytics-civil-law-mapping-and-blockchain-execution-for-the-liwa-krui-corridor",
+    "doi": "10.5281/zenodo.24032991",
+    "date": "2026-11-07",
+    "type": "academic_preprint"
+  },
+  {
+    "title": "A Stochastic Optimization Framework Integrating Real‑Time Wave Forecasting, Probabilistic Cargo‑Loss Assessment, and Performance‑Linked Subsidy Allocation for Small‑Scale Jukung Operators in Pulau Pisang, Pesisir Barat",
+    "slug": "a-stochastic-optimization-framework-integrating-real-time-wave-forecasting-probabilistic-cargo-loss-assessment-and-performance-linked-subsidy-allocation-for-small-scale-jukung-operators-in-pulau-pisang-pesisir-barat",
+    "doi": "10.5281/zenodo.24029072",
+    "date": "2026-11-06",
+    "type": "academic_preprint"
+  },
+  {
+    "title": "Hybrid Model Pembiayaan Faktur Digital Berbasis Perikatan Perdata dan Jaminan Stok Sembako untuk Pedagang Pasar Tradisional Krui",
+    "slug": "hybrid-model-pembiayaan-faktur-digital-berbasis-perikatan-perdata-dan-jaminan-stok-sembako-untuk-pedagang-pasar-tradisional-krui",
+    "doi": "10.5281/zenodo.23993666",
+    "date": "2026-11-06",
+    "type": "academic_preprint"
+  },
+  {
+    "title": "Model Integratif Physical-Digital Twin dengan Legal Ontology dan MARL untuk Optimasi Dual-Temperature Cold-Storage Mikro di TNBBS, Krui",
+    "slug": "model-integratif-physical-digital-twin-dengan-legal-ontology-dan-marl-untuk-optimasi-dual-temperature-cold-storage-mikro-di-tnbbs-krui",
+    "doi": "10.13140/RG.2.2.83242.53054",
+    "date": "2026-11-05",
+    "type": "academic_preprint"
+  },
+  {
+    "title": "Model Hybrid DAG-Edge-IoT Temperature-Credit Token untuk Optimasi Routing Mikro Cold-Storage di Koridor Konservasi TNBBS",
+    "slug": "model-hybrid-dagedgeiot-temperaturecredit-token-untuk-optimasi-routing-mikro-coldstorage-di-koridor-konservasi-tnbbs",
+    "doi": "10.13140/RG.2.2.89379.36039",
+    "date": "2026-11-04",
+    "type": "academic_preprint"
+  },
+  {
+    "title": "Model Hybrid Edge-AI-Enabled Thermodynamic Control dengan Smart-Contract Incentive untuk Optimasi Mikro-Cold-Storage Dual-Temp di Koridor Konservasi TNBBS",
+    "slug": "model-hybrid-edgeaienabled-thermodynamic-control-dengan-smartcontract-incentive-untuk-optimasi-mikrocoldstorage-dualtemp-di-koridor-konservasi-tnbbs",
+    "doi": "10.13140/RG.2.2.91179.55833",
+    "date": "2026-11-04",
+    "type": "academic_preprint"
+  },
+  {
+    "title": "Model Integratif 3-Dimensi Thermal-Teknis-Yuridis untuk Mikro-Node Cold-Storage Dual-Temperature Berbasis Blockchain di Koridor Konservasi TNBBS",
+    "slug": "model-integratif-3dimensi-thermalteknisyuridis-untuk-mikronode-coldstorage-dualtemperature-berbasis-blockchain-di-koridor-konservasi-tnbbs",
+    "doi": "10.13140/RG.2.2.19369.96862",
+    "date": "2026-11-03",
+    "type": "academic_preprint"
+  },
+  {
+    "title": "Model Distribusi Logistik Hospitality dan Rekonstruksi Kepastian Kontrak Pasokan di Kawasan 3T: Studi Kasus Empiris Krui Kabupaten Pesisir Barat",
+    "slug": "model-distribusi-bahan-baku-hospitality-di-kawasan-3t-studi-kasus-krui-kabupaten-pesisir-barat",
+    "doi": "10.13140/RG.2.2.14820.91520",
+    "date": "2026-11-02",
+    "type": "academic_preprint"
+  },
+  {
+    "title": "Catatan Kunjungan ke Villa Nalu: Kehangatan Pelayanan & Keramahan Ibu Marlin di Krui",
+    "slug": "catatan-kunjungan-ke-villa-nalu-kehangatan-pelayanan-amp-keramahan-ibu-marlin-di-krui",
+    "date": "2026-10-18",
+    "type": "field_report"
+  },
+  {
+    "title": "Catatan Kunjungan ke Surfmatra: Menikmati Kehangatan Hospitality Asli Pesisir Barat",
+    "slug": "catatan-kunjungan-ke-surfmatra-menikmati-kehangatan-hospitality-asli-pesisir-barat",
+    "date": "2026-10-17",
+    "type": "field_report"
+  },
+  {
+    "title": "PT CHAIN ASIA CONECT Sepakati Kontrak Penjualan Perangkat Lunak DICOM Senilai $1.300/Bulan dengan MS Solution Malaysia",
+    "slug": "pt-chain-asia-conect-sepakati-kontrak-penjualan-perangkat-lunak-dicom-senilai-1300bulan-dengan-ms-solution-malaysia",
+    "date": "2026-10-16",
+    "type": "corporate_deal"
+  },
+  {
+    "title": "Rencana Peluncuran Layanan Baru Kuartal IV 2026",
+    "slug": "rencana-peluncuran-layanan-baru-kuartal-iv-2026",
+    "date": "2026-10-15",
+    "type": "corporate_announcement"
+  },
+  {
+    "title": "Ekspansi Lisensi Perangkat Lunak Diagnostik PACS Cloud Medis",
+    "slug": "ekspansi-lisensi-perangkat-lunak-diagnostik-pacs-cloud-medis",
+    "date": "2026-10-14",
+    "type": "corporate_announcement"
+  },
+  {
+    "title": "PT CHAIN ASIA CONECT Perluas Jaringan Rantai Pasok di Wilayah Krui",
+    "slug": "pt-chain-asia-conect-perluas-jaringan-rantai-pasok-di-wilayah-krui",
+    "date": "2026-10-14",
+    "type": "corporate_announcement"
+  }
+]

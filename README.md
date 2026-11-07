@@ -49,10 +49,12 @@ Proyek ini telah **dipisahkan secara permanen** dari repositori korporat `chaina
 │       ├── ethics.astro          # Etika Publikasi & Integritas Ilmiah
 │       ├── submissions.astro     # Panduan Penulisan & Pengiriman Naskah
 │       └── sitemap.xml.js        # Dynamic scholarly sitemap generator
-└── scripts/
-    ├── generate-paper-pdf.py     # Engine kompilasi PDF naskah Typst 2-kolom berstandar IEEE/ACM
-    ├── sync-osf-papers.py        # Script sinkronisasi & push revisi naskah ke OSF Storage
-    └── zenodo-publisher.py       # Script deposit naskah ilmiah ke CERN Zenodo API
+├── scripts/
+│   ├── generate-paper-pdf.py     # Engine kompilasi PDF naskah Typst 2-kolom berstandar IEEE/ACM
+│   ├── auto-article-groq.mjs     # Mesin generator naskah & telaah AI Groq dengan live Telegram tracker
+│   ├── test-telegram.mjs         # Tool verifikasi koneksi Telegram Bot (@log_system_server_bot)
+│   ├── sync-osf-papers.py        # Script sinkronisasi & push revisi naskah ke OSF Storage
+│   └── zenodo-publisher.py       # Script deposit naskah ilmiah ke CERN Zenodo API
 ```
 
 ---

@@ -9,7 +9,12 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "wrangler pages deploy dist --project-name=jcfad-journal"
+    "deploy": "wrangler pages deploy dist --project-name=jcfad-journal",
+    "test:telegram": "node scripts/test-telegram.mjs",
+    "article:generate": "node scripts/auto-article-groq.mjs",
+    "paper:generate": "python3 scripts/generate-paper-pdf.py",
+    "paper:sync-osf": "python3 scripts/sync-osf-papers.py",
+    "paper:zenodo": "python3 scripts/zenodo-publisher.py"
   },
   "dependencies": {
     "astro": "^4.15.0",
