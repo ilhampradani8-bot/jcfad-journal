@@ -3981,32 +3981,44 @@ const newsArticleSchema = {
     display: none;
   }
 
-  @media (max-width: 1180px) {
+  /* ── PC & LAPTOP RESPONSIVE TUNING (TETAP 3 KOLOM / DUAL SIDEBAR DI SEMUA MODE PC) ── */
+  @media (max-width: 1280px) and (min-width: 992px) {
     .scholarly-workspace-layout {
-      flex-direction: column;
-      gap: 2.5rem;
+      gap: 1.25rem;
     }
     .journal-sticky-sidebar {
-      width: 100%;
-      position: static;
-      max-height: none;
-      border-right: none;
-      padding-right: 0;
+      width: 205px;
+      padding-right: 0.75rem;
     }
     .journal-right-sidebar {
-      width: 100%;
-      position: static;
-      max-height: none;
-      border-left: none;
-      padding-left: 0;
-      border-top: 1px solid #e2e8f0;
-      padding-top: 2rem;
+      width: 255px;
+      padding-left: 0.75rem;
     }
     .right-sb-indexing-grid {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(2, 1fr);
     }
     .embedded-pdf-frame-full {
-      height: 700px;
+      height: 850px;
+    }
+  }
+
+  @media (max-width: 991px) and (min-width: 769px) {
+    .scholarly-workspace-layout {
+      gap: 1rem;
+    }
+    .journal-sticky-sidebar {
+      width: 180px;
+      padding-right: 0.5rem;
+    }
+    .journal-right-sidebar {
+      width: 235px;
+      padding-left: 0.5rem;
+    }
+    .right-sb-indexing-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .embedded-pdf-frame-full {
+      height: 750px;
     }
   }
 
