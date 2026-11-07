@@ -438,119 +438,87 @@ const newsArticleSchema = {
                 <span>&larr; Index Jurnal JCFAD</span>
               </a>
 
-              <!-- Info DOI Resmi Naskah -->
-              <div class="sidebar-frozen-doi-box">
-                <span class="sidebar-frozen-doi-kicker">CERN ZENODO DOI:</span>
-                <a href={`https://doi.org/${articleDoi}`} target="_blank" rel="noopener noreferrer" class="sidebar-frozen-doi-val" title="Buka Record Resmi DOI">
-                  <span>{articleDoi}</span>
-                  <svg viewBox="0 0 20 20" fill="currentColor" width="11" height="11"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/></svg>
-                </a>
-              </div>
-
-              <!-- Tombol Aksi di Freeze Kiri (Salin Sitasi APA & Unduh PDF) -->
-              <div class="sidebar-frozen-actions">
-                <button type="button" class="sidebar-btn-copy-citation" id="sidebar-btn-copy-apa-citation" title="Salin Sitasi Format APA 7th Edition">
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                  </svg>
-                  <span id="sidebar-btn-copy-citation-text">Salin Sitasi APA</span>
-                </button>
-
-                <a href={articlePdfPath} target="_blank" download={articleDownloadName} class="sidebar-btn-pdf-download" title="Unduh File Resmi Galley PDF">
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                  </svg>
-                  <span>Unduh Galley PDF</span>
-                </a>
-              </div>
-            </div>
-
-          <!-- 2. Sticky Version Switcher Panel (Hanya Muncul Jika Multi-Versi) -->
-          {hasMultipleVersions && (
-            <div class="sidebar-versions-panel">
-              <div class="sb-panel-header">
-                <span class="sb-kicker">CERN ZENODO REGISTRY</span>
-                <h3 class="sb-title">Riwayat Versi Naskah</h3>
-              </div>
-
-              <div class="sidebar-versions-list" id="sidebar-version-buttons">
-                {versionData.versions.map((ver: any) => (
-                  <button
-                    type="button"
-                    class={`sidebar-version-item-btn ${ver.isLatest ? 'is-latest active' : 'is-archived'}`}
-                    data-version-target={ver.versionNum}
-                    title={`Klik untuk memuat dan membaca ${ver.version}`}
-                  >
-                    <div class="sb-v-top-row">
-                      <span class="sb-v-badge-name">{ver.version}</span>
-                      {ver.isLatest ? (
-                        <span class="sb-badge-tag-latest">LATEST</span>
-                      ) : (
-                        <span class="sb-badge-tag-archived">ARCHIVED</span>
-                      )}
-                    </div>
-                    <div class="sb-v-doi-row">doi:{ver.doi}</div>
-                    <div class="sb-v-date-row">{ver.date}</div>
-                    <div class="sb-v-click-indicator">
-                      <span class="sb-dot-indicator"></span>
-                      <span class="sb-indicator-text">{ver.isLatest ? '● Naskah Aktif Ditampilkan' : '↗ Muat Naskah Versi Ini'}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-
-              <div class="sidebar-concept-doi-wrap">
-                <span class="sb-c-label">Concept DOI (Sitasi Semua Versi):</span>
-                <a href={`https://doi.org/${versionData.conceptDoi}`} target="_blank" rel="noopener noreferrer" class="sb-c-link">
-                  <code>{versionData.conceptDoi}</code> ↗
-                </a>
-              </div>
-            </div>
-          )}
-
-          <!-- 3. Official Indexing Standards (Clean Logos, No Card, Larger Size) -->
-          <div class="sidebar-indexing-panel">
-            <span class="sidebar-indexing-kicker">STANDAR INDEKS TERVERIFIKASI</span>
-            <div class="sidebar-indexing-clean-list">
-              <a href="https://www.scopus.com" target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="Scopus Elsevier Standard">
-                <img src="/images/indexes/scopus.png" alt="Scopus" class="sb-index-clean-img scopus-img" />
-                <span class="sb-index-clean-name">Scopus</span>
-              </a>
-              <a href="https://zenodo.org" target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="CERN Zenodo Open Science Repository">
-                <img src="/images/indexes/zenodo.png" alt="Zenodo" class="sb-index-clean-img" />
-                <span class="sb-index-clean-name">Zenodo</span>
-              </a>
-              <a href="https://crossref.org" target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="Crossref Official Metadata Registry">
-                <img src="/images/indexes/crossref.png" alt="Crossref" class="sb-index-clean-img" />
-                <span class="sb-index-clean-name">Crossref</span>
-              </a>
-              <a href="https://scholar.google.com" target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="Google Scholar Academic Metrics">
-                <img src="/images/indexes/google-scholar.webp" alt="Google Scholar" class="sb-index-clean-img" />
-                <span class="sb-index-clean-name">Scholar</span>
-              </a>
-              <a href="https://www.researchgate.net" target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="ResearchGate Scientific Network">
-                <img src="/images/indexes/researchgate.svg" alt="ResearchGate" class="sb-index-clean-img" />
-                <span class="sb-index-clean-name">ResearchGate</span>
-              </a>
-              <a href="https://orcid.org/0009-0008-1310-6169" target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="ORCID Verified Researcher">
-                <img src="/images/indexes/orcid.png" alt="ORCID" class="sb-index-clean-img" />
-                <span class="sb-index-clean-name">ORCID</span>
-              </a>
-              <a href="https://sinta.kemdikbud.go.id" target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="SINTA Kemendikbudristek">
-                <img src="/images/indexes/sinta.png" alt="SINTA" class="sb-index-clean-img" />
-                <span class="sb-index-clean-name">SINTA</span>
-              </a>
-              <a href={osfRecord ? osfRecord.osfUrl : "https://osf.io/64xda/"} target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="Open Science Framework (OSF)">
-                <img src="/images/indexes/osf.png" alt="OSF" class="sb-index-clean-img" />
-                <span class="sb-index-clean-name">OSF</span>
+              <a href={articlePdfPath} target="_blank" download={articleDownloadName} class="sidebar-btn-pdf-download" title="Unduh File Resmi Galley PDF">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Unduh Galley PDF</span>
               </a>
             </div>
-          </div>
 
-        </aside>
+            <!-- 2. Navigasi / Daftar Isi Naskah (Table of Contents) -->
+            <div class="sidebar-toc-panel">
+              <span class="sidebar-toc-kicker">NAVIGASI NASKAH</span>
+              <nav class="sidebar-toc-nav" aria-label="Daftar Isi Naskah">
+                <a href="#abstrak" class="sidebar-toc-link">
+                  <span class="toc-bullet">&bull;</span>
+                  <span>Abstrak &amp; Kata Kunci</span>
+                </a>
+                <a href="#pembaca-pdf" class="sidebar-toc-link">
+                  <span class="toc-bullet">&bull;</span>
+                  <span>Pembaca PDF Naskah</span>
+                </a>
+                <a href="#naskah-prose" class="sidebar-toc-link">
+                  <span class="toc-bullet">&bull;</span>
+                  <span>Naskah Lengkap (IMRAD)</span>
+                </a>
+                <a href="#pustaka" class="sidebar-toc-link">
+                  <span class="toc-bullet">&bull;</span>
+                  <span>Daftar Pustaka Primer</span>
+                </a>
+                <a href="#sitasi-akademik" class="sidebar-toc-link">
+                  <span class="toc-bullet">&bull;</span>
+                  <span>Sitasi &amp; Format Rujukan</span>
+                </a>
+              </nav>
+            </div>
+
+            <!-- 3. Sticky Version Switcher Panel (Hanya Muncul Jika Multi-Versi) -->
+            {hasMultipleVersions && (
+              <div class="sidebar-versions-panel">
+                <div class="sb-panel-header">
+                  <span class="sb-kicker">CERN ZENODO REGISTRY</span>
+                  <h3 class="sb-title">Riwayat Versi Naskah</h3>
+                </div>
+
+                <div class="sidebar-versions-list" id="sidebar-version-buttons">
+                  {versionData.versions.map((ver: any) => (
+                    <button
+                      type="button"
+                      class={`sidebar-version-item-btn ${ver.isLatest ? 'is-latest active' : 'is-archived'}`}
+                      data-version-target={ver.versionNum}
+                      title={`Klik untuk memuat dan membaca ${ver.version}`}
+                    >
+                      <div class="sb-v-top-row">
+                        <span class="sb-v-badge-name">{ver.version}</span>
+                        {ver.isLatest ? (
+                          <span class="sb-badge-tag-latest">LATEST</span>
+                        ) : (
+                          <span class="sb-badge-tag-archived">ARCHIVED</span>
+                        )}
+                      </div>
+                      <div class="sb-v-doi-row">doi:{ver.doi}</div>
+                      <div class="sb-v-date-row">{ver.date}</div>
+                      <div class="sb-v-click-indicator">
+                        <span class="sb-dot-indicator"></span>
+                        <span class="sb-indicator-text">{ver.isLatest ? '● Naskah Aktif Ditampilkan' : '↗ Muat Naskah Versi Ini'}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                <div class="sidebar-concept-doi-wrap">
+                  <span class="sb-c-label">Concept DOI (Sitasi Semua Versi):</span>
+                  <a href={`https://doi.org/${versionData.conceptDoi}`} target="_blank" rel="noopener noreferrer" class="sb-c-link">
+                    <code>{versionData.conceptDoi}</code> ↗
+                  </a>
+                </div>
+              </div>
+            )}
+
+          </aside>
 
         <!-- ── RIGHT COLUMN: ARTICLE MAIN COLUMN ── -->
         <article class="article-main-column" itemscope itemtype={isAcademicPaper ? "https://schema.org/ScholarlyArticle" : "https://schema.org/NewsArticle"}>
@@ -853,7 +821,7 @@ const newsArticleSchema = {
           )}
 
           <!-- Academic Citation Box (Format Sitasi Baku untuk ResearchGate & Google Scholar) -->
-          <section class="paper-citation-box-clean" aria-label="Sitasi Naskah Ilmiah" data-apa={apaCitationText} data-bibtex={bibtexCitationText}>
+          <section class="paper-citation-box-clean" id="sitasi-akademik" aria-label="Sitasi Naskah Ilmiah" data-apa={apaCitationText} data-bibtex={bibtexCitationText}>
             <div class="citation-box-header">
               <div class="citation-box-title-group">
                 <span class="citation-box-badge">SITASI RESMI</span>
@@ -896,6 +864,128 @@ const newsArticleSchema = {
         </div>
 
         </article>
+
+        <!-- ── RIGHT COLUMN: SCHOLARLY METADATA, CITATION & INDEXING SIDEBAR ── -->
+        <aside class="journal-right-sidebar" id="journal-right-sidebar" aria-label="Sidebar Metadata, Sitasi &amp; Indeksasi">
+
+          <!-- 1. Quick Citation Copy Actions -->
+          <div class="right-sb-card">
+            <span class="right-sb-kicker">SITASI &amp; RUJUKAN CEPAT</span>
+            <div class="right-sb-actions">
+              <button type="button" class="right-sb-btn-cite primary" id="btn-right-copy-apa" title="Salin Sitasi Format APA 7th Edition">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span id="label-right-copy-apa">Salin Sitasi APA</span>
+              </button>
+              <button type="button" class="right-sb-btn-cite secondary" id="btn-right-copy-bibtex" title="Salin Sitasi Format BibTeX LaTeX">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="16 18 22 12 16 6"></polyline>
+                  <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                <span id="label-right-copy-bibtex">Salin Format BibTeX</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Detailed Metadata Panel -->
+          <div class="right-sb-card">
+            <span class="right-sb-kicker">METADATA PUBLIKASI</span>
+            <div class="right-sb-meta-list">
+              <div class="right-sb-meta-row">
+                <span class="meta-label">CERN ZENODO DOI:</span>
+                <a href={`https://doi.org/${articleDoi}`} target="_blank" rel="noopener noreferrer" class="meta-val meta-link mono">
+                  <span>{articleDoi}</span> ↗
+                </a>
+              </div>
+              {osfRecord && (
+                <div class="right-sb-meta-row">
+                  <span class="meta-label">OSF GLOBAL DOI:</span>
+                  <a href={`https://doi.org/${osfRecord.osfDoi}`} target="_blank" rel="noopener noreferrer" class="meta-val meta-link mono">
+                    <span>{osfRecord.osfDoi}</span> ↗
+                  </a>
+                </div>
+              )}
+              <div class="right-sb-meta-row">
+                <span class="meta-label">TANGGAL SUBMISI (CREATED):</span>
+                <span class="meta-val">{historyDates.received}</span>
+              </div>
+              <div class="right-sb-meta-row">
+                <span class="meta-label">TANGGAL REVISI (PEER-REVIEW):</span>
+                <span class="meta-val">{historyDates.revised}</span>
+              </div>
+              <div class="right-sb-meta-row">
+                <span class="meta-label">TANGGAL DITERIMA (ACCEPTED):</span>
+                <span class="meta-val">{historyDates.accepted}</span>
+              </div>
+              <div class="right-sb-meta-row">
+                <span class="meta-label">TANGGAL TERBIT (MODIFIED):</span>
+                <span class="meta-val font-bold">{historyDates.published}</span>
+              </div>
+              <div class="right-sb-meta-row">
+                <span class="meta-label">KONTRIBUTOR / PENULIS:</span>
+                <div class="meta-authors-wrap">
+                  {displayAuthors.map((auth: string) => (
+                    <span class="meta-author-item">
+                      <strong>{auth}</strong>
+                      <a href="https://orcid.org/0009-0008-1310-6169" target="_blank" rel="noopener noreferrer" class="meta-orcid-pill" title="ORCID Verified: 0009-0008-1310-6169">
+                        ORCID 0009-0008-1310-6169
+                      </a>
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div class="right-sb-meta-row">
+                <span class="meta-label">AFILIASI:</span>
+                <span class="meta-val">PT CHAIN ASIA CONECT Research &amp; Development Division</span>
+              </div>
+              <div class="right-sb-meta-row">
+                <span class="meta-label">HAK CIPTA &amp; LISENSI:</span>
+                <span class="meta-val meta-license-pill">CC BY 4.0 Open Access</span>
+              </div>
+              <div class="right-sb-meta-row">
+                <span class="meta-label">VOLUME &amp; EDISI:</span>
+                <span class="meta-val">Vol. 1 No. 1 (2026) &bull; Working Paper Series</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Standar Indeks Terverifikasi (Logos Only, No Text, Larger Size) -->
+          <div class="right-sb-card">
+            <div class="right-sb-index-head">
+              <span class="right-sb-kicker">STANDAR INDEKS TERVERIFIKASI</span>
+              <span class="right-sb-index-sub">Repositori &amp; Metadata Resmi</span>
+            </div>
+            <div class="right-sb-indexing-grid">
+              <a href="https://www.scopus.com" target="_blank" rel="noopener noreferrer" class="right-sb-logo-card" title="Scopus Elsevier Standard">
+                <img src="/images/indexes/scopus.png" alt="Scopus" class="right-sb-logo-img scopus-img" />
+              </a>
+              <a href="https://zenodo.org" target="_blank" rel="noopener noreferrer" class="right-sb-logo-card" title="CERN Zenodo Open Science Repository">
+                <img src="/images/indexes/zenodo.png" alt="Zenodo" class="right-sb-logo-img" />
+              </a>
+              <a href="https://crossref.org" target="_blank" rel="noopener noreferrer" class="right-sb-logo-card" title="Crossref Official Metadata Registry">
+                <img src="/images/indexes/crossref.png" alt="Crossref" class="right-sb-logo-img" />
+              </a>
+              <a href="https://scholar.google.com" target="_blank" rel="noopener noreferrer" class="right-sb-logo-card" title="Google Scholar Academic Metrics">
+                <img src="/images/indexes/google-scholar.webp" alt="Google Scholar" class="right-sb-logo-img" />
+              </a>
+              <a href="https://www.researchgate.net" target="_blank" rel="noopener noreferrer" class="right-sb-logo-card" title="ResearchGate Scientific Network">
+                <img src="/images/indexes/researchgate.svg" alt="ResearchGate" class="right-sb-logo-img" />
+              </a>
+              <a href={osfRecord ? osfRecord.osfUrl : "https://osf.io/64xda/"} target="_blank" rel="noopener noreferrer" class="right-sb-logo-card" title="Open Science Framework (OSF)">
+                <img src="/images/indexes/osf.png" alt="OSF" class="right-sb-logo-img" />
+              </a>
+              <a href="https://orcid.org/0009-0008-1310-6169" target="_blank" rel="noopener noreferrer" class="right-sb-logo-card" title="ORCID Verified Researcher">
+                <img src="/images/indexes/orcid.png" alt="ORCID" class="right-sb-logo-img" />
+              </a>
+              <a href="https://sinta.kemdikbud.go.id" target="_blank" rel="noopener noreferrer" class="right-sb-logo-card" title="SINTA Kemendikbudristek">
+                <img src="/images/indexes/sinta.png" alt="SINTA" class="right-sb-logo-img" />
+              </a>
+            </div>
+          </div>
+
+        </aside>
       </div>
     </div>
     ) : (
@@ -2838,23 +2928,23 @@ const newsArticleSchema = {
     color: #ffffff;
   }
 
-  /* ── TWO-COLUMN SCHOLARLY WORKSPACE & FROZEN SIDEBAR ── */
+  /* ── THREE-COLUMN SCHOLARLY WORKSPACE & DUAL STICKY SIDEBARS ── */
   .scholarly-workspace-wrapper {
-    max-width: 1420px;
+    max-width: 1560px;
     margin: 0 auto;
-    padding: 2rem 1.5rem 5rem 1.5rem;
+    padding: 2rem 1.25rem 5rem 1.25rem;
   }
 
   .scholarly-workspace-layout {
     display: flex;
     align-items: flex-start;
-    gap: 2.25rem;
+    gap: 2rem;
     position: relative;
   }
 
   /* ── LEFT COLUMN: FROZEN / STICKY ACADEMIC SIDEBAR ── */
   .journal-sticky-sidebar {
-    width: 280px;
+    width: 240px;
     flex-shrink: 0;
     position: sticky;
     top: 5.5rem;
@@ -2864,10 +2954,10 @@ const newsArticleSchema = {
     background: transparent;
     border: none;
     border-right: 1px solid #e2e8f0;
-    padding: 0 1.25rem 3rem 0;
+    padding: 0 1rem 3rem 0;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
     scrollbar-width: thin;
     scrollbar-color: #cbd5e1 transparent;
     z-index: 20;
@@ -3152,54 +3242,280 @@ const newsArticleSchema = {
     letter-spacing: 0.06em;
   }
 
-  .sidebar-indexing-clean-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem 0.75rem;
-    padding-top: 0.35rem;
-  }
-
-  .sb-index-clean-item {
+  /* ── LEFT SIDEBAR: TABLE OF CONTENTS (NAVIGASI NASKAH) ── */
+  .sidebar-toc-panel {
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 1.15rem;
     display: flex;
     flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .sidebar-toc-kicker {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #475569;
+    letter-spacing: 0.06em;
+  }
+
+  .sidebar-toc-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .sidebar-toc-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #334155;
+    text-decoration: none;
+    padding: 0.35rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .sidebar-toc-link:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    padding-left: 0.75rem;
+  }
+
+  .toc-bullet {
+    color: #dc2626;
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+
+  /* ── RIGHT COLUMN: SCHOLARLY METADATA, CITATION & INDEXING SIDEBAR ── */
+  .journal-right-sidebar {
+    width: 290px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 5.5rem;
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: transparent;
+    border: none;
+    border-left: 1px solid #e2e8f0;
+    padding: 0 0 3rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+    z-index: 20;
+  }
+
+  .right-sb-card {
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .right-sb-card:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .right-sb-kicker {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: 0.06em;
+  }
+
+  .right-sb-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .right-sb-btn-cite {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.6rem 0.85rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     text-decoration: none;
-    gap: 0.4rem;
-    padding: 0.4rem 0.2rem;
-    transition: transform 0.15s ease, opacity 0.15s ease;
+    border: none;
+    width: 100%;
   }
 
-  .sb-index-clean-item:hover {
+  .right-sb-btn-cite.primary {
+    background: #0f172a;
+    color: #ffffff;
+  }
+
+  .right-sb-btn-cite.primary:hover {
+    background: #dc2626;
+  }
+
+  .right-sb-btn-cite.secondary {
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+  }
+
+  .right-sb-btn-cite.secondary:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+  }
+
+  .right-sb-meta-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .right-sb-meta-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .meta-label {
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: #64748b;
+    letter-spacing: 0.04em;
+  }
+
+  .meta-val {
+    color: #0f172a;
+    font-size: 0.74rem;
+    line-height: 1.45;
+  }
+
+  .meta-val.font-bold {
+    font-weight: 700;
+  }
+
+  .meta-val.mono {
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 0.7rem;
+  }
+
+  .meta-link {
+    color: #0284c7;
+    text-decoration: none;
+    word-break: break-all;
+    transition: color 0.15s ease;
+  }
+
+  .meta-link:hover {
+    color: #0369a1;
+    text-decoration: underline;
+  }
+
+  .meta-authors-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: 0.15rem;
+  }
+
+  .meta-author-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .meta-orcid-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.68rem;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    text-decoration: none;
+    width: fit-content;
+    transition: all 0.15s ease;
+  }
+
+  .meta-orcid-pill:hover {
+    background: #dcfce7;
+    border-color: #86efac;
+  }
+
+  .meta-license-pill {
+    display: inline-flex;
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: #eff6ff;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+    padding: 0.15rem 0.45rem;
+    border-radius: 3px;
+    width: fit-content;
+  }
+
+  /* Right Sidebar Indexing Head & Grid (Larger Logos, No Text) */
+  .right-sb-index-head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .right-sb-index-sub {
+    font-size: 0.68rem;
+    color: #64748b;
+  }
+
+  .right-sb-indexing-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    padding-top: 0.25rem;
+  }
+
+  .right-sb-logo-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.75rem 0.6rem;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    text-decoration: none;
+    min-height: 64px;
+  }
+
+  .right-sb-logo-card:hover {
     transform: translateY(-2px);
-    opacity: 0.75;
+    border-color: #0f172a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
-  .sb-index-clean-img {
-    height: 40px;
-    max-width: 105px;
+  .right-sb-logo-img {
+    height: 44px;
     width: auto;
+    max-width: 105px;
     object-fit: contain;
     display: block;
   }
 
-  .sb-index-clean-img.scopus-img {
-    height: 34px;
+  .right-sb-logo-img.scopus-img {
+    height: 38px;
     max-width: 105px;
-  }
-
-  .sb-index-clean-name {
-    font-size: 0.74rem;
-    font-weight: 700;
-    color: #334155;
-    letter-spacing: -0.01em;
-  }
-
-  .scopus-badge-img {
-    height: 18px;
-    width: auto;
-    object-fit: contain;
   }
 
   .meta-doi-sub {
@@ -3383,9 +3699,10 @@ const newsArticleSchema = {
     background: #525659;
   }
 
-  @media (max-width: 1080px) {
+  @media (max-width: 1180px) {
     .scholarly-workspace-layout {
       flex-direction: column;
+      gap: 2.5rem;
     }
     .journal-sticky-sidebar {
       width: 100%;
@@ -3394,8 +3711,26 @@ const newsArticleSchema = {
       border-right: none;
       padding-right: 0;
     }
+    .journal-right-sidebar {
+      width: 100%;
+      position: static;
+      max-height: none;
+      border-left: none;
+      padding-left: 0;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 2rem;
+    }
+    .right-sb-indexing-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
     .embedded-pdf-frame-full {
       height: 700px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .right-sb-indexing-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
@@ -3888,6 +4223,25 @@ const newsArticleSchema = {
 
     const freezeCopyBtn = document.getElementById('sidebar-btn-copy-apa-citation');
     if (freezeCopyBtn) handleCopyApa(freezeCopyBtn, 'sidebar-btn-copy-citation-text');
+
+    const rightCopyApaBtn = document.getElementById('btn-right-copy-apa');
+    if (rightCopyApaBtn) handleCopyApa(rightCopyApaBtn, 'label-right-copy-apa');
+
+    const rightCopyBibBtn = document.getElementById('btn-right-copy-bibtex');
+    if (rightCopyBibBtn) {
+      rightCopyBibBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(bibtexText).then(() => {
+          const label = document.getElementById('label-right-copy-bibtex');
+          if (label) {
+            const original = label.textContent;
+            label.textContent = '✓ BibTeX Tersalin!';
+            setTimeout(() => {
+              label.textContent = original;
+            }, 2000);
+          }
+        });
+      });
+    }
   }
 
   if (document.readyState === 'loading') {
