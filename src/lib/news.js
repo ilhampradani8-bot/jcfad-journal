@@ -62,7 +62,7 @@ export function parseMarkdownTableHtml(raw) {
     return stripped.length === 0 && dashes.length >= 2;
   });
 
-  if (sepIdx === -1) return null;
+  if (sepIdx === -1 || sepIdx === 0) return null;
 
   const headerLines = tableLines.slice(0, sepIdx);
   const dataLines = tableLines.slice(sepIdx + 1);
@@ -105,6 +105,7 @@ export function parseMarkdownTableHtml(raw) {
   if (caption) {
     html += `  <div class="table-title-sharp academic-table-caption">${inlineFormat(caption)}</div>\n`;
   }
+  html += `  <div class="table-scroll-hint">↔ Geser tabel secara horizontal untuk melihat seluruh data</div>\n`;
   html += `  <table class="academic-three-line-table">\n`;
   html += `    <thead>\n`;
   for (const row of headerRows) {
@@ -152,10 +153,9 @@ export function renderArticleContentHtml(raw) {
   let cleanedText = decoded
     .replace(/(?:\r?\n|^)#{1,4}\s*(?:(?:\d+\.?\s*)?(?:Revision\s*Notes?|Catatan\s*Revisi|Reviewer|Sintesis\s*Rekonsiliasi|Penajaman\s*Doktrinal|Read\s*Time|Reading\s*Time|Integrity\s*Declaration|Deklarasi\s*Integritas|Daftar\s*Pustaka\s*Utama|Keterkaitan\s*Empiris|Keterkaitan\s*Riset))[\s\S]*$/i, '')
     .replace(/(?:\r?\n|^)All\s*(?:of\s*)?(?:the\s*)?(?:above|these)\s*amendments\s*directly\s*address[\s\S]*$/i, '')
-    .replace(/(?:\r?\n|^)[*\s]*DOI:\s*10\.\d{4,9}\/[-._;()/:A-Z0-9]+\s*\|\s*ResearchGate\s*&\s*Zenodo\s*Preprint[\s\S]*$/i, '');
-
-  // Bersihkan penutup rilis 'Ditulis oleh...' & 'Dibaca X kali' dari narasi
-  cleanedText = cleanedText
+    // Hapus HANYA baris footnote/watermark DOI (jangan hapus teks setelahnya!)
+    .replace(/(?:\r?\n|^)[*\s]*DOI:\s*10\.\d{4,9}\/[^\n]*(?:ResearchGate|Zenodo)[^\n]*(?:\r?\n|$)/gmi, '\n')
+    // Bersihkan penutup rilis 'Ditulis oleh...' & 'Dibaca X kali' dari narasi
     .replace(/(?:\r?\n|^)\s*(?:Ditulis\s*(?:oleh)?:?|Penulis:?)\s*(?:\r?\n)?[^\n]*(?:\r?\n)?(?:President\s*Director[^\n]*)?/gi, '')
     .replace(/(?:\r?\n|^)\s*Dibaca\s+\d+[\s\w]*/gi, '');
 
@@ -178,90 +178,114 @@ export function renderArticleContentHtml(raw) {
   cleanedText = cleanedText.replace(/([.!?])\s+("(?=[A-Z]))/g, '$1\n\n$2');
   cleanedText = cleanedText.replace(/(".*?"\s*(?:ujar|ungkap|tutur|tutup|jelas|kata|imbuh)[^.!?]+[.!?])\s+([A-Z])/g, '$1\n\n$2');
 
-  // Normalisasi single newline \n menjadi double newline \n\n untuk paragraf terpisah
-  cleanedText = cleanedText.replace(/([^\n])\n([^\n])/g, '$1\n\n$2');
+  const lines = cleanedText.split(/\r?\n/);
+  const blocks = [];
+  let curTable = [];
+  let curList = [];
+  let curPara = [];
 
-  // Pecah paragraf yang terlalu panjang (>550 char) menjadi paragraf editorial yang nyaman dibaca
-  const rawParagraphs = cleanedText.split(/\n\n+/).filter(p => p.trim().length > 0);
-  const paragraphs = [];
-  for (const p of rawParagraphs) {
-    const trimmed = p.trim();
-    if (trimmed.startsWith('|') || trimmed.startsWith('<') || trimmed.startsWith('- ') || trimmed.startsWith('* ') || trimmed.startsWith('**')) {
-      paragraphs.push(trimmed);
-      continue;
-    }
-    if (trimmed.length > 550 && !trimmed.startsWith('"')) {
-      const sentences = trimmed.match(/[^.!?]+[.!?]+(?:\s+|$)/g);
-      if (sentences && sentences.length >= 4) {
-        let chunk = '';
-        for (let sIdx = 0; sIdx < sentences.length; sIdx++) {
-          chunk += sentences[sIdx];
-          if ((sIdx + 1) % 2 === 0 && sIdx < sentences.length - 1) {
-            paragraphs.push(chunk.trim());
-            chunk = '';
-          }
-        }
-        if (chunk.trim()) paragraphs.push(chunk.trim());
-        continue;
+  function flushPara() {
+    if (curPara.length > 0) {
+      const pText = curPara.join(' ').trim();
+      if (pText) {
+        let formatted = pText
+          .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>');
+        blocks.push({
+          type: 'paragraph',
+          html: formatted
+        });
       }
+      curPara = [];
     }
-    paragraphs.push(trimmed);
   }
 
-  return paragraphs.map(p => {
-    const trimmed = p.trim();
-
-    // Cek jika blok adalah tag HTML container
-    if (/^<(div|section|table|figure|blockquote|hr|header|footer)/i.test(trimmed)) {
-      return {
-        type: 'html',
-        html: trimmed
-      };
-    }
-
-    // Cek apakah blok adalah tabel Markdown (| ... |)
-    const tableHtml = parseMarkdownTableHtml(trimmed);
-    if (tableHtml) {
-      return {
-        type: 'table',
-        html: tableHtml
-      };
-    }
-
-    // Cek apakah paragraf adalah Sub-heading (misal **Judul Bab** atau ### Judul)
-    const headingMatch = trimmed.match(/^\*\*(.*?)\*\*$/) || trimmed.match(/^#{2,4}\s+(.*)$/);
-    if (headingMatch) {
-      return {
-        type: 'heading',
-        html: cleanContentText(headingMatch[1])
-      };
-    }
-
-    // Cek apakah item list bertitik/bullet
-    if (trimmed.startsWith('- ') || trimmed.startsWith('* ') || /^\d+\.\s+/.test(trimmed)) {
-      const listItems = trimmed.split('\n').map(line => {
-        const cleanLine = line.replace(/^[-*]\s+/, '').replace(/^\d+\.\s+/, '');
-        // Biarkan bold di awal list jika ada (misal **Konteks**: deskripsi)
-        const parsed = cleanLine.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        return parsed;
-      });
-      return {
+  function flushList() {
+    if (curList.length > 0) {
+      blocks.push({
         type: 'list',
-        items: listItems
-      };
+        items: curList.map(item => item.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'))
+      });
+      curList = [];
+    }
+  }
+
+  function flushTable() {
+    if (curTable.length > 0) {
+      const tText = curTable.join('\n');
+      const tHtml = parseMarkdownTableHtml(tText);
+      if (tHtml) {
+        blocks.push({
+          type: 'table',
+          html: tHtml
+        });
+      } else {
+        curTable.forEach(tl => curPara.push(tl));
+        flushPara();
+      }
+      curTable = [];
+    }
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i].trim();
+    if (!l) {
+      flushTable();
+      flushList();
+      flushPara();
+      continue;
     }
 
-    // Paragraf biasa: ganti **teks** menjadi <strong>teks</strong> dan hapus *** yang berserakan
-    let formatted = trimmed
-      .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>');
+    // Baris tabel markdown
+    if (l.startsWith('|') && l.includes('|')) {
+      flushList();
+      flushPara();
+      curTable.push(l);
+      continue;
+    } else if (curTable.length > 0) {
+      flushTable();
+    }
 
-    return {
-      type: 'paragraph',
-      html: formatted
-    };
-  });
+    // Baris list
+    if (l.startsWith('- ') || l.startsWith('* ') || /^\d+\.\s+/.test(l)) {
+      flushPara();
+      curList.push(l.replace(/^[-*]\s+/, '').replace(/^\d+\.\s+/, ''));
+      continue;
+    } else if (curList.length > 0) {
+      flushList();
+    }
+
+    // Baris Heading
+    const headingMatch = l.match(/^\*\*(.*?)\*\*$/) || l.match(/^#{1,4}\s+(.*)$/);
+    if (headingMatch && !l.includes('|')) {
+      flushPara();
+      blocks.push({
+        type: 'heading',
+        html: cleanContentText(headingMatch[1].replace(/^\*\*|\*\*$/g, '').trim())
+      });
+      continue;
+    }
+
+    // Baris tag HTML container
+    if (/^<(div|section|table|figure|blockquote|hr|header|footer)/i.test(l)) {
+      flushPara();
+      blocks.push({
+        type: 'html',
+        html: l
+      });
+      continue;
+    }
+
+    // Teks biasa
+    curPara.push(l);
+  }
+
+  flushTable();
+  flushList();
+  flushPara();
+
+  return blocks;
 }
 
 // Helper untuk membuat slug SEO dari judul rilis

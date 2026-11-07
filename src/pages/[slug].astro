@@ -72,6 +72,7 @@ const cleanExcerpt = cleanContentText(article.excerpt);
 const initialDoi = article.doi || '10.5281/zenodo.14022601';
 const versionData = getArticleVersionData(article.slug, initialDoi);
 const currentV1 = ((versionsV1Data as Record<string, any>) || {})[article.slug] || null;
+const parsedBlocksV1 = currentV1 ? renderArticleContentHtml(currentV1.body) : [];
 const osfRecord = ((osfRecordsData as Record<string, any>) || {})[article.slug] || null;
 const hasMultipleVersions = Boolean(isAcademicPaper && versionData && versionData.versions && versionData.versions.length > 1);
 const v2Item = versionData?.versions?.find((v: any) => v.versionNum === '2') || versionData?.versions?.[0];
@@ -733,73 +734,84 @@ const newsArticleSchema = {
 
           <!-- Article Prose Body (Bebas Duplikasi & Bebas Tumpukan Card) -->
           <div class="article-prose-sharp" id="naskah-prose" itemprop="articleBody">
-          <!-- Layer Version 2 (Latest Peer-Reviewed English) -->
-          <div id="layer-version-2" class="version-body-layer active">
-            {parsedBlocks.map((block) => {
-              if (block.type === 'html' || block.type === 'table') {
-                return <div class="rich-html-block" set:html={block.html} />;
-              }
-              if (block.type === 'heading') {
-                const text = (block.html || '').toLowerCase();
-                let hId = undefined;
-                if (text.includes('pendahuluan') || text.includes('introduction')) hId = 'pendahuluan';
-                else if (text.includes('metode') || text.includes('method')) hId = 'metode';
-                else if (text.includes('hasil') || text.includes('result') || text.includes('discussion')) hId = 'hasil';
-                else if (text.includes('simpulan') || text.includes('conclusion')) hId = 'simpulan';
-                return <h2 class="article-subheading-sharp" id={hId}>{block.html}</h2>;
-              }
-              if (block.type === 'list') {
-                return (
-                  <ul class="article-content-list-sharp">
-                    {block.items.map((item) => (
-                      <li set:html={item} />
-                    ))}
-                  </ul>
-                );
-              }
-              return <p set:html={block.html} />;
-            })}
-          </div>
+            <!-- Header Section Transkrip Naskah Lengkap dengan Tombol Sembunyikan/Tampilkan -->
+            <div class="prose-section-header">
+              <div class="prose-header-left">
+                <span class="prose-header-kicker">FULL TEXT TRANSCRIPT &bull; OPEN ACCESS</span>
+                <h3 class="prose-header-title">Transkrip Naskah Lengkap (IMRAD Format)</h3>
+              </div>
+              <button type="button" class="btn-toggle-prose" id="btn-toggle-prose" aria-expanded="true">
+                <span id="label-toggle-prose">Sembunyikan Naskah Teks ▲</span>
+              </button>
+            </div>
 
-          <!-- Layer Version 1 (Initial Working Paper / Preprint Archive in Indonesian) - HANYA ADA JIKA MULTI-VERSI -->
-          {hasMultipleVersions && (
-            <div id="layer-version-1" class="version-body-layer" style="display: none;">
-              {currentV1 ? (
-                <div class="v1-archived-prose">
-                  <div class="v1-archive-watermark">
-                    <span>ARSIP NASKAH KERJA AWAL &bull; VERSION 1 PREPRINT (BAHASA INDONESIA)</span>
-                  </div>
-                  <div class="v1-content-text">
-                    {(() => {
-                      const cleanV1Body = currentV1.body
-                        .replace(/(?:\r?\n|^)#{1,4}\s*(?:(?:\d+\.?\s*)?(?:Revision\s*Notes?|Catatan\s*Revisi|Reviewer|Sintesis\s*Rekonsiliasi|Penajaman\s*Doktrinal|Read\s*Time|Reading\s*Time|Integrity\s*Declaration|Deklarasi\s*Integritas|Daftar\s*Pustaka\s*Utama|Keterkaitan\s*Empiris|Keterkaitan\s*Riset))[\s\S]*$/i, '')
-                        .replace(/(?:\r?\n|^)All\s*(?:of\s*)?(?:the\s*)?(?:above|these)\s*amendments\s*directly\s*address[\s\S]*$/i, '')
-                        .replace(/(?:\r?\n|^)[*\s]*DOI:\s*10\.\d{4,9}\/[-._;()/:A-Z0-9]+\s*\|\s*ResearchGate\s*&\s*Zenodo\s*Preprint[\s\S]*$/i, '');
-                      return cleanV1Body.split(/\n\n+/).map((paragraph: string) => {
-                        const trimmed = paragraph.trim();
-                        if (!trimmed) return null;
-                        const tableHtml = parseMarkdownTableHtml(trimmed);
-                        if (tableHtml) {
-                          return <div class="rich-html-block" set:html={tableHtml} />;
-                        }
-                        if (/^(?:#\s*)?(?:1|2|3|4|5)\.\s+/i.test(trimmed)) {
-                          return <h2 class="article-subheading-sharp">{trimmed.replace(/^#+\s*/, '')}</h2>;
-                        }
-                        if (trimmed.startsWith('## ') || trimmed.startsWith('### ') || /^\d+\.\d+\s+/i.test(trimmed)) {
-                          return <h3 class="article-subheading-h3">{trimmed.replace(/^#+\s*/, '')}</h3>;
-                        }
-                        return <p>{trimmed}</p>;
-                      });
-                    })()}
-                  </div>
-                </div>
-              ) : (
-                <div class="v1-archive-fallback">
-                  <p>Naskah Version 1 diarsipkan secara permanen pada repositori CERN Zenodo: <a href={`https://doi.org/${clientVersionPayload.v1?.doi || articleDoi}`} target="_blank">doi:{clientVersionPayload.v1?.doi || articleDoi}</a></p>
+            <div id="naskah-prose-body">
+              <!-- Layer Version 2 (Latest Peer-Reviewed English) -->
+              <div id="layer-version-2" class="version-body-layer active">
+                {parsedBlocks.map((block) => {
+                  if (block.type === 'html' || block.type === 'table') {
+                    return <div class="rich-html-block" set:html={block.html} />;
+                  }
+                  if (block.type === 'heading') {
+                    const text = (block.html || '').toLowerCase();
+                    let hId = undefined;
+                    if (text.includes('pendahuluan') || text.includes('introduction')) hId = 'pendahuluan';
+                    else if (text.includes('metode') || text.includes('method')) hId = 'metode';
+                    else if (text.includes('hasil') || text.includes('result') || text.includes('discussion')) hId = 'hasil';
+                    else if (text.includes('simpulan') || text.includes('conclusion')) hId = 'simpulan';
+                    return <h2 class="article-subheading-sharp" id={hId}>{block.html}</h2>;
+                  }
+                  if (block.type === 'list') {
+                    return (
+                      <ul class="article-content-list-sharp">
+                        {block.items.map((item) => (
+                          <li set:html={item} />
+                        ))}
+                      </ul>
+                    );
+                  }
+                  return <p set:html={block.html} />;
+                })}
+              </div>
+
+              <!-- Layer Version 1 (Initial Working Paper / Preprint Archive in Indonesian) - HANYA ADA JIKA MULTI-VERSI -->
+              {hasMultipleVersions && (
+                <div id="layer-version-1" class="version-body-layer" style="display: none;">
+                  {currentV1 ? (
+                    <div class="v1-archived-prose">
+                      <div class="v1-archive-watermark">
+                        <span>ARSIP NASKAH KERJA AWAL &bull; VERSION 1 PREPRINT (BAHASA INDONESIA)</span>
+                      </div>
+                      <div class="v1-content-text">
+                        {parsedBlocksV1.map((block) => {
+                          if (block.type === 'html' || block.type === 'table') {
+                            return <div class="rich-html-block" set:html={block.html} />;
+                          }
+                          if (block.type === 'heading') {
+                            return <h2 class="article-subheading-sharp">{block.html}</h2>;
+                          }
+                          if (block.type === 'list') {
+                            return (
+                              <ul class="article-content-list-sharp">
+                                {block.items.map((item) => (
+                                  <li set:html={item} />
+                                ))}
+                              </ul>
+                            );
+                          }
+                          return <p set:html={block.html} />;
+                        })}
+                      </div>
+                    </div>
+                  ) : (
+                    <div class="v1-archive-fallback">
+                      <p>Naskah Version 1 diarsipkan secara permanen pada repositori CERN Zenodo: <a href={`https://doi.org/${clientVersionPayload.v1?.doi || articleDoi}`} target="_blank">doi:{clientVersionPayload.v1?.doi || articleDoi}</a></p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
+          </div>
 
           <!-- Single Clean Bibliography Section (Format APA 7th Numbered - Bersih dari Kode JSON) -->
           {referencesList && referencesList.length > 0 && (
@@ -2249,6 +2261,68 @@ const newsArticleSchema = {
     color: #334155;
   }
 
+  /* Section Header Transkrip Naskah Lengkap */
+  .prose-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 0 0.85rem 0;
+    margin-top: 2rem;
+    border-top: 2.5px solid #0f172a;
+    border-bottom: 1px solid #e2e8f0;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: #ffffff;
+  }
+
+  .prose-header-kicker {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: #dc2626;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  .prose-header-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+  }
+
+  .btn-toggle-prose {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
+    padding: 0.4rem 0.85rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .btn-toggle-prose:hover {
+    background: #0f172a;
+    border-color: #0f172a;
+    color: #ffffff;
+  }
+
+  .table-scroll-hint {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 0.4rem;
+    font-style: italic;
+    background: #f8fafc;
+    padding: 0.25rem 0.6rem;
+    border-left: 3px solid #0284c7;
+    display: inline-block;
+  }
+
   /* Academic Three-Line Table (Standar Publikasi Ilmiah SINTA / Scopus) */
   .academic-table-wrap,
   .academic-table-wrapper {
@@ -2256,6 +2330,11 @@ const newsArticleSchema = {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     width: 100%;
+    border: 1px solid #e2e8f0;
+    padding: 0.75rem;
+    background: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
   }
 
   .table-title-sharp,
@@ -4854,6 +4933,19 @@ const newsArticleSchema = {
         closeAllSheets();
       });
     });
+
+    // Toggle Sembunyikan / Tampilkan Naskah Teks (HTML Transkrip)
+    const toggleProseBtn = document.getElementById('btn-toggle-prose');
+    const proseBody = document.getElementById('naskah-prose-body');
+    const toggleLabel = document.getElementById('label-toggle-prose');
+    if (toggleProseBtn && proseBody && toggleLabel) {
+      toggleProseBtn.addEventListener('click', () => {
+        const isHidden = proseBody.style.display === 'none';
+        proseBody.style.display = isHidden ? 'block' : 'none';
+        toggleLabel.textContent = isHidden ? 'Sembunyikan Naskah Teks ▲' : 'Tampilkan Naskah Teks ▼';
+        toggleProseBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+      });
+    }
   }
 
   if (document.readyState === 'loading') {
