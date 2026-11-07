@@ -1,0 +1,22 @@
+{
+  "name": "jcfad-journal",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Journal of Coastal Frontiers & Applied Development (JCFAD) - Official Independent Scholarly Journal Portal",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "deploy": "wrangler pages deploy dist --project-name=jcfad-journal"
+  },
+  "dependencies": {
+    "astro": "^4.15.0",
+    "lenis": "^1.3.27"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.4",
+    "wrangler": "^4.157.0"
+  }
+}

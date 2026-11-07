@@ -1,0 +1,168 @@
+---
+import Layout from '../layouts/Layout.astro';
+import JournalHeader from '../components/JournalHeader.astro';
+import Footer from '../components/Footer.astro';
+
+const journalTitle = "Journal of Coastal Frontiers & Applied Development";
+const journalAbbr = "JCFAD";
+---
+
+<Layout
+  title={`Focus & Scope | ${journalTitle} (${journalAbbr})`}
+  description="Aims, scientific scope, and topical coverage of the Journal of Coastal Frontiers & Applied Development (JCFAD)."
+  canonical="https://journal.chainasiaconnect.co.id/focus-scope"
+>
+  <JournalHeader />
+
+  <main class="classic-page-container">
+    <div class="container classic-page-inner">
+      <div class="page-header-box">
+        <div class="page-sup">JCFAD SCIENTIFIC COVERAGE</div>
+        <h1 class="page-title">Focus and Scope</h1>
+        <p class="page-desc">
+          <em>Journal of Coastal Frontiers &amp; Applied Development (JCFAD)</em> is an open-access, peer-reviewed scientific journal dedicated to the empirical intersection of regional development, commercial law, applied economics, and frontier infrastructure.
+        </p>
+      </div>
+
+      <div class="content-sections">
+        <section class="scope-section">
+          <h2>1. Geographic &amp; Field Focus</h2>
+          <p>
+            The journal specifically emphasizes research grounded in the 3T regions (Tertinggal, Terdepan, Terluar) of Indonesia, with a concentrated focus on <strong>Pesisir Barat Regency (Krui)</strong> and the ecological buffer corridors of <strong>Taman Nasional Bukit Barisan Selatan (TNBBS)</strong>, Sumatra.
+          </p>
+        </section>
+
+        <section class="scope-section">
+          <h2>2. Core Topical Areas</h2>
+          <ul class="scope-list">
+            <li>
+              <strong>Coastal &amp; Frontier Regional Economics:</strong> Empirical supply chain optimization, micro-logistics in isolated zones, tourism and hospitality economics, and community-based value creation.
+            </li>
+            <li>
+              <strong>Commercial Jurisprudence &amp; Contract Law (KUHPerdata):</strong> Contractual certainty, supply agreement reconstruction, dispute minimization under Indonesian Civil Code, and institutional governance for remote businesses.
+            </li>
+            <li>
+              <strong>Agroforestry &amp; Artisanal Fisheries Value Chains:</strong> Systematic investigations of Damar Mata Kucing (<em>Shorea javanica</em>) extraction, traditional fishing fleets, and sustainable forest commodity market dynamics.
+            </li>
+            <li>
+              <strong>Applied Frontier Infrastructure &amp; Smart Systems:</strong> Edge IoT telemetry, micro-cold-storage thermodynamic modeling, digital twins, and distributed ledger technology applied to regional logistics.
+            </li>
+          </ul>
+        </section>
+
+        <section class="scope-section">
+          <h2>3. Publication Frequency &amp; Model</h2>
+          <p>
+            JCFAD publishes continuous volumes with biannual compilation issues (June and December). All articles are published under the <strong>Creative Commons Attribution 4.0 International (CC BY 4.0)</strong> license, ensuring universal free access and academic reuse.
+          </p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .classic-page-container {
+    padding: 3rem 0 5rem;
+    background: #ffffff;
+    min-height: 75vh;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #111111;
+  }
+
+  .classic-page-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .page-header-box {
+    border-bottom: 2px solid #111111;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .page-sup {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #dc2626;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0 0 0.8rem;
+    color: #000000;
+  }
+
+  .page-desc {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #444444;
+    margin: 0;
+  }
+
+  .content-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .scope-section h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    color: #111111;
+    border-bottom: 1px solid #eeeeee;
+    padding-bottom: 0.4rem;
+  }
+
+  .scope-section p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #333333;
+    margin: 0;
+  }
+
+  .scope-list {
+    margin: 0.8rem 0 0 1.2rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    font-size: 0.98rem;
+    line-height: 1.7;
+    color: #333333;
+  }
+
+  .scope-list strong {
+    color: #000000;
+  }
+
+  @media (max-width: 640px) {
+    .classic-page-container {
+      padding: 1.75rem 0 3.5rem;
+    }
+    .classic-page-inner {
+      padding: 0 1rem;
+    }
+    .page-title {
+      font-size: 1.65rem;
+    }
+    .page-desc {
+      font-size: 0.95rem;
+    }
+    .scope-section h2 {
+      font-size: 1.2rem;
+    }
+    .scope-list {
+      margin-left: 0.5rem;
+    }
+  }
+</style>

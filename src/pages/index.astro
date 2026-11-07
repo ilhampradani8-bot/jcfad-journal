@@ -1,0 +1,732 @@
+---
+import Layout from '../layouts/Layout.astro';
+import JournalHeader from '../components/JournalHeader.astro';
+import Footer from '../components/Footer.astro';
+import { fetchAllNews, decodeHtmlEntities, cleanContentText, isAcademicItem } from '../lib/news';
+
+// Fetch all articles from Cloudflare D1
+const { news } = await fetchAllNews();
+
+// Filter STRICTLY for academic research papers / journal category only
+const articles = news.filter((item) => isAcademicItem(item));
+
+const journalTitle = "Journal of Coastal Frontiers & Applied Development";
+const journalAbbr = "JCFAD";
+const currentIssue = "Vol. 1 No. 1 (2026): Empirical Regional Studies, Contractual Governance, and Frontier Resource Optimization in Pesisir Barat (Krui)";
+const publisherName = "PT CHAIN ASIA CONECT Research & Development Division";
+---
+
+<Layout
+  title={`${journalTitle} (${journalAbbr}) | Official Open Access Journal`}
+  description="An open access peer-reviewed working paper series focusing on Pesisir Barat (Krui) regional development, commercial contract law under Indonesian Civil Code, and applied frontier field research."
+  canonical="https://journal.chainasiaconnect.co.id"
+>
+  <JournalHeader />
+
+  <main class="classic-journal-wrapper">
+    <!-- Masthead (Classic Scholarly Header / Oxford & PKP OJS Standard) -->
+    <header class="classic-masthead">
+      <div class="container classic-masthead-inner">
+        <div class="journal-identity-block">
+          <div class="masthead-flex-header">
+            <img src="/images/jcfad-seal.png" alt="JCFAD Seal" class="masthead-seal-img" width="72" height="72" />
+            <div>
+              <div class="journal-header-sup">OPEN ACCESS SCHOLARLY JOURNAL &bull; WORKING PAPER SERIES</div>
+              <h1 class="journal-main-title">{journalTitle}</h1>
+            </div>
+          </div>
+          <p class="journal-main-desc">
+            A scholarly publication dedicated to empirical regional studies, frontier economics, natural resource governance, and applied jurisprudence in Pesisir Barat Regency (Krui), Sumatra, Indonesia.
+          </p>
+          <div class="journal-classic-meta">
+            <span><strong>Abbreviation:</strong> {journalAbbr}</span>
+            <span class="meta-dot">&bull;</span>
+            <span><strong>Frequency:</strong> Semi-Annual (2 Issues / Year)</span>
+            <span class="meta-dot">&bull;</span>
+            <span><strong>Series Status:</strong> Author Working Paper Preprint Series</span>
+            <span class="meta-dot">&bull;</span>
+            <span><strong>License:</strong> CC BY 4.0 Open Access</span>
+          </div>
+        </div>
+
+        <!-- Current Issue Banner (Classic Sharp Typography - No Floating Cards) -->
+        <div class="classic-issue-banner" id="current-issue">
+          <div class="issue-banner-label">CURRENT ISSUE</div>
+          <h2 class="issue-banner-title">{currentIssue}</h2>
+          <div class="issue-banner-meta">
+            Published: November 2026 &bull; Krui, Pesisir Barat &amp; Jakarta &bull; <strong>{articles.length} Empirical Papers Indexed</strong>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Layout (Two-Column Classic Academic Architecture) -->
+    <div class="container classic-body-grid">
+      <!-- Left Column: Table of Contents (Direct Typography Stream - No Card Boxes) -->
+      <section class="classic-toc-column" aria-label="Table of Contents">
+        <div class="classic-section-header">
+          <h3 class="section-title-classic">ORIGINAL EMPIRICAL RESEARCH &amp; APPLIED FEASIBILITY STUDIES</h3>
+          <span class="section-badge-classic">Vol. 1 No. 1 (2026)</span>
+        </div>
+
+        <div class="classic-articles-stream">
+          {articles.map((art, idx) => {
+            const cleanTitle = decodeHtmlEntities(art.title);
+            const cleanExcerpt = cleanContentText(art.excerpt);
+            const doi = art.doi || '10.5281/zenodo.14022601';
+            const pdfUrl = `https://journal.chainasiaconnect.co.id/docs/${art.slug}.pdf`;
+            const readUrl = `https://journal.chainasiaconnect.co.id/${art.slug}`;
+
+            return (
+              <article class="classic-article-entry">
+                <div class="entry-meta-top">
+                  <span class="entry-index-num">#{idx + 1}</span>
+                  <span class="entry-category-text">{art.tag || 'EMPIRICAL RESEARCH ARTICLE'}</span>
+                  <span class="entry-doi-text">DOI: <a href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer">{doi}</a></span>
+                </div>
+
+                <h4 class="entry-title">
+                  <a href={readUrl}>{cleanTitle}</a>
+                </h4>
+
+                <div class="entry-author-row">
+                  <span class="author-primary"><strong>Ilham Pradani</strong></span>
+                  <a href="https://orcid.org/0009-0008-1310-6169" target="_blank" rel="noopener noreferrer" class="classic-orcid-badge" title="Verified ORCID iD: 0009-0008-1310-6169">
+                    <img src="/images/indexes/orcid.png" alt="ORCID" class="orcid-icon-img" />
+                    <span>0009-0008-1310-6169</span>
+                  </a>
+                  <span class="author-affil-text">— Research &amp; Development Division, PT CHAIN ASIA CONECT</span>
+                </div>
+
+                <p class="entry-abstract-text">
+                  {cleanExcerpt}
+                </p>
+
+                <div class="entry-actions-row">
+                  <a href={readUrl} class="classic-btn-action">
+                    Read Full Article (HTML) &rarr;
+                  </a>
+                  <a href={pdfUrl} target="_blank" download class="classic-btn-action-solid">
+                    Download Official Galley (PDF)
+                  </a>
+                  <span class="entry-license-tag">CC BY 4.0 Open Access</span>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <!-- Right Column: Scholarly Sidebar (Sharp Borders, Monochrome, No Color Bars) -->
+      <aside class="classic-sidebar" aria-label="Journal Information and Editorial Details">
+        <!-- Block 1: Editorial Board (Clean, Professional & Factual) -->
+        <div class="classic-block" id="editorial-board">
+          <h4 class="classic-block-header">EDITORIAL BOARD</h4>
+          <div class="editor-identity-classic">
+            <span class="editor-name-classic">Ilham Pradani, S.H.</span>
+            <span class="editor-title-classic">Editor-in-Chief &amp; Lead Investigator</span>
+            <span class="editor-org-classic">Research &amp; Development Division, PT CHAIN ASIA CONECT</span>
+            <a href="https://orcid.org/0009-0008-1310-6169" target="_blank" rel="noopener noreferrer" class="classic-link-orcid">
+              ORCID Profile: 0009-0008-1310-6169 &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Block 2: Indexing & Scholarly Open Repositories (Official 6 Logos) -->
+        <div class="classic-block" id="indexing">
+          <h4 class="classic-block-header">INDEXING &amp; OPEN REPOSITORIES</h4>
+          <p class="classic-block-note">Articles are archived, registered, and discoverable across academic indexes:</p>
+          
+          <div class="classic-index-logo-grid">
+            <!-- 0. Scopus Elsevier -->
+            <a href="https://www.scopus.com" target="_blank" rel="noopener noreferrer" class="index-logo-tile" title="Scopus Elsevier Standard Indexing">
+              <img src="/images/indexes/scopus.png" alt="Scopus" style="max-height: 28px;" />
+            </a>
+
+            <!-- 1. Google Scholar -->
+            <a href="https://scholar.google.com" target="_blank" rel="noopener noreferrer" class="index-logo-tile" title="Google Scholar Index">
+              <img src="/images/indexes/google-scholar.webp" alt="Google Scholar" />
+            </a>
+
+            <!-- 2. Zenodo CERN -->
+            <a href="https://zenodo.org" target="_blank" rel="noopener noreferrer" class="index-logo-tile" title="Zenodo Open Science Archive (CERN)">
+              <img src="/images/indexes/zenodo.png" alt="Zenodo" />
+            </a>
+
+            <!-- 3. ResearchGate -->
+            <a href="https://www.researchgate.net" target="_blank" rel="noopener noreferrer" class="index-logo-tile" title="ResearchGate Scientific Network">
+              <img src="/images/indexes/researchgate.svg" alt="ResearchGate" />
+            </a>
+
+            <!-- 4. Crossref Metadata -->
+            <a href="https://www.crossref.org" target="_blank" rel="noopener noreferrer" class="index-logo-tile" title="Crossref Digital Object Identifiers">
+              <img src="/images/indexes/crossref.png" alt="Crossref" />
+            </a>
+
+            <!-- 5. ORCID Registry -->
+            <a href="https://orcid.org/0009-0008-1310-6169" target="_blank" rel="noopener noreferrer" class="index-logo-tile" title="ORCID Researcher Registry">
+              <img src="/images/indexes/orcid.png" alt="ORCID" />
+            </a>
+
+            <!-- 6. SINTA Guidelines -->
+            <a href="https://sinta.kemdikbud.go.id" target="_blank" rel="noopener noreferrer" class="index-logo-tile" title="SINTA National Journal Standard">
+              <img src="/images/indexes/sinta.png" alt="SINTA" />
+            </a>
+          </div>
+        </div>
+
+        <!-- Block 3: Focus & Scope (Pesisir Barat Regional Economics & Applied Law) -->
+        <div class="classic-block" id="focus-scope">
+          <h4 class="classic-block-header">FOCUS &amp; SCOPE</h4>
+          <p class="classic-block-desc">
+            JCFAD publishes field-grounded empirical findings and applied theoretical models with specific focus on:
+          </p>
+          <ul class="classic-block-list">
+            <li>Pesisir Barat (Krui) Regional Economics &amp; 3T Frontier Development</li>
+            <li>Commercial Contractual Certainty &amp; Indonesian Civil Code (KUHPerdata)</li>
+            <li>Damar Mata Kucing Agroforestry &amp; Artisanal Fishery Value Chains</li>
+            <li>Remote Conservation Corridor Infrastructure (TNBBS Buffer Zones)</li>
+          </ul>
+        </div>
+
+        <!-- Block 4: Publication Ethics & COPE Preprint Standard -->
+        <div class="classic-block" id="ethics">
+          <h4 class="classic-block-header">PUBLICATION ETHICS &amp; COPE PREPRINT</h4>
+          <p class="classic-block-desc">
+            All manuscripts in this volume are deposited as an <strong>Author Working Paper / Preprint Series</strong> adhering to the standards of the <em>Committee on Publication Ethics (COPE)</em>.
+          </p>
+          <p class="classic-block-desc small">
+            Deposited to establish author priority of scientific discovery and legally excluded from similarity index or dual-publication penalties under COPE standards.
+          </p>
+        </div>
+
+        <!-- Block 5: Author Submissions -->
+        <div class="classic-block" id="submissions">
+          <h4 class="classic-block-header">AUTHOR SUBMISSIONS</h4>
+          <p class="classic-block-desc">
+            Manuscripts are accepted in Bahasa Indonesia or English following standard IMRAD structure. All submissions should include raw empirical datasets and institutional correspondence.
+          </p>
+          <p class="classic-block-desc small">
+            Editorial Correspondence: <code>r-d@chainasiaconnect.co.id</code>
+          </p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  /* Reset & Classic Academic Scholarly Typography */
+  .classic-journal-wrapper {
+    background: #ffffff;
+    min-height: 100vh;
+    padding-top: 1.5rem;
+    padding-bottom: 5rem;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: #111111;
+  }
+
+  /* Universal Sharp Edges & Zero Roundness */
+  .classic-journal-wrapper *,
+  .classic-journal-wrapper *::before,
+  .classic-journal-wrapper *::after {
+    border-radius: 0 !important;
+  }
+
+  /* Top Masthead (Classic Academic Layout: Double Black Rule, Crisp White) */
+  .classic-masthead {
+    background: #ffffff;
+    border-top: 3px double #111111;
+    border-bottom: 1px solid #111111;
+    padding: 2.25rem 0 1.75rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .classic-masthead-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 992px) {
+    .classic-masthead-inner {
+      grid-template-columns: 1.5fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .masthead-flex-header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .masthead-seal-img {
+    height: 72px;
+    width: 72px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .journal-header-sup {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #333333;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+
+  .journal-main-title {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: clamp(1.8rem, 3vw, 2.35rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: #000000;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .journal-main-desc {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: #444444;
+    margin: 0 0 1rem;
+    font-style: italic;
+  }
+
+  .journal-classic-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.78rem;
+    color: #555555;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 0.75rem;
+  }
+
+  .meta-dot {
+    color: #999999;
+  }
+
+  /* Current Issue Box (Sharp Black Border, Clean Academic Paper Look) */
+  .classic-issue-banner {
+    border: 1px solid #111111;
+    background: #fafafa;
+    padding: 1.35rem 1.5rem;
+  }
+
+  .issue-banner-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #000000;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .issue-banner-title {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #000000;
+    margin: 0 0 0.5rem;
+  }
+
+  .issue-banner-meta {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.78rem;
+    color: #555555;
+    line-height: 1.45;
+  }
+
+  /* Two Column Academic Layout */
+  .classic-body-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  @media (min-width: 992px) {
+    .classic-body-grid {
+      grid-template-columns: 2.2fr 1fr;
+    }
+  }
+
+  .classic-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #111111;
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .section-title-classic {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    color: #000000;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .section-badge-classic {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border: 1px solid #111111;
+    padding: 0.15rem 0.5rem;
+    color: #111111;
+  }
+
+  /* Table of Contents Stream (Natural Academic Flow, Zero Floating Cards) */
+  .classic-articles-stream {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .classic-article-entry {
+    background: #ffffff;
+    border: 1.5px solid #111111;
+    border-radius: 4px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.75rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+
+  .classic-article-entry:hover {
+    border-color: #dc2626;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  }
+
+  .entry-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.74rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .entry-index-num {
+    font-weight: 800;
+    color: #000000;
+  }
+
+  .entry-category-text {
+    font-weight: 700;
+    color: #333333;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .entry-doi-text {
+    margin-left: auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.76rem;
+    color: #555555;
+  }
+
+  .entry-doi-text a {
+    color: #111111;
+    text-decoration: underline;
+  }
+
+  .entry-title {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: clamp(1.2rem, 1.8vw, 1.45rem);
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 0.65rem;
+  }
+
+  .entry-title a {
+    color: #000000;
+    text-decoration: none;
+  }
+
+  .entry-title a:hover {
+    text-decoration: underline;
+  }
+
+  .entry-author-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.82rem;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .author-primary {
+    color: #000000;
+  }
+
+  .classic-orcid-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    border: 1px solid #111111;
+    padding: 0.1rem 0.4rem;
+    color: #111111;
+    font-size: 0.72rem;
+    font-family: 'Courier New', Courier, monospace;
+    text-decoration: none;
+  }
+
+  .orcid-icon-img {
+    height: 12px;
+    width: auto;
+  }
+
+  .author-affil-text {
+    color: #666666;
+    font-size: 0.8rem;
+  }
+
+  .entry-abstract-text {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: #333333;
+    margin: 0 0 1.25rem;
+    text-align: justify;
+  }
+
+  .entry-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .classic-btn-action {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #111111;
+    background: #ffffff;
+    color: #111111;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.5rem 0.9rem;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .classic-btn-action:hover {
+    background: #111111;
+    color: #ffffff;
+  }
+
+  .classic-btn-action-solid {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #111111;
+    background: #111111;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.5rem 0.9rem;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .classic-btn-action-solid:hover {
+    background: #333333;
+    border-color: #333333;
+  }
+
+  .entry-license-tag {
+    margin-left: auto;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.74rem;
+    color: #666666;
+  }
+
+  /* Sidebar Blocks (Sharp Monochrome, No Rounded Corners, No Color Bars) */
+  .classic-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .classic-block {
+    border: 1px solid #111111;
+    background: #ffffff;
+    padding: 1.35rem;
+  }
+
+  .classic-block-header {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.86rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #000000;
+    text-transform: uppercase;
+    border-bottom: 1px solid #111111;
+    padding-bottom: 0.45rem;
+    margin: 0 0 0.9rem;
+  }
+
+  .editor-identity-classic {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .editor-name-classic {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #000000;
+  }
+
+  .editor-title-classic {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #111111;
+  }
+
+  .editor-org-classic {
+    font-size: 0.78rem;
+    color: #555555;
+    line-height: 1.4;
+  }
+
+  .classic-link-orcid {
+    font-size: 0.76rem;
+    color: #000000;
+    font-weight: 700;
+    text-decoration: underline;
+    margin-top: 0.4rem;
+  }
+
+  /* Index Logo Grid (Official 6 Logos) */
+  .classic-block-note {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.76rem;
+    color: #555555;
+    margin: 0 0 0.8rem;
+    line-height: 1.4;
+  }
+
+  .classic-index-logo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+    align-items: center;
+  }
+
+  .index-logo-tile {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .index-logo-tile:hover {
+    background: transparent !important;
+    opacity: 0.7;
+  }
+
+  .index-logo-tile img {
+    max-height: 32px;
+    max-width: 100%;
+    object-fit: contain;
+    filter: none;
+  }
+
+  .classic-block-desc {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: #333333;
+    margin: 0 0 0.6rem;
+  }
+
+  .classic-block-desc.small {
+    font-size: 0.76rem;
+    color: #666666;
+  }
+
+  .classic-block-list {
+    margin: 0;
+    padding-left: 1.15rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.8rem;
+    color: #333333;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .classic-article-entry {
+      padding: 1.25rem 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .entry-meta-top {
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .entry-doi-text {
+      margin-left: 0;
+      width: 100%;
+    }
+
+    .entry-actions-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.5rem;
+    }
+
+    .classic-btn-action,
+    .classic-btn-action-solid {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .entry-license-tag {
+      margin-left: 0;
+      text-align: center;
+      padding-top: 0.25rem;
+    }
+
+    .classic-masthead {
+      padding: 1.5rem 0 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .masthead-flex-header {
+      gap: 0.75rem;
+    }
+
+    .classic-journal-title {
+      font-size: 1.35rem;
+    }
+
+    .issue-banner-title {
+      font-size: 1.15rem;
+    }
+  }
+</style>

@@ -1,0 +1,15 @@
+# Academic PDFs & Documents
+/docs/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=86400, s-maxage=604800
+  X-Robots-Tag: all
+
+# Images & Visual Assets
+/images/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=604800, s-maxage=2592000
+
+# Sitemaps
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8
+  Cache-Control: public, max-age=3600

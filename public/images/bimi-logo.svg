@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>PT CHAIN ASIA CONECT</title>
+  <rect width="512" height="512" fill="#0f172a"/>
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#dc2626" stroke-width="18"/>
+  <path d="M190 190 C140 190, 140 322, 190 322 L230 322" fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round"/>
+  <path d="M256 176 L216 326 M256 176 L296 326 M230 282 L282 282" fill="none" stroke="#dc2626" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M356 190 C306 190, 306 322, 356 322 L382 322" fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round"/>
+</svg>

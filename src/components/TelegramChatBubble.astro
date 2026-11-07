@@ -1,0 +1,910 @@
+---
+// TelegramChatBubble.astro - Apple / iTunes Style Clean White Live Chat (Web <-> Telegram)
+---
+
+<div class="apple-chat-root" id="apple-chat-root">
+  <!-- Live Chat Popup Window (Apple / iTunes Clean White) -->
+  <div class="apple-chat-window" id="apple-chat-window" aria-hidden="true">
+    
+    <!-- Apple Style Header -->
+    <div class="apple-chat-header">
+      <div class="apple-header-left">
+        <div class="apple-avatar-wrap">
+          <img src="/images/CAC-LOGOremovebg-preview.png" alt="PT CHAIN ASIA CONECT" class="apple-avatar-img" />
+          <span class="apple-status-indicator" id="apple-status-indicator"></span>
+        </div>
+        <div class="apple-header-info">
+          <div class="apple-header-title">PT CHAIN ASIA CONECT</div>
+          <div class="apple-header-subtitle" id="apple-header-status">Live Customer Care</div>
+        </div>
+      </div>
+      <div class="apple-header-actions">
+        <button type="button" class="apple-btn-icon" id="apple-clear-chat" title="Bersihkan Percakapan" aria-label="Bersihkan">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </button>
+        <button type="button" class="apple-btn-icon" id="apple-close-chat" aria-label="Tutup Chat">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Notice banner if Telegram admin connection is syncing -->
+    <div class="apple-notice-bar" id="apple-notice-bar" style="display: none;">
+      <span>💡 Kirim 1 pesan/start ke <strong>@bubblechainasia_bot</strong> di Telegram agar notifikasi masuk.</span>
+    </div>
+
+    <!-- Messages Scroll Body -->
+    <div class="apple-chat-body" id="apple-chat-body">
+      
+      <div class="apple-date-badge">Hari ini</div>
+
+      <!-- Initial Welcome Message -->
+      <div class="apple-msg-row apple-msg-incoming">
+        <div class="apple-msg-avatar">
+          <img src="/images/CAC-LOGOremovebg-preview.png" alt="CS" />
+        </div>
+        <div class="apple-bubble apple-bubble-incoming">
+          <p>Halo! Selamat datang di <strong>PT CHAIN ASIA CONECT</strong>. 👋</p>
+          <p>Silakan tinggalkan pertanyaan Anda di sini, kami akan langsung merespons di layar ini.</p>
+          <span class="apple-msg-time">CS Team</span>
+        </div>
+      </div>
+
+      <!-- Quick Option Pills -->
+      <div class="apple-quick-topics" id="apple-quick-box">
+        <span class="apple-quick-title">Pilihan Cepat:</span>
+        <button type="button" class="apple-pill-btn" data-text="Halo, saya ingin menanyakan kerja sama kemitraan rantai pasok (supply chain).">
+          🤝 Kemitraan Pasok
+        </button>
+        <button type="button" class="apple-pill-btn" data-text="Halo, saya ingin informasi legalitas & profil PT CHAIN ASIA CONECT.">
+          📑 Legalitas & Profil
+        </button>
+        <button type="button" class="apple-pill-btn" data-text="Halo, saya ingin terhubung dengan Direktur PT CHAIN ASIA CONECT.">
+          📞 Hubungi Direksi
+        </button>
+      </div>
+
+      <!-- Dynamic Message Stream -->
+      <div id="apple-dynamic-messages"></div>
+
+      <!-- Typing Indicator -->
+      <div class="apple-typing-row" id="apple-typing" style="display: none;">
+        <div class="apple-typing-bubble">
+          <span class="apple-dot"></span>
+          <span class="apple-dot"></span>
+          <span class="apple-dot"></span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Input Footer -->
+    <div class="apple-chat-footer">
+      <form id="apple-chat-form" class="apple-form">
+        <div class="apple-input-wrap">
+          <input 
+            type="text" 
+            id="apple-user-text" 
+            class="apple-input" 
+            placeholder="Ketik pesan..." 
+            autocomplete="off"
+            required 
+          />
+          <button type="submit" class="apple-send-btn" id="apple-send-btn" aria-label="Kirim">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+      <div class="apple-footer-sub">
+        <span id="apple-send-status">🟢 Siap menerima pesan</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Apple Style Floating Trigger Button -->
+  <button type="button" class="apple-floating-trigger" id="apple-floating-trigger" aria-label="Buka Live Chat Support">
+    <div class="apple-trigger-icon">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+      </svg>
+    </div>
+    <span class="apple-unread-dot" id="apple-unread-dot"></span>
+  </button>
+</div>
+
+<style is:global>
+  .apple-chat-root {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999999;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Floating Trigger Button (Clean Apple White & Shadow) */
+  .apple-floating-trigger {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: #007aff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease, background 0.2s;
+    position: relative;
+    outline: none;
+  }
+
+  .apple-floating-trigger:hover {
+    transform: scale(1.06) translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16), 0 4px 10px rgba(0, 0, 0, 0.08);
+    background: #fafafa;
+  }
+
+  .apple-floating-trigger:active {
+    transform: scale(0.95);
+  }
+
+  .apple-unread-dot {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 14px;
+    height: 14px;
+    background: #34c759;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(52, 199, 89, 0.4);
+  }
+
+  /* Apple Style Chat Window (Pure White & Frosted Glass) */
+  .apple-chat-window {
+    position: absolute;
+    bottom: 74px;
+    right: 0;
+    width: 360px;
+    max-width: calc(100vw - 32px);
+    height: 490px;
+    max-height: calc(100vh - 110px);
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.2), 0 0 1px 1px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px) scale(0.96);
+    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s;
+  }
+
+  .apple-chat-window.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+  }
+
+  /* Header */
+  .apple-chat-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e5e5ea;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .apple-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .apple-avatar-wrap {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    background: #ffffff;
+    border: 1px solid #e5e5ea;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .apple-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .apple-status-indicator {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 10px;
+    height: 10px;
+    background: #34c759;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+  }
+
+  .apple-header-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .apple-header-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1c1c1e;
+    letter-spacing: -0.2px;
+  }
+
+  .apple-header-subtitle {
+    font-size: 11px;
+    color: #8e8e93;
+    font-weight: 500;
+  }
+
+  .apple-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .apple-btn-icon {
+    background: transparent;
+    border: none;
+    color: #8e8e93;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .apple-btn-icon:hover {
+    background: #e5e5ea;
+    color: #1c1c1e;
+  }
+
+  /* Notice Bar */
+  .apple-notice-bar {
+    background: #fff9e6;
+    border-bottom: 1px solid #ffe58f;
+    padding: 6px 12px;
+    font-size: 11px;
+    color: #874d00;
+    line-height: 1.3;
+  }
+
+  /* Chat Body Stream */
+  .apple-chat-body {
+    flex: 1;
+    padding: 16px 14px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: #f8fafc;
+  }
+
+  .apple-date-badge {
+    align-self: center;
+    background: #e2e8f0;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin: 2px 0 6px 0;
+  }
+
+  #apple-dynamic-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Chat Message Row & Bubble Styling */
+  .apple-msg-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    max-width: 82%;
+    animation: appleBubblePop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
+  @keyframes appleBubblePop {
+    from { opacity: 0; transform: translateY(8px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Incoming / Agent Bubble (Left) */
+  .apple-msg-incoming {
+    align-self: flex-start;
+  }
+
+  .apple-msg-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  .apple-msg-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .apple-bubble-incoming {
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px 18px 18px 4px;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    line-height: 1.45;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    position: relative;
+  }
+
+  .apple-bubble-incoming p {
+    margin: 0 0 6px 0;
+  }
+
+  .apple-bubble-incoming p:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .apple-msg-time {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    font-size: 10px;
+    color: #94a3b8;
+    margin-top: 5px;
+  }
+
+  /* Outgoing / User Bubble (Right) */
+  .apple-msg-outgoing {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+  }
+
+  .apple-bubble-outgoing {
+    background: linear-gradient(135deg, #007aff 0%, #0062cc 100%);
+    color: #ffffff;
+    border-radius: 18px 18px 4px 18px;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    line-height: 1.4;
+    word-break: break-word;
+    box-shadow: 0 3px 10px rgba(0, 122, 255, 0.28);
+    position: relative;
+  }
+
+  .apple-bubble-outgoing .apple-msg-time {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .apple-check-icon {
+    display: inline-block;
+    color: #38bdf8;
+    font-weight: 700;
+  }
+
+  /* Quick Topic Pills */
+  .apple-quick-topics {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 4px 0 4px 34px;
+  }
+
+  .apple-quick-title {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 600;
+  }
+
+  .apple-pill-btn {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    width: fit-content;
+  }
+
+  .apple-pill-btn:hover {
+    background: #007aff;
+    color: #ffffff;
+    border-color: #007aff;
+    transform: scale(1.02) translateX(4px);
+    box-shadow: 0 3px 8px rgba(0, 122, 255, 0.25);
+  }
+
+  /* Typing Dots Indicator */
+  .apple-typing-row {
+    align-self: flex-start;
+  }
+
+  .apple-typing-bubble {
+    background: #f2f2f7;
+    padding: 10px 14px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: fit-content;
+  }
+
+  .apple-dot {
+    width: 6px;
+    height: 6px;
+    background: #8e8e93;
+    border-radius: 50%;
+    animation: appleBounce 1.2s infinite ease-in-out;
+  }
+
+  .apple-dot:nth-child(2) { animation-delay: 0.2s; }
+  .apple-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes appleBounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+    40% { transform: translateY(-4px); opacity: 1; }
+  }
+
+  /* Footer & Input */
+  .apple-chat-footer {
+    background: #f8f9fa;
+    border-top: 1px solid #e5e5ea;
+    padding: 10px 12px 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .apple-form {
+    width: 100%;
+    margin: 0;
+  }
+
+  .apple-input-wrap {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #d1d1d6;
+    border-radius: 22px;
+    padding: 3px 5px 3px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .apple-input-wrap:focus-within {
+    border-color: #007aff;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+  }
+
+  .apple-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #1c1c1e;
+    font-size: 13.5px;
+    outline: none;
+  }
+
+  .apple-input::placeholder {
+    color: #8e8e93;
+  }
+
+  .apple-send-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #007aff;
+    color: #ffffff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    padding: 0;
+  }
+
+  .apple-send-btn:hover {
+    background: #0062cc;
+    transform: scale(1.05);
+  }
+
+  .apple-footer-sub {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #8e8e93;
+  }
+
+  /* Responsive Mobile */
+  @media (max-width: 480px) {
+    .apple-chat-root {
+      bottom: 16px;
+      right: 16px;
+    }
+    .apple-chat-window {
+      width: calc(100vw - 32px);
+      height: min(480px, calc(100vh - 96px));
+      bottom: 68px;
+      right: 0;
+      border-radius: 16px;
+    }
+    .apple-floating-trigger {
+      width: 52px;
+      height: 52px;
+    }
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const BOT_TOKEN = '8865367316:AAHLN47ZL8n_R14T-Pd0EcsSk1Kd9Q4Ouek';
+    const TG_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
+    const ADMIN_CHAT_ID = '8570234554';
+
+    const trigger = document.getElementById('apple-floating-trigger');
+    const closeBtn = document.getElementById('apple-close-chat');
+    const clearBtn = document.getElementById('apple-clear-chat');
+    const chatWin = document.getElementById('apple-chat-window');
+    const form = document.getElementById('apple-chat-form');
+    const input = document.getElementById('apple-user-text');
+    const dynamicList = document.getElementById('apple-dynamic-messages');
+    const unreadDot = document.getElementById('apple-unread-dot');
+    const typingIndicator = document.getElementById('apple-typing');
+    const quickBox = document.getElementById('apple-quick-box');
+    const pillButtons = document.querySelectorAll('.apple-pill-btn');
+    const sendStatus = document.getElementById('apple-send-status');
+    const noticeBar = document.getElementById('apple-notice-bar');
+
+    // Generate or restore session
+    let sessionId = localStorage.getItem('cac_apple_session_id');
+    if (!sessionId) {
+      sessionId = 'User-' + Math.floor(1000 + Math.random() * 9000);
+      localStorage.setItem('cac_apple_session_id', sessionId);
+    }
+
+    let messages = [];
+    try {
+      messages = JSON.parse(localStorage.getItem('cac_apple_history_' + sessionId) || '[]');
+    } catch (e) {
+      messages = [];
+    }
+
+    let lastUpdateId = parseInt(localStorage.getItem('cac_apple_last_update_id') || '0', 10);
+    let adminChatId = ADMIN_CHAT_ID;
+    let pollTimer = null;
+
+    // Render messages
+    function renderMessages() {
+      if (!dynamicList) return;
+      dynamicList.innerHTML = '';
+      messages.forEach(msg => {
+        const row = document.createElement('div');
+        if (msg.sender === 'user') {
+          row.className = 'apple-msg-row apple-msg-outgoing';
+          row.innerHTML = `
+            <div class="apple-bubble apple-bubble-outgoing">
+              <p style="margin: 0;">${escapeHtml(msg.text)}</p>
+              <span class="apple-msg-time">
+                <span>${msg.time || ''}</span>
+                <span class="apple-check-icon">✓✓</span>
+              </span>
+            </div>
+          `;
+        } else {
+          row.className = 'apple-msg-row apple-msg-incoming';
+          row.innerHTML = `
+            <div class="apple-msg-avatar">
+              <img src="/images/CAC-LOGOremovebg-preview.png" alt="CS" />
+            </div>
+            <div class="apple-bubble apple-bubble-incoming">
+              <p style="margin: 0;">${escapeHtml(msg.text)}</p>
+              <span class="apple-msg-time">${msg.time || 'CS Team'}</span>
+            </div>
+          `;
+        }
+        dynamicList.appendChild(row);
+      });
+      scrollToBottom();
+      if (messages.length > 0 && quickBox) {
+        quickBox.style.display = 'none';
+      }
+    }
+
+    function scrollToBottom() {
+      const body = document.getElementById('apple-chat-body');
+      if (body) {
+        body.scrollTop = body.scrollHeight;
+      }
+    }
+
+    function escapeHtml(str) {
+      const p = document.createElement('p');
+      p.textContent = str;
+      return p.innerHTML;
+    }
+
+    function saveMessage(sender, text, time) {
+      messages.push({
+        sender,
+        text,
+        time: time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      localStorage.setItem('cac_apple_history_' + sessionId, JSON.stringify(messages));
+      renderMessages();
+    }
+
+    // Toggle Chat Window
+    function toggleChat() {
+      if (!chatWin) return;
+      const isOpen = chatWin.classList.toggle('open');
+      chatWin.setAttribute('aria-hidden', !isOpen);
+      if (isOpen) {
+        if (unreadDot) unreadDot.style.display = 'none';
+        if (input) input.focus();
+        startPolling();
+        fetchAdminChatId();
+      } else {
+        stopPolling();
+      }
+    }
+
+    function closeChat() {
+      if (chatWin) {
+        chatWin.classList.remove('open');
+        chatWin.setAttribute('aria-hidden', 'true');
+        stopPolling();
+      }
+    }
+
+    if (trigger) {
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleChat();
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeChat();
+      });
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        if (confirm('Bersihkan riwayat percakapan?')) {
+          messages = [];
+          localStorage.removeItem('cac_apple_history_' + sessionId);
+          if (dynamicList) dynamicList.innerHTML = '';
+          if (quickBox) quickBox.style.display = 'flex';
+        }
+      });
+    }
+
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+      const root = document.getElementById('apple-chat-root');
+      if (root && !root.contains(e.target)) {
+        closeChat();
+      }
+    });
+
+    // Detect Admin Telegram Chat ID automatically
+    async function fetchAdminChatId() {
+      try {
+        const res = await fetch(`${TG_API}/getUpdates`);
+        const data = await res.json();
+        if (data.ok && data.result && data.result.length > 0) {
+          for (let i = data.result.length - 1; i >= 0; i--) {
+            const upd = data.result[i];
+            const msg = upd.message || upd.channel_post || upd.edited_message;
+            if (msg && msg.chat && msg.chat.id) {
+              adminChatId = msg.chat.id;
+              localStorage.setItem('cac_apple_admin_chat_id', adminChatId);
+              if (noticeBar) noticeBar.style.display = 'none';
+              break;
+            }
+          }
+        }
+        if (!adminChatId && noticeBar) {
+          noticeBar.style.display = 'block';
+        }
+      } catch (e) {
+        // network
+      }
+    }
+
+    // Track sent message IDs for this session to isolate replies
+    let sentMsgIds = [];
+    try {
+      sentMsgIds = JSON.parse(localStorage.getItem('cac_sent_ids_' + sessionId) || '[]');
+    } catch (e) {
+      sentMsgIds = [];
+    }
+
+    // Send Message to Telegram
+    async function sendMessage(text) {
+      saveMessage('user', text);
+      if (quickBox) quickBox.style.display = 'none';
+
+      const formattedText = `💬 *Pesan Baru dari Web Pengunjung*\n👤 *Sesi*: \`#${sessionId}\`\n📝 *Pesan*: ${text}\n\n_👉 Balas (Reply) pesan ini untuk membalas ke pengunjung #${sessionId}_`;
+
+      try {
+        if (sendStatus) sendStatus.textContent = 'Mengirim pesan...';
+        const res = await fetch(`${TG_API}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: adminChatId,
+            text: formattedText,
+            parse_mode: 'Markdown'
+          })
+        });
+        const data = await res.json();
+        if (data.ok && data.result && data.result.message_id) {
+          sentMsgIds.push(data.result.message_id);
+          localStorage.setItem('cac_sent_ids_' + sessionId, JSON.stringify(sentMsgIds));
+          if (sendStatus) sendStatus.textContent = '🟢 Terkirim ke Admin • Menunggu balasan';
+        } else {
+          console.warn('Telegram send response:', data);
+          if (sendStatus) sendStatus.textContent = '🟢 Pesan terkirim ke sistem';
+        }
+      } catch (err) {
+        console.error('Send error:', err);
+        if (sendStatus) sendStatus.textContent = '⚠️ Masalah jaringan saat mengirim.';
+      }
+    }
+
+    // Processed Telegram message IDs to prevent any duplicate bubbles
+    let processedTelegramMsgIds = [];
+    try {
+      processedTelegramMsgIds = JSON.parse(localStorage.getItem('cac_processed_tg_ids') || '[]');
+    } catch (e) {
+      processedTelegramMsgIds = [];
+    }
+
+    // Poll for Admin replies from Telegram (Strict Session Match & Deduplication)
+    async function checkReplies() {
+      try {
+        const url = lastUpdateId 
+          ? `${TG_API}/getUpdates?offset=${lastUpdateId + 1}&timeout=3` 
+          : `${TG_API}/getUpdates?limit=10`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.ok && data.result && data.result.length > 0) {
+          data.result.forEach(update => {
+            lastUpdateId = Math.max(lastUpdateId, update.update_id);
+            localStorage.setItem('cac_apple_last_update_id', lastUpdateId.toString());
+
+            const msg = update.message;
+            if (msg && msg.text && !msg.text.includes('Pesan Baru dari Web Pengunjung') && !msg.text.startsWith('/')) {
+              
+              // DEDUPLICATION: If this Telegram message was already rendered, skip immediately
+              if (processedTelegramMsgIds.includes(msg.message_id)) {
+                return;
+              }
+
+              const replyTo = msg.reply_to_message;
+              
+              // STRICT MATCH 1: Admin replied directly to one of this session's telegram messages
+              const isReplyToMyMsgId = replyTo && sentMsgIds.includes(replyTo.message_id);
+              
+              // STRICT MATCH 2: The replied message text specifically contains this visitor's session ID
+              const isReplyToMySessionText = replyTo && replyTo.text && replyTo.text.includes(`#${sessionId}`);
+              
+              // STRICT MATCH 3: The reply itself explicitly mentions this visitor's session ID
+              const mentionsMySession = msg.text.includes(`#${sessionId}`);
+
+              // ONLY ACCEPT if it strictly belongs to THIS user session (No cross-talk)
+              if (isReplyToMyMsgId || isReplyToMySessionText || mentionsMySession) {
+                // Mark as processed immediately so no duplicate can ever be triggered
+                processedTelegramMsgIds.push(msg.message_id);
+                localStorage.setItem('cac_processed_tg_ids', JSON.stringify(processedTelegramMsgIds.slice(-200)));
+
+                const cleanText = msg.text.replace(new RegExp(`#${sessionId}`, 'g'), '').trim();
+                if (cleanText) {
+                  const timeStr = new Date(msg.date * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                  
+                  // Save message synchronously
+                  saveMessage('agent', cleanText, timeStr);
+
+                  if (sendStatus) sendStatus.textContent = '🟢 Admin sedang online';
+                }
+              }
+            }
+          });
+        }
+      } catch (err) {
+        // silent polling catch
+      }
+    }
+
+    function startPolling() {
+      if (pollTimer) clearInterval(pollTimer);
+      checkReplies();
+      pollTimer = setInterval(checkReplies, 2500);
+    }
+
+    function stopPolling() {
+      if (pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = null;
+      }
+    }
+
+    // Quick Pill Topic clicks
+    pillButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.getAttribute('data-text') || '';
+        sendMessage(text);
+      });
+    });
+
+    // Form Submit
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+
+        sendMessage(text);
+        input.value = '';
+      });
+    }
+
+    // Initial run
+    renderMessages();
+  });
+</script>

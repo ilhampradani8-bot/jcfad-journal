@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Allow: /docs/
+Allow: /images/
+
+# Google Scholar, Crossref, Scopus & Academic Indexers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /images/
+
+User-agent: Google-Extended
+Allow: /
+
+# Sitemap
+Sitemap: https://journal.chainasiaconnect.co.id/sitemap.xml

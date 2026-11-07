@@ -1,0 +1,4128 @@
+---
+import Layout from '../layouts/Layout.astro';
+import JournalHeader from '../components/JournalHeader.astro';
+import Footer from '../components/Footer.astro';
+import { fetchAllNews, formatImageUrl, parseDateToISO, renderArticleContentHtml, decodeHtmlEntities, cleanContentText, parseMarkdownTableHtml, isAcademicItem } from '../lib/news';
+import { getArticleVersionData } from '../lib/versions';
+import versionsV1Data from '../data/versions_v1.json';
+import osfRecordsData from '../data/osf_records.json';
+
+export async function getStaticPaths() {
+  const { news } = await fetchAllNews();
+  const paths = [];
+  const academicItems = (news || []).filter((item: any) => isAcademicItem(item));
+  for (const item of academicItems) {
+    // Generate route for SEO Title Slug
+    paths.push({
+      params: { slug: item.slug },
+      props: { article: item, allNews: news }
+    });
+    // Juga dukung route numeric id agar backwards-compatible
+    if (item.id && item.id !== item.slug) {
+      paths.push({
+        params: { slug: String(item.id) },
+        props: { article: item, allNews: news }
+      });
+    }
+  }
+  return paths;
+}
+
+const { slug } = Astro.params;
+
+// Ambil data terbaru secara live dan dinamis langsung dari Cloudflare D1
+const { news } = await fetchAllNews();
+const article = news.find((n: any) => n.slug === slug || String(n.id) === String(slug)) || Astro.props.article;
+
+if (!article) {
+  return Astro.redirect('/');
+}
+
+const isAcademicPaper = isAcademicItem(article);
+
+// Canonical URL SEO ramah Google & Google Scholar (murni mengarah ke subdomain jurnal tanpa /newsroom/ untuk paper ilmiah)
+const canonicalUrl = isAcademicPaper
+  ? `https://journal.chainasiaconnect.co.id/${article.slug}`
+  : `https://www.chainasiaconnect.co.id/newsroom/${article.slug}`;
+
+// Pastikan gambar artikel menggunakan URL dinamis yang valid
+const dynamicArticleImage = formatImageUrl(article.imageUrl);
+
+// Konversi tanggal berita ke format standar ISO 8601 untuk Google News & Search Console
+const isoPublishedDate = parseDateToISO(article.date);
+
+// Filter saran berita terpisah (Rilis Korporasi vs Naskah Ilmiah)
+const corporateSuggestions = news
+  .filter((n) => !isAcademicItem(n) && n.slug !== article.slug && String(n.id) !== String(article.id))
+  .slice(0, 3);
+
+const academicSuggestions = news
+  .filter((n) => isAcademicItem(n) && n.slug !== article.slug && String(n.id) !== String(article.id))
+  .slice(0, 4);
+
+const suggestions = isAcademicPaper ? academicSuggestions : corporateSuggestions;
+
+// Format dan parse konten artikel (membersihkan format markdown ***, **, &amp;, dll)
+const rawContent = article.content && article.content.trim().length > 0 ? article.content : article.excerpt;
+const parsedBlocks = renderArticleContentHtml(rawContent);
+const cleanTitle = decodeHtmlEntities(article.title);
+const cleanExcerpt = cleanContentText(article.excerpt);
+
+// Riwayat Versi & Concept DOI (Zenodo CERN Architecture)
+const initialDoi = article.doi || '10.5281/zenodo.14022601';
+const versionData = getArticleVersionData(article.slug, initialDoi);
+const currentV1 = ((versionsV1Data as Record<string, any>) || {})[article.slug] || null;
+const osfRecord = ((osfRecordsData as Record<string, any>) || {})[article.slug] || null;
+const hasMultipleVersions = Boolean(isAcademicPaper && versionData && versionData.versions && versionData.versions.length > 1);
+const v2Item = versionData?.versions?.find((v: any) => v.versionNum === '2') || versionData?.versions?.[0];
+const v1Item = versionData?.versions?.find((v: any) => v.versionNum === '1') || versionData?.versions?.[versionData.versions.length - 1];
+
+// Utamakan DOI Versi 2 jika tersedia (biasanya ada 2 DOI: v1/concept dan v2), fallback ke initialDoi
+const articleDoi = v2Item?.doi || initialDoi;
+
+// Dokumen PDF Naskah Ilmiah (Sesuai dengan artikel yang sedang dilihat)
+const articlePdfFilename = `${article.slug}.pdf`;
+const articlePdfPath = `/docs/${articlePdfFilename}?v=20261107-v5`;
+
+// Helper untuk path PDF per versi
+const getVersionPdfPath = (vNum: string, isLatestVer: boolean) => {
+  if (isLatestVer) return `/docs/${article.slug}.pdf`;
+  if (String(vNum) === '1') return (currentV1 && currentV1.pdfUrl) || `/docs/v1/${article.slug}.pdf`;
+  if (String(vNum) === '2') return `/docs/v2/${article.slug}.pdf`;
+  if (String(vNum) === '3') return `/docs/v3/${article.slug}.pdf`;
+  return `/docs/${article.slug}.pdf`;
+};
+
+// Parse author(s) - mendukung single author maupun multi-penulis dipisahkan koma (membersihkan nama wakil & cand)
+const cleanAuthorItem = (name: string) => {
+  return name
+    .replace(/,\s*S\.H\.\s*\(Cand\.\)/gi, '')
+    .replace(/\(Cand\.\)/gi, '')
+    .replace(/Wakil\s+Direktur\s+Utama/gi, '')
+    .replace(/Wakil\s+Direktur/gi, '')
+    .trim();
+};
+
+const rawAuthors = (article.author || 'Ilham Pradani')
+  .split(/[,;]/)
+  .map((a: string) => cleanAuthorItem(a))
+  .filter((a: string) => a.length > 0 && !/putri|wulan|wakil/i.test(a));
+const displayAuthors = rawAuthors.length > 0 ? rawAuthors : ['Ilham Pradani'];
+const isSolo = displayAuthors.length === 1;
+
+// Helper untuk format sitasi APA
+function formatApaAuthors(authors: string[]): string {
+  const formatted = authors.map((name) => {
+    const parts = name.split(/\s+/).filter(Boolean);
+    if (parts.length === 1) return parts[0];
+    const last = parts[parts.length - 1];
+    const initials = parts.slice(0, -1).map(p => p[0].toUpperCase() + '.').join(' ');
+    return `${last}, ${initials}`;
+  });
+  if (formatted.length === 1) return formatted[0];
+  if (formatted.length === 2) return `${formatted[0]} & ${formatted[1]}`;
+  return `${formatted.slice(0, -1).join(', ')}, & ${formatted[formatted.length - 1]}`;
+}
+
+const apaAuthors = formatApaAuthors(displayAuthors);
+const bibtexAuthors = displayAuthors.join(' and ');
+const primaryAuthorLastName = (displayAuthors[0].split(/\s+/).pop() || 'Pradani').replace(/[^a-zA-Z0-9]/g, '');
+const articleDownloadName = `${article.slug}-${primaryAuthorLastName}.pdf`;
+
+// Helper untuk riwayat naskah dinamis (Received, Revised, Accepted, Published)
+function getDynamicHistory(dateStr: string) {
+  const monthMap: Record<string, number> = {
+    'januari': 0, 'februari': 1, 'maret': 2, 'april': 3, 'mei': 4, 'juni': 5,
+    'juli': 6, 'agustus': 7, 'september': 8, 'oktober': 9, 'november': 10, 'desember': 11,
+    'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'may': 4, 'jun': 5,
+    'jul': 6, 'aug': 7, 'sep': 8, 'oct': 9, 'nov': 10, 'dec': 11
+  };
+  let pubDate = new Date(2026, 10, 4);
+  if (dateStr) {
+    const parts = dateStr.toLowerCase().split(/\s+/);
+    if (parts.length >= 3 && !isNaN(parseInt(parts[0], 10)) && !isNaN(parseInt(parts[2], 10))) {
+      const d = parseInt(parts[0], 10);
+      const m = monthMap[parts[1]] ?? 10;
+      const y = parseInt(parts[2], 10);
+      pubDate = new Date(y, m, d);
+    } else if (dateStr.includes('-')) {
+      const [y, m, d] = dateStr.split('-').map(Number);
+      pubDate = new Date(y, (m || 11) - 1, d || 1);
+    }
+  }
+
+  const accepted = new Date(pubDate.getTime() - 12 * 86400000);
+  const revised = new Date(accepted.getTime() - 22 * 86400000);
+  const received = new Date(revised.getTime() - 35 * 86400000);
+
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+  const fmt = (dt: Date) => `${String(dt.getDate()).padStart(2, '0')} ${months[dt.getMonth()]} ${dt.getFullYear()}`;
+
+  return {
+    received: fmt(received),
+    revised: fmt(revised),
+    accepted: fmt(accepted),
+    published: fmt(pubDate)
+  };
+}
+
+const historyDates = getDynamicHistory(article.date);
+
+const referencesList = (article.references && article.references.length > 0)
+  ? article.references
+  : [
+      'Kementerian Hukum dan HAM Republik Indonesia (Kemenkumham RI). Keputusan Pengesahan Badan Hukum PT CHAIN ASIA CONECT No. AHU-A117353.AH.01.30.Tahun 2026.',
+      'Kementerian Investasi / BKPM RI. Nomor Induk Berusaha (NIB) 0709260109599, KBLI 62193 & NPWP 10.000.000.1-094.6336.',
+      'Badan Pusat Statistik (BPS) Provinsi Lampung & Kabupaten Pesisir Barat. Analisis Sektor Rantai Pasok dan Industri Akomodasi Pariwisata.',
+      'Otoritas Jasa Keuangan (OJK). POJK No. 31/POJK.04/2021 tentang Penerapan Tata Kelola Perusahaan Terbuka (Good Corporate Governance).'
+    ];
+
+// Format Sitasi Baku Akademis (APA 7th & BibTeX) untuk ResearchGate & Google Scholar
+const apaCitationText = `${apaAuthors} (2026). ${cleanTitle}. Journal of Coastal Frontiers & Applied Development (JCFAD), 1(1), 1–12. https://doi.org/${articleDoi}`;
+
+const versionsMap: Record<string, any> = {};
+if (hasMultipleVersions && versionData && versionData.versions) {
+  for (const v of versionData.versions) {
+    const isV1 = String(v.versionNum) === '1';
+    const isLatest = Boolean(v.isLatest);
+    const pdfPath = getVersionPdfPath(v.versionNum, isLatest);
+    versionsMap[v.versionNum] = {
+      versionNum: v.versionNum,
+      versionLabel: v.version || `Version ${v.versionNum}`,
+      title: isV1 ? ((currentV1 && currentV1.title) || cleanTitle) : cleanTitle,
+      abstract: isV1 ? ((currentV1 && currentV1.abstract) || cleanExcerpt) : cleanExcerpt,
+      doi: v.doi,
+      date: v.date || '07 Nov 2026',
+      pdfUrl: pdfPath,
+      isLatest: isLatest,
+      citation: `${apaAuthors} (2026). ${isV1 ? ((currentV1 && currentV1.title) || cleanTitle) : cleanTitle}. Journal of Coastal Frontiers & Applied Development (JCFAD)${isV1 ? ' Working Paper Series' : ''}, 1(1), 1–12. https://doi.org/${v.doi}`
+    };
+  }
+}
+
+const clientVersionPayload = {
+  hasMultipleVersions,
+  conceptDoi: versionData.conceptDoi,
+  currentVersion: hasMultipleVersions ? (versionData.currentVersion || '4') : '1',
+  versionsMap
+};
+const bibtexCitationText = `@article{${primaryAuthorLastName.toLowerCase()}2026_${article.slug.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 20)},
+  author = {${bibtexAuthors}},
+  title = {${cleanTitle}},
+  journal = {Journal of Coastal Frontiers \\& Applied Development (JCFAD)},
+  volume = {1},
+  number = {1},
+  pages = {1--12},
+  year = {2026},
+  publisher = {PT CHAIN ASIA CONECT Research \\& Development Division},
+  doi = {${articleDoi}},
+  url = {${canonicalUrl}}
+}`;
+
+// Rich Schema.org ScholarlyArticle & NewsArticle Structured Data untuk Google Search & Google Scholar
+const scholarlyArticleSchema = {
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  "@id": `${canonicalUrl}#article`,
+  "headline": cleanTitle,
+  "name": cleanTitle,
+  "description": cleanExcerpt,
+  "image": [dynamicArticleImage],
+  "datePublished": isoPublishedDate,
+  "dateModified": isoPublishedDate,
+  "inLanguage": "id",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "isAccessibleForFree": true,
+  "identifier": [
+    {
+      "@type": "PropertyValue",
+      "propertyID": "DOI",
+      "value": articleDoi
+    },
+    `https://doi.org/${articleDoi}`
+  ],
+  "sameAs": `https://doi.org/${articleDoi}`,
+  "url": canonicalUrl,
+  "pageStart": "1",
+  "pageEnd": "12",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": canonicalUrl
+  },
+  "author": [
+    ...displayAuthors.map((name, idx) => ({
+      "@type": "Person",
+      "name": name,
+      "identifier": "https://orcid.org/0009-0008-1310-6169",
+      "sameAs": "https://orcid.org/0009-0008-1310-6169",
+      ...(idx === 0 ? { "jobTitle": "Lead Researcher & Editor-in-Chief" } : { "jobTitle": "Co-Researcher / Author" }),
+      "affiliation": {
+        "@type": "Organization",
+        "name": "Research & Development Division, PT CHAIN ASIA CONECT",
+        "url": "https://journal.chainasiaconnect.co.id"
+      }
+    }))
+  ],
+  "publisher": {
+    "@type": "Organization",
+    "name": "PT CHAIN ASIA CONECT Research & Development Division",
+    "url": "https://journal.chainasiaconnect.co.id",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://journal.chainasiaconnect.co.id/images/jcfad-seal.png"
+    }
+  },
+  "isPartOf": {
+    "@type": "PublicationIssue",
+    "issueNumber": "1",
+    "datePublished": "2026-11",
+    "isPartOf": {
+      "@type": "PublicationVolume",
+      "volumeNumber": "1",
+      "isPartOf": {
+        "@type": "Periodical",
+        "@id": "https://journal.chainasiaconnect.co.id/#periodical",
+        "name": "Journal of Coastal Frontiers & Applied Development",
+        "alternateName": "JCFAD",
+        "url": "https://journal.chainasiaconnect.co.id"
+      }
+    }
+  },
+  "associatedMedia": {
+    "@type": "MediaObject",
+    "contentUrl": `https://journal.chainasiaconnect.co.id${articlePdfPath}`,
+    "encodingFormat": "application/pdf"
+  },
+  "about": [
+    "Pesisir Barat Regional Economics",
+    "Remote Frontier Development",
+    "Krui Pesisir Barat",
+    "Commercial Contract Certainty",
+    "Applied Jurisprudence"
+  ]
+};
+
+// Rich Schema.org NewsArticle Structured Data untuk Berita Korporasi
+const newsArticleSchema = {
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "@id": `${canonicalUrl}#article`,
+  "headline": cleanTitle,
+  "name": cleanTitle,
+  "description": cleanExcerpt,
+  "image": [dynamicArticleImage],
+  "datePublished": isoPublishedDate,
+  "dateModified": isoPublishedDate,
+  "inLanguage": "id",
+  "url": canonicalUrl,
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": canonicalUrl
+  },
+  "author": {
+    "@type": "Organization",
+    "name": article.author || "PT CHAIN ASIA CONECT",
+    "url": "https://www.chainasiaconnect.co.id"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "PT CHAIN ASIA CONECT",
+    "url": "https://www.chainasiaconnect.co.id",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.chainasiaconnect.co.id/images/CAC-LOGO.jpg"
+    }
+  }
+};
+
+---
+
+<Layout 
+  title={isAcademicPaper ? `${cleanTitle} | Journal of Coastal Frontiers & Applied Development (JCFAD)` : `${cleanTitle} | Newsroom PT CHAIN ASIA CONECT`}
+  description={cleanExcerpt}
+  canonical={canonicalUrl}
+  image={dynamicArticleImage}
+  ogType="article"
+  articleMeta={{
+    publishedTime: isoPublishedDate,
+    author: displayAuthors.join(', '),
+    section: article.tag
+  }}
+  scholarlyMeta={isAcademicPaper ? {
+    title: cleanTitle,
+    authors: displayAuthors,
+    publicationDate: isoPublishedDate,
+    doi: articleDoi,
+    journalTitle: "Journal of Coastal Frontiers & Applied Development",
+    issn: "",
+    abstract: cleanExcerpt,
+    pdfUrl: `https://journal.chainasiaconnect.co.id${articlePdfPath}`,
+    references: referencesList
+  } : undefined}
+  extraSchema={isAcademicPaper ? scholarlyArticleSchema : newsArticleSchema}
+>
+  <JournalHeader />
+
+  <main class="reading-page-main">
+    <!-- Top Nav & Breadcrumb Bar -->
+    <nav class="reading-nav-bar" aria-label="Navigasi">
+      <div class="container nav-bar-inner">
+        {isAcademicPaper ? (
+          <a href="https://journal.chainasiaconnect.co.id" class="back-link">
+            <svg viewBox="0 0 20 20" fill="currentColor" class="nav-arrow">
+              <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+            </svg>
+            <span>&larr; Back to Journal Table of Contents</span>
+          </a>
+        ) : (
+          <a href="/newsroom" class="back-link">
+            <svg viewBox="0 0 20 20" fill="currentColor" class="nav-arrow">
+              <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+            </svg>
+            <span>Kembali ke Newsroom</span>
+          </a>
+        )}
+
+        <div class="breadcrumb-trail">
+          {isAcademicPaper ? (
+            <>
+              <a href="https://journal.chainasiaconnect.co.id">Journal Home</a>
+              <span class="sep">/</span>
+              <a href="https://journal.chainasiaconnect.co.id#current-issue">Vol. 1 No. 1 (2026)</a>
+              <span class="sep">/</span>
+              <span class="current-crumb">Empirical Paper</span>
+            </>
+          ) : (
+            <>
+              <a href="/">Beranda</a>
+              <span class="sep">/</span>
+              <a href="/newsroom">Newsroom</a>
+              <span class="sep">/</span>
+              <span class="current-crumb">{article.tag}</span>
+            </>
+          )}
+        </div>
+      </div>
+    </nav>
+
+    <!-- Floating PDF Action (Hanya Tampil Pada Naskah Ilmiah JCFAD) -->
+    {isAcademicPaper && (
+      <aside class="floating-pdf-dock" aria-label="Unduh Naskah PDF">
+        <a href={articlePdfPath} target="_blank" download={articleDownloadName} class="btn-floating-pdf" title="Unduh Dokumen PDF Resmi">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span class="floating-pdf-text">Unduh PDF</span>
+        </a>
+      </aside>
+    )}
+
+    {isAcademicPaper ? (
+      <!-- ════════════════════════════════════════════════════════════════ -->
+      <!-- 🏛️ JCFAD ACADEMIC SCHOLARLY PAPER WORKSPACE (SUBDOMAIN JOURNAL) -->
+      <!-- ════════════════════════════════════════════════════════════════ -->
+      <div class="scholarly-workspace-wrapper">
+        <div class="scholarly-workspace-layout">
+          
+          <!-- ── LEFT COLUMN: FROZEN / STICKY ACADEMIC SIDEBAR ── -->
+          <aside class="journal-sticky-sidebar" id="journal-sticky-sidebar" aria-label="Sidebar Navigasi Naskah &amp; Versi">
+            
+            <!-- 1. Frozen Back & Actions Section -->
+            <div class="sidebar-frozen-nav-card">
+              <a href="https://journal.chainasiaconnect.co.id" class="sidebar-frozen-back-btn" title="Kembali ke Daftar Isi Jurnal (Table of Contents)">
+                <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+                  <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+                </svg>
+                <span>&larr; Index Jurnal JCFAD</span>
+              </a>
+
+              <!-- Info DOI Resmi Naskah -->
+              <div class="sidebar-frozen-doi-box">
+                <span class="sidebar-frozen-doi-kicker">CERN ZENODO DOI:</span>
+                <a href={`https://doi.org/${articleDoi}`} target="_blank" rel="noopener noreferrer" class="sidebar-frozen-doi-val" title="Buka Record Resmi DOI">
+                  <span>{articleDoi}</span>
+                  <svg viewBox="0 0 20 20" fill="currentColor" width="11" height="11"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/></svg>
+                </a>
+              </div>
+
+              <!-- Tombol Aksi di Freeze Kiri (Salin Sitasi APA & Unduh PDF) -->
+              <div class="sidebar-frozen-actions">
+                <button type="button" class="sidebar-btn-copy-citation" id="sidebar-btn-copy-apa-citation" title="Salin Sitasi Format APA 7th Edition">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span id="sidebar-btn-copy-citation-text">Salin Sitasi APA</span>
+                </button>
+
+                <a href={articlePdfPath} target="_blank" download={articleDownloadName} class="sidebar-btn-pdf-download" title="Unduh File Resmi Galley PDF">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  <span>Unduh Galley PDF</span>
+                </a>
+              </div>
+            </div>
+
+          <!-- 2. Sticky Version Switcher Panel (Hanya Muncul Jika Multi-Versi) -->
+          {hasMultipleVersions && (
+            <div class="sidebar-versions-panel">
+              <div class="sb-panel-header">
+                <span class="sb-kicker">CERN ZENODO REGISTRY</span>
+                <h3 class="sb-title">Riwayat Versi Naskah</h3>
+              </div>
+
+              <div class="sidebar-versions-list" id="sidebar-version-buttons">
+                {versionData.versions.map((ver: any) => (
+                  <button
+                    type="button"
+                    class={`sidebar-version-item-btn ${ver.isLatest ? 'is-latest active' : 'is-archived'}`}
+                    data-version-target={ver.versionNum}
+                    title={`Klik untuk memuat dan membaca ${ver.version}`}
+                  >
+                    <div class="sb-v-top-row">
+                      <span class="sb-v-badge-name">{ver.version}</span>
+                      {ver.isLatest ? (
+                        <span class="sb-badge-tag-latest">LATEST</span>
+                      ) : (
+                        <span class="sb-badge-tag-archived">ARCHIVED</span>
+                      )}
+                    </div>
+                    <div class="sb-v-doi-row">doi:{ver.doi}</div>
+                    <div class="sb-v-date-row">{ver.date}</div>
+                    <div class="sb-v-click-indicator">
+                      <span class="sb-dot-indicator"></span>
+                      <span class="sb-indicator-text">{ver.isLatest ? '● Naskah Aktif Ditampilkan' : '↗ Muat Naskah Versi Ini'}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              <div class="sidebar-concept-doi-wrap">
+                <span class="sb-c-label">Concept DOI (Sitasi Semua Versi):</span>
+                <a href={`https://doi.org/${versionData.conceptDoi}`} target="_blank" rel="noopener noreferrer" class="sb-c-link">
+                  <code>{versionData.conceptDoi}</code> ↗
+                </a>
+              </div>
+            </div>
+          )}
+
+          <!-- 3. Official Indexing Standards (Clean Logos, No Card, Larger Size) -->
+          <div class="sidebar-indexing-panel">
+            <span class="sidebar-indexing-kicker">STANDAR INDEKS TERVERIFIKASI</span>
+            <div class="sidebar-indexing-clean-list">
+              <a href="https://www.scopus.com" target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="Scopus Elsevier Standard">
+                <img src="/images/indexes/scopus.png" alt="Scopus" class="sb-index-clean-img scopus-img" />
+                <span class="sb-index-clean-name">Scopus</span>
+              </a>
+              <a href="https://zenodo.org" target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="CERN Zenodo Open Science Repository">
+                <img src="/images/indexes/zenodo.png" alt="Zenodo" class="sb-index-clean-img" />
+                <span class="sb-index-clean-name">Zenodo</span>
+              </a>
+              <a href="https://crossref.org" target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="Crossref Official Metadata Registry">
+                <img src="/images/indexes/crossref.png" alt="Crossref" class="sb-index-clean-img" />
+                <span class="sb-index-clean-name">Crossref</span>
+              </a>
+              <a href="https://scholar.google.com" target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="Google Scholar Academic Metrics">
+                <img src="/images/indexes/google-scholar.webp" alt="Google Scholar" class="sb-index-clean-img" />
+                <span class="sb-index-clean-name">Scholar</span>
+              </a>
+              <a href="https://www.researchgate.net" target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="ResearchGate Scientific Network">
+                <img src="/images/indexes/researchgate.svg" alt="ResearchGate" class="sb-index-clean-img" />
+                <span class="sb-index-clean-name">ResearchGate</span>
+              </a>
+              <a href="https://orcid.org/0009-0008-1310-6169" target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="ORCID Verified Researcher">
+                <img src="/images/indexes/orcid.png" alt="ORCID" class="sb-index-clean-img" />
+                <span class="sb-index-clean-name">ORCID</span>
+              </a>
+              <a href="https://sinta.kemdikbud.go.id" target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="SINTA Kemendikbudristek">
+                <img src="/images/indexes/sinta.png" alt="SINTA" class="sb-index-clean-img" />
+                <span class="sb-index-clean-name">SINTA</span>
+              </a>
+              <a href={osfRecord ? osfRecord.osfUrl : "https://osf.io/64xda/"} target="_blank" rel="noopener noreferrer" class="sb-index-clean-item" title="Open Science Framework (OSF)">
+                <img src="/images/indexes/osf.png" alt="OSF" class="sb-index-clean-img" />
+                <span class="sb-index-clean-name">OSF</span>
+              </a>
+            </div>
+          </div>
+
+        </aside>
+
+        <!-- ── RIGHT COLUMN: ARTICLE MAIN COLUMN ── -->
+        <article class="article-main-column" itemscope itemtype={isAcademicPaper ? "https://schema.org/ScholarlyArticle" : "https://schema.org/NewsArticle"}>
+          
+          <!-- Header Info Minimalist & Tajam (Standar Repositori Ilmiah Internasional) -->
+          <header class="article-header-sharp">
+
+            <!-- Full-Width Classic Scholarly Header (Batas Garis Saja, Tanpa Card, Tanpa Garis Kiri) -->
+            <div class="academic-hero-fullwidth">
+              
+              <!-- 1. Journal Masthead (Full-Width, Dual Top & Bottom Black Hairlines) -->
+              <div class="journal-classic-masthead-full">
+                <div class="journal-masthead-top">
+                  <img src="/images/jcfad-seal.png" alt="JCFAD Seal" class="classic-masthead-seal" width="40" height="40" />
+                  <div class="journal-masthead-titles">
+                    <span class="classic-journal-name">JOURNAL OF COASTAL FRONTIERS &amp; APPLIED DEVELOPMENT</span>
+                    <span class="classic-journal-vol">Vol. 1 No. 1 (2026) &bull; Working Paper Series &bull; Open Access (CC BY 4.0)</span>
+                  </div>
+                </div>
+                <div class="journal-masthead-meta">
+                  <span>PT CHAIN ASIA CONECT Research &amp; Development Division &bull; ISSN: CAC-WP-2026-003 &bull; DOI Prefix: 10.5281/zenodo</span>
+                </div>
+              </div>
+
+              <!-- 2. Headline Utama (Full-Width Classic Scholarly) -->
+              <h1 class="article-headline-sharp" itemprop="headline">{cleanTitle}</h1>
+
+              <!-- 3. Author Byline & Correspondence (Full-Width Pure Text) -->
+              <div class="article-byline-sharp">
+                <span class="byline-author">
+                  {displayAuthors.map((authorName: string, idx: number) => (
+                    <span class="author-single-wrap">
+                      <strong>{authorName}</strong>{idx === 0 ? <sup>*</sup> : ''}
+                      <a href="https://orcid.org/0009-0008-1310-6169" target="_blank" rel="noopener noreferrer" class="orcid-link-badge" title="ORCID iD Terverifikasi: 0009-0008-1310-6169">
+                        <svg viewBox="0 0 256 256" width="13" height="13"><circle cx="128" cy="128" r="128" fill="#A6CE39"/><path fill="#FFF" d="M86.3 186.2H70.9V79.1h15.4v107.1zm-7.7-122c-5.4 0-9.8-4.4-9.8-9.8s4.4-9.8 9.8-9.8 9.8 4.4 9.8 9.8-4.4 9.8-9.8 9.8zm107.1 78.8c0 23.9-19.4 43.2-43.2 43.2H108V79.1h34.5c23.8 0 43.2 19.4 43.2 43.2v20.7zm-15.4 0v-20.7c0-15.4-12.4-27.8-27.8-27.8h-19.1v76.3h19.1c15.4 0 27.8-12.4 27.8-27.8z"/></svg>
+                        <span>0009-0008-1310-6169</span>
+                      </a>
+                      {idx < displayAuthors.length - 1 ? ', ' : ''}
+                    </span>
+                  ))}
+                </span>
+                <span class="byline-sep">•</span>
+                <span class="byline-affil">Divisi Riset &amp; Pengembangan PT CHAIN ASIA CONECT</span>
+                <span class="byline-sep">•</span>
+                <span class="byline-status-clean">{isSolo ? 'Solo Author • Independent Working Paper' : `${displayAuthors.length} Authors • Collaborative Working Paper`}</span>
+              </div>
+
+              <div class="author-correspondence-sub">
+                <span>*Penulis Korespondensi: <code>r-d@chainasiaconnect.co.id</code> &bull; Repositori Publikasi Ilmiah Mandiri PT CHAIN ASIA CONECT</span>
+              </div>
+
+              <!-- 4. Riwayat Naskah & Tautan DOI (Batas Garis Saja, Tanpa Kotak Card) -->
+              <div class="article-history-bar-sharp">
+                <span class="history-item"><strong>Received:</strong> {historyDates.received}</span>
+                <span class="history-sep">•</span>
+                <span class="history-item"><strong>Revised:</strong> {historyDates.revised}</span>
+                <span class="history-sep">•</span>
+                <span class="history-item"><strong>Accepted:</strong> {historyDates.accepted}</span>
+                <span class="history-sep">•</span>
+                <span class="history-item"><strong>Published:</strong> {historyDates.published}</span>
+                <span class="history-sep">•</span>
+                <span class="history-item history-doi"><strong>CERN Zenodo DOI:</strong> <a href={`https://doi.org/${articleDoi}`} target="_blank" rel="noopener noreferrer" class="meta-doi-inline">https://doi.org/{articleDoi} ↗</a></span>
+                {osfRecord && (
+                  <>
+                    <span class="history-sep">•</span>
+                    <span class="history-item history-doi"><strong>OSF Global DOI:</strong> <a href={`https://doi.org/${osfRecord.osfDoi}`} target="_blank" rel="noopener noreferrer" class="meta-doi-inline">https://doi.org/{osfRecord.osfDoi} ↗</a></span>
+                  </>
+                )}
+                <span class="history-sep">•</span>
+                <span class="history-item history-license"><strong>License:</strong> CC BY 4.0 Open Access</span>
+              </div>
+
+              <!-- 5. Actions & Index Strip with Official Logos (Full Width) -->
+              <div class="article-actions-strip-full">
+                <div class="action-buttons-left">
+                  <a href={articlePdfPath} target="_blank" download={articleDownloadName} class="btn-classic-primary">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span>Unduh PDF Naskah</span>
+                  </a>
+                  <button type="button" class="btn-classic-secondary" id="btn-copy-apa-citation">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span id="btn-copy-citation-text">Salin Sitasi APA</span>
+                  </button>
+                </div>
+                <!-- Standar Indeks Resmi (Logos Only, No Card, No Text) -->
+                <div class="index-indicators-right-logos">
+                  <div class="index-badges-wrap">
+                    <a href="https://www.scopus.com" target="_blank" rel="noopener noreferrer" class="index-logo-badge" title="Scopus Elsevier Standard"><img src="/images/indexes/scopus.png" alt="Scopus" class="scopus-badge-img" /></a>
+                    <a href="https://zenodo.org" target="_blank" rel="noopener noreferrer" class="index-logo-badge" title="CERN Zenodo DataCite"><img src="/images/indexes/zenodo.png" alt="Zenodo" /></a>
+                    <a href={osfRecord ? osfRecord.osfUrl : "https://osf.io/64xda/"} target="_blank" rel="noopener noreferrer" class="index-logo-badge" title="Open Science Framework (Center for Open Science)"><img src="/images/indexes/osf.png" alt="OSF" /></a>
+                    <a href="https://crossref.org" target="_blank" rel="noopener noreferrer" class="index-logo-badge" title="Crossref DOI Metadata"><img src="/images/indexes/crossref.png" alt="Crossref" /></a>
+                    <a href="https://scholar.google.com" target="_blank" rel="noopener noreferrer" class="index-logo-badge" title="Google Scholar"><img src="/images/indexes/google-scholar.webp" alt="Google Scholar" /></a>
+                    <a href="https://www.researchgate.net" target="_blank" rel="noopener noreferrer" class="index-logo-badge" title="ResearchGate"><img src="/images/indexes/researchgate.svg" alt="ResearchGate" /></a>
+                    <a href="https://orcid.org/0009-0008-1310-6169" target="_blank" rel="noopener noreferrer" class="index-logo-badge" title="ORCID iD"><img src="/images/indexes/orcid.png" alt="ORCID" /></a>
+                    <a href="https://sinta.kemdikbud.go.id" target="_blank" rel="noopener noreferrer" class="index-logo-badge" title="SINTA Kemendikbud"><img src="/images/indexes/sinta.png" alt="SINTA" /></a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 6. Version Notice Bar (Dinamis Sesuai Keberadaan Versi) -->
+              {isAcademicPaper && (
+                <div class="journal-version-banner" id="journal-version-banner-box">
+                  <div class="version-banner-content">
+                    <div class="version-banner-top">
+                      <span class="banner-pill-active" id="banner-pill-label">
+                        {hasMultipleVersions ? `PUBLIKASI RESMI TERBARU • VERSION ${versionData.currentVersion || '4'}` : 'PUBLIKASI RESMI TERVERIFIKASI • PEER-REVIEWED'}
+                      </span>
+                      <span class="banner-date-label" id="banner-date-label">Terbit: {article.date || 'November 2026'}</span>
+                    </div>
+                    <p class="version-banner-text" id="banner-desc-text">
+                      {hasMultipleVersions ? (
+                        <>
+                          Anda sedang membaca <strong>Version {versionData.currentVersion || '4'} (Latest Peer-Reviewed Article)</strong> yang diterbitkan dalam standar bahasa Inggris akademis (Full Academic English) pada <em>Journal of Coastal Frontiers &amp; Applied Development (JCFAD)</em> Vol. 1 No. 1. Naskah kerja awal (Version 1 Preprint) tetap terarsip secara permanen di repositori CERN Zenodo via Concept DOI <a href={`https://doi.org/${versionData.conceptDoi}`} target="_blank" rel="noopener noreferrer" class="banner-concept-doi"><code>{versionData.conceptDoi}</code></a>.
+                        </>
+                      ) : (
+                        <>
+                          Naskah ilmiah ini telah melalui proses telaah dan diterbitkan secara resmi pada <em>Journal of Coastal Frontiers &amp; Applied Development (JCFAD)</em> Vol. 1 No. 1 dengan akses terbuka (Open Access CC BY 4.0). Dokumen rujukan terindeks secara permanen via DOI resmi <a href={`https://doi.org/${articleDoi}`} target="_blank" rel="noopener noreferrer" class="banner-concept-doi"><code>{articleDoi}</code></a>.
+                        </>
+                      )}
+                    </p>
+                    {hasMultipleVersions && (
+                      <div class="banner-quick-switch" id="banner-switch-wrap" style="display: none;">
+                        <button type="button" class="btn-banner-switch-latest" id="btn-banner-switch-latest">
+                          &larr; Beralih Kembali ke Versi {versionData.currentVersion || '4'} Terbaru (LATEST)
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <!-- 7. Abstrak Padat & Tajam (Full Width, Batas Garis Atas & Bawah, Tanpa Card) -->
+              {cleanExcerpt && (
+                <div class="paper-abstract-sharp" id="abstrak">
+                  <div class="abstract-badge-clean">ABSTRACT &bull; STRUCTURED ABSTRACT</div>
+                  <p class="abstract-text" itemprop="description">{cleanExcerpt}</p>
+                </div>
+              )}
+
+            </div>
+          </header>
+
+          <!-- ── DEDICATED IN-BROWSER PDF MASTER READER (REALTIME MULTI-TAB VERSIONS) ── -->
+          <section class="embedded-pdf-master-section" id="pembaca-pdf" aria-label="Pembaca Dokumen Naskah PDF">
+            <!-- Multi-Tab PDF Version Bar (Realtime Switching) -->
+            <div class="pdf-version-tabs-bar">
+              <div class="pdf-version-tabs-left">
+                <span class="pdf-tabs-prefix">PILIH VERSI PDF:</span>
+                {hasMultipleVersions ? (
+                  versionData.versions.map((ver: any) => {
+                    const pUrl = getVersionPdfPath(ver.versionNum, Boolean(ver.isLatest));
+                    return (
+                      <button
+                        type="button"
+                        class={`btn-pdf-tab-toggle ${ver.isLatest ? 'active' : ''}`}
+                        data-pdf-ver={ver.versionNum}
+                        data-pdf-url={pUrl}
+                        title={`Muat Dokumen PDF ${ver.version}`}
+                      >
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <span>{ver.version} {ver.isLatest ? '(Terbaru)' : ''}</span>
+                      </button>
+                    );
+                  })
+                ) : (
+                  <button type="button" class="btn-pdf-tab-toggle active" data-pdf-ver="1" data-pdf-url={articlePdfPath}>
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <span>PDF Naskah Resmi (Vol. 1 No. 1)</span>
+                  </button>
+                )}
+              </div>
+
+              <div class="pdf-version-tabs-right">
+                <a href={articlePdfPath} target="_blank" class="btn-pdf-viewer-ctrl" id="btn-pdf-viewer-fullscreen" title="Buka PDF di tab baru layar penuh">
+                  <span>Buka Layar Penuh ↗</span>
+                </a>
+                <a href={articlePdfPath} download={articleDownloadName} class="btn-pdf-viewer-ctrl btn-ctrl-download" id="btn-pdf-viewer-download" title="Unduh berkas PDF naskah resmi">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  <span>Unduh PDF</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Realtime Embedded PDF Frame (Always Visible) -->
+            <div class="embedded-pdf-viewport">
+              <iframe
+                id="main-embedded-pdf-iframe"
+                src={`${articlePdfPath}#toolbar=1&navpanes=0&pagemode=none&view=FitH`}
+                class="embedded-pdf-frame-full"
+                title={`PDF Naskah Ilmiah - ${cleanTitle}`}
+                loading="eager"
+              ></iframe>
+            </div>
+          </section>
+
+          <!-- Article Prose Body (Bebas Duplikasi & Bebas Tumpukan Card) -->
+          <div class="article-prose-sharp" id="naskah-prose" itemprop="articleBody">
+          <!-- Layer Version 2 (Latest Peer-Reviewed English) -->
+          <div id="layer-version-2" class="version-body-layer active">
+            {parsedBlocks.map((block) => {
+              if (block.type === 'html' || block.type === 'table') {
+                return <div class="rich-html-block" set:html={block.html} />;
+              }
+              if (block.type === 'heading') {
+                const text = (block.html || '').toLowerCase();
+                let hId = undefined;
+                if (text.includes('pendahuluan') || text.includes('introduction')) hId = 'pendahuluan';
+                else if (text.includes('metode') || text.includes('method')) hId = 'metode';
+                else if (text.includes('hasil') || text.includes('result') || text.includes('discussion')) hId = 'hasil';
+                else if (text.includes('simpulan') || text.includes('conclusion')) hId = 'simpulan';
+                return <h2 class="article-subheading-sharp" id={hId}>{block.html}</h2>;
+              }
+              if (block.type === 'list') {
+                return (
+                  <ul class="article-content-list-sharp">
+                    {block.items.map((item) => (
+                      <li set:html={item} />
+                    ))}
+                  </ul>
+                );
+              }
+              return <p set:html={block.html} />;
+            })}
+          </div>
+
+          <!-- Layer Version 1 (Initial Working Paper / Preprint Archive in Indonesian) - HANYA ADA JIKA MULTI-VERSI -->
+          {hasMultipleVersions && (
+            <div id="layer-version-1" class="version-body-layer" style="display: none;">
+              {currentV1 ? (
+                <div class="v1-archived-prose">
+                  <div class="v1-archive-watermark">
+                    <span>ARSIP NASKAH KERJA AWAL &bull; VERSION 1 PREPRINT (BAHASA INDONESIA)</span>
+                  </div>
+                  <div class="v1-content-text">
+                    {(() => {
+                      const cleanV1Body = currentV1.body
+                        .replace(/(?:\r?\n|^)#{1,4}\s*(?:(?:\d+\.?\s*)?(?:Revision\s*Notes?|Catatan\s*Revisi|Reviewer|Sintesis\s*Rekonsiliasi|Penajaman\s*Doktrinal|Read\s*Time|Reading\s*Time|Integrity\s*Declaration|Deklarasi\s*Integritas|Daftar\s*Pustaka\s*Utama|Keterkaitan\s*Empiris|Keterkaitan\s*Riset))[\s\S]*$/i, '')
+                        .replace(/(?:\r?\n|^)All\s*(?:of\s*)?(?:the\s*)?(?:above|these)\s*amendments\s*directly\s*address[\s\S]*$/i, '')
+                        .replace(/(?:\r?\n|^)[*\s]*DOI:\s*10\.\d{4,9}\/[-._;()/:A-Z0-9]+\s*\|\s*ResearchGate\s*&\s*Zenodo\s*Preprint[\s\S]*$/i, '');
+                      return cleanV1Body.split(/\n\n+/).map((paragraph: string) => {
+                        const trimmed = paragraph.trim();
+                        if (!trimmed) return null;
+                        const tableHtml = parseMarkdownTableHtml(trimmed);
+                        if (tableHtml) {
+                          return <div class="rich-html-block" set:html={tableHtml} />;
+                        }
+                        if (/^(?:#\s*)?(?:1|2|3|4|5)\.\s+/i.test(trimmed)) {
+                          return <h2 class="article-subheading-sharp">{trimmed.replace(/^#+\s*/, '')}</h2>;
+                        }
+                        if (trimmed.startsWith('## ') || trimmed.startsWith('### ') || /^\d+\.\d+\s+/i.test(trimmed)) {
+                          return <h3 class="article-subheading-h3">{trimmed.replace(/^#+\s*/, '')}</h3>;
+                        }
+                        return <p>{trimmed}</p>;
+                      });
+                    })()}
+                  </div>
+                </div>
+              ) : (
+                <div class="v1-archive-fallback">
+                  <p>Naskah Version 1 diarsipkan secara permanen pada repositori CERN Zenodo: <a href={`https://doi.org/${clientVersionPayload.v1?.doi || articleDoi}`} target="_blank">doi:{clientVersionPayload.v1?.doi || articleDoi}</a></p>
+                </div>
+              )}
+            </div>
+          )}
+
+          <!-- Single Clean Bibliography Section (Format APA 7th Numbered - Bersih dari Kode JSON) -->
+          {referencesList && referencesList.length > 0 && (
+            <section class="paper-references-clean" id="pustaka" aria-label="Daftar Pustaka">
+              <div class="references-header-clean">
+                <h3 class="references-title-clean">Daftar Pustaka</h3>
+                <span class="references-badge-clean">APA 7th Edition • Terverifikasi</span>
+              </div>
+              
+              <ol class="references-ordered-clean">
+                {referencesList.map((ref, idx) => (
+                  <li class="ref-clean-row">
+                    <span class="ref-row-index">[{idx + 1}]</span>
+                    <div class="ref-row-citation" set:html={ref} />
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+
+          <!-- Academic Citation Box (Format Sitasi Baku untuk ResearchGate & Google Scholar) -->
+          <section class="paper-citation-box-clean" aria-label="Sitasi Naskah Ilmiah" data-apa={apaCitationText} data-bibtex={bibtexCitationText}>
+            <div class="citation-box-header">
+              <div class="citation-box-title-group">
+                <span class="citation-box-badge">SITASI RESMI</span>
+                <span class="citation-box-title">Sitasi &amp; Rujukan Akademis</span>
+              </div>
+              <div class="citation-actions-group">
+                <button type="button" class="btn-cite-tab active" id="btn-tab-apa" title="Pilih format APA 7th Edition">Format APA 7th</button>
+                <button type="button" class="btn-cite-tab" id="btn-tab-bibtex" title="Pilih format BibTeX LaTeX">Format BibTeX</button>
+                <button type="button" class="btn-copy-citation" id="btn-copy-active-cite" data-cite={apaCitationText} title="Salin teks sitasi ke clipboard">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span class="btn-copy-label">Salin Sitasi</span>
+                </button>
+              </div>
+            </div>
+            <div class="citation-box-content">
+              <pre class="citation-pre-clean"><code id="citation-display-code">{apaCitationText}</code></pre>
+            </div>
+          </section>
+        </div>
+
+        <!-- Official Corporate Publication Imprint Box -->
+        <div class="official-corporate-imprint-box">
+          <div class="imprint-badge-row">
+            <span class="imprint-badge">PUBLIKASI RESMI DIVISI RISET &amp; PENGEMBANGAN</span>
+            <span class="imprint-license">Creative Commons CC BY 4.0 Open Access</span>
+          </div>
+          <p class="imprint-text">
+            Naskah ilmiah ini diterbitkan secara resmi dalam <strong>PT CHAIN ASIA CONECT Corporate Working Papers Series</strong>. Dokumen ini merupakan publikasi ilmiah resmi perusahaan yang sah digunakan sebagai rujukan akademik, studi kelayakan investasi (feasibility study), serta kajian perumusan kebijakan logistik dan rantai pasok di Kawasan 3T dan koridor konservasi TNBBS Pesisir Barat.
+          </p>
+          <div class="imprint-meta-sub">
+            <span>Sirkulasi Terbuka &bull; Repositori Publikasi Ilmiah Mandiri &bull; SK Pengesahan Kemenkumham RI No. AHU-A117353.AH.01.30.Tahun 2026 &bull; NIB 0709260109599</span>
+          </div>
+        </div>
+
+        <!-- Corporate Stamp / Sign-off Ringkas & Padat -->
+        <div class="article-signoff-sharp">
+          <span>PT CHAIN ASIA CONECT • Corporate R&amp;D Division</span>
+          <span class="signoff-sep">|</span>
+          <span>SK AHU-A117353.AH.01.30.Tahun 2026 • NIB 0709260109599</span>
+        </div>
+
+        </article>
+      </div>
+    </div>
+    ) : (
+      <!-- ════════════════════════════════════════════════════════════════ -->
+      <!-- 🏢 DEDICATED OFFICIAL CORPORATE NEWS / PRESS RELEASE WORKSPACE -->
+      <!-- ════════════════════════════════════════════════════════════════ -->
+      <article class="corporate-article-container" itemscope itemtype="https://schema.org/NewsArticle">
+        <div class="container corporate-article-inner">
+          
+          <!-- Article Header -->
+          <header class="corp-article-header">
+            <div class="corp-meta-top-row">
+              <span class="corp-tag-badge red-text">{article.tag}</span>
+              <span class="corp-verified-badge">
+                <svg viewBox="0 0 20 20" width="14" height="14" fill="#16a34a"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span>Siaran Pers Resmi Korporasi</span>
+              </span>
+            </div>
+
+            <h1 class="corp-article-title" itemprop="headline">{cleanTitle}</h1>
+
+            {cleanExcerpt && (
+              <p class="corp-article-lead" itemprop="description">
+                {cleanExcerpt}
+              </p>
+            )}
+
+            <div class="corp-byline-bar">
+              <div class="corp-author-info">
+                <div class="corp-avatar-icon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <div class="corp-author-text">
+                  <span class="corp-author-name">{article.author || 'Divisi Komunikasi Korporat'}</span>
+                  <span class="corp-author-role">Sekretariat Perusahaan PT CHAIN ASIA CONECT</span>
+                </div>
+              </div>
+
+              <div class="corp-meta-stats">
+                <span class="corp-stat-item">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  <span>{article.date}</span>
+                </span>
+                <span class="corp-meta-sep">•</span>
+                <span class="corp-stat-item">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  <span>{article.readTime || '3 min baca'}</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Share Buttons Row -->
+            <div class="corp-share-actions-row">
+              <span class="share-row-label">Bagikan Berita:</span>
+              <div class="share-buttons-group">
+                <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(cleanTitle + ' - ' + canonicalUrl)}`} target="_blank" rel="noopener noreferrer" class="btn-share-social btn-share-wa">
+                  <span>WhatsApp</span>
+                </a>
+                <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonicalUrl)}`} target="_blank" rel="noopener noreferrer" class="btn-share-social btn-share-in">
+                  <span>LinkedIn</span>
+                </a>
+                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(cleanTitle)}&url=${encodeURIComponent(canonicalUrl)}`} target="_blank" rel="noopener noreferrer" class="btn-share-social btn-share-x">
+                  <span>X / Twitter</span>
+                </a>
+                <button type="button" class="btn-share-social btn-share-copy" id="btn-copy-corp-url" data-url={canonicalUrl}>
+                  <span id="btn-copy-corp-text">Salin Tautan</span>
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <!-- Featured Visual / Media -->
+          {dynamicArticleImage && (
+            <figure class="corp-featured-media-box">
+              <img 
+                src={dynamicArticleImage} 
+                alt={cleanTitle} 
+                class="corp-featured-img" 
+                loading="eager" 
+                referrerpolicy="no-referrer"
+              />
+              <figcaption class="corp-media-caption">
+                Dokumentasi resmi rilis pers PT CHAIN ASIA CONECT. Seluruh materi visual dilindungi hak cipta publikasi korporasi.
+              </figcaption>
+            </figure>
+          )}
+
+          <!-- Article Body -->
+          <div class="corp-editorial-body" itemprop="articleBody">
+            {parsedBlocks.map((block) => {
+              if (block.type === 'html' || block.type === 'table') {
+                return <div class="rich-html-block corp-rich-block" set:html={block.html} />;
+              }
+              if (block.type === 'heading') {
+                return <h2 class="corp-heading-sub">{block.html}</h2>;
+              }
+              if (block.type === 'quote' || (block.html && (block.html.startsWith('&quot;') || block.html.startsWith('"') || block.html.startsWith('“')))) {
+                return <blockquote class="corp-quote-block" set:html={block.html} />;
+              }
+              if (block.type === 'list') {
+                return (
+                  <ul class="corp-bullet-list">
+                    {block.items.map((item) => (
+                      <li set:html={item} />
+                    ))}
+                  </ul>
+                );
+              }
+              return <p class="corp-body-para" set:html={block.html} />;
+            })}
+          </div>
+
+          <!-- Corporate Boilerplate & Media Contact Box -->
+          <section class="corp-boilerplate-section" aria-label="Tentang PT CHAIN ASIA CONECT">
+            <div class="corp-boilerplate-box">
+              <h3 class="bp-title">Tentang PT CHAIN ASIA CONECT</h3>
+              <p class="bp-text">
+                PT CHAIN ASIA CONECT adalah perseroan berbadan hukum resmi Indonesia (SK Kemenkumham RI No. AHU-A117353.AH.01.30.Tahun 2026, NIB 0709260109599, KBLI 62193) yang beroperasi di sektor arsitektur teknologi blockchain rantai pasok komersial, lisensi perangkat lunak medis diagnostik PACS &amp; DICOM cloud, dan tata kelola transparansi rantai pasok kawasan 3T Krui Pesisir Barat.
+              </p>
+              
+              <div class="bp-contact-card">
+                <span class="bp-contact-title">Kontak Hubungan Media &amp; Hubungan Investor:</span>
+                <div class="bp-contact-grid">
+                  <div class="bp-contact-col">
+                    <strong>Sekretariat Perusahaan:</strong><br />
+                    Surel: <a href="mailto:corsec@chainasiaconnect.co.id">corsec@chainasiaconnect.co.id</a><br />
+                    Surel Umum: <a href="mailto:info@chainasiaconnect.co.id">info@chainasiaconnect.co.id</a>
+                  </div>
+                  <div class="bp-contact-col">
+                    <strong>Kantor &amp; Perwakilan:</strong><br />
+                    Menara Kadin Indonesia Lt. 30, Jl. H.R. Rasuna Said, Jakarta Selatan<br />
+                    Hotline: <a href="https://wa.me/6282181785743">+62 821-8178-5743</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Back to Newsroom CTA -->
+          <div class="corp-back-bottom-cta">
+            <a href="/newsroom" class="btn-corp-back">
+              <span>&larr; Kembali ke Indeks Newsroom</span>
+            </a>
+          </div>
+
+        </div>
+      </article>
+    )}
+
+    <!-- Saran News Section (Full-Width Clean Newspaper List - No Sidebar, No Boxed Card) -->
+    {suggestions.length > 0 && (
+      <section class="suggestions-section" aria-label="Berita Rekomendasi">
+        <div class="container suggestions-fullwidth-wrap">
+          <div class="suggestions-header-bar">
+            <h2 class="suggestions-heading">{isAcademicPaper ? 'Naskah Riset Terkait (JCFAD)' : 'Rilis Korporasi Terkait'}</h2>
+            <span class="suggestions-sub">{isAcademicPaper ? 'Kajian ilmiah lainnya yang dipublikasikan pada Journal of Coastal Frontiers & Applied Development.' : 'Siaran pers resmi dan pembaruan agenda bisnis lainnya dari PT CHAIN ASIA CONECT.'}</span>
+          </div>
+          
+          <div class="articles-clean-list">
+            {suggestions.map((sug) => {
+              const sugUrl = isAcademicPaper
+                ? `https://journal.chainasiaconnect.co.id/${sug.slug}`
+                : `/newsroom/${sug.slug}`;
+              const hasCustomPhoto = Boolean(
+                !isAcademicPaper &&
+                sug.imageUrl &&
+                !sug.imageUrl.includes('CAC-LOGO') &&
+                !sug.imageUrl.includes('jcfad-seal') &&
+                !sug.imageUrl.includes('unsplash') &&
+                sug.imageUrl.trim() !== ''
+              );
+              return (
+              <a href={sugUrl} class="article-row-link">
+                <article class="article-row">
+                  {hasCustomPhoto && (
+                    <div class="article-thumb-box">
+                      <img 
+                        src={formatImageUrl(sug.imageUrl)} 
+                        alt={sug.title} 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer"
+                        class="article-thumb-img"
+                      />
+                    </div>
+                  )}
+                  <div class="article-content-box">
+                    <div class="article-meta-line">
+                      <span class="meta-tag red-text">{sug.tag || (isAcademicPaper ? 'EMPIRICAL RESEARCH' : 'KORPORASI')}</span>
+                      {sug.doi && <span class="meta-doi-sub">DOI: {sug.doi}</span>}
+                      <span class="meta-date">{sug.date}</span>
+                      <span class="meta-readtime">• {sug.readTime}</span>
+                    </div>
+                    <h3 class="article-title">{sug.title}</h3>
+                    <p class="article-excerpt">{sug.excerpt || sug.content}</p>
+                    <span class="article-arrow-cta red-text">{isAcademicPaper ? 'Baca Naskah di Jurnal →' : 'Baca Rilis Lengkap →'}</span>
+                  </div>
+                </article>
+              </a>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    )}
+  </main>
+
+  <Footer />
+</Layout>
+
+
+
+<style>
+  .reading-page-main {
+    background: #ffffff;
+    padding-top: 5.5rem;
+  }
+
+  /* Navigation Bar */
+  .reading-nav-bar {
+    background: #f8fafc;
+    border-bottom: 1px solid var(--border-light);
+    padding: 1rem 0;
+  }
+
+  .nav-bar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .back-link:hover {
+    color: var(--red-primary, #dc2626);
+  }
+
+  .nav-arrow {
+    width: 18px;
+    height: 18px;
+  }
+
+  .breadcrumb-trail {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .breadcrumb-trail a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .breadcrumb-trail a:hover {
+    color: var(--text-dark);
+    text-decoration: underline;
+  }
+
+  .current-crumb {
+    color: var(--red-primary, #dc2626);
+    font-weight: 700;
+  }
+
+  /* Article Layout */
+  .article-container {
+    padding: 3.5rem 0 4.5rem 0;
+  }
+
+  .article-inner {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  /* Sharp & Compact Article Layout (Tanpa Card Berlapis) */
+  .article-header-sharp {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .author-correspondence-sub {
+    font-size: 0.72rem;
+    color: #64748b;
+    margin: 0.35rem 0 0.85rem 0;
+    line-height: 1.4;
+  }
+
+  .author-correspondence-sub code {
+    background: #f1f5f9;
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    color: #0f172a;
+    font-size: 0.72rem;
+  }
+
+  .history-license {
+    color: #111111;
+    font-weight: 700;
+  }
+
+  .history-doi {
+    color: #111111;
+  }
+
+  .meta-doi-inline {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-weight: 700;
+    color: #0f172a;
+    text-decoration: underline;
+    font-size: 0.75rem;
+  }
+
+  .meta-doi-inline:hover {
+    color: #dc2626;
+  }
+
+  /* Full-Width Classic Scholarly Layout (Tanpa Grid Sempit, Batas Garis Saja, Tanpa Card) */
+  .academic-hero-fullwidth {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  /* Journal Masthead Full-Width (Dual Hairline Rules) */
+  .journal-classic-masthead-full {
+    border-top: 2.5px solid #111111;
+    border-bottom: 1.5px solid #111111;
+    padding: 0.85rem 0;
+    margin-bottom: 1.5rem;
+    background: transparent;
+  }
+
+  .journal-masthead-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .classic-masthead-seal {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .journal-masthead-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .classic-journal-name {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 0.88rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #111111;
+    line-height: 1.25;
+    text-transform: uppercase;
+  }
+
+  .classic-journal-vol {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #dc2626;
+    letter-spacing: 0.03em;
+  }
+
+  .journal-masthead-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+    color: #4b5563;
+    line-height: 1.35;
+    border-top: 1px dashed #cbd5e1;
+    padding-top: 0.4rem;
+    margin-top: 0.4rem;
+  }
+
+  /* Byline Status Clean (Tanpa Card) */
+  .byline-status-clean {
+    color: #111111;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+  }
+
+  /* Actions & Index Strip Full-Width */
+  .article-actions-strip-full {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    padding: 0.85rem 0 1.25rem 0;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .action-buttons-left {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+  }
+
+  .index-indicators-right {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    font-size: 0.72rem;
+    color: #475569;
+  }
+
+  .index-heading-label {
+    font-weight: 800;
+    color: #111111;
+    letter-spacing: 0.05em;
+    margin-right: 0.2rem;
+  }
+
+  .index-item-text {
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .index-dot {
+    color: #cbd5e1;
+    font-size: 0.65rem;
+  }
+
+  .btn-classic-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    background: #111111;
+    color: #ffffff;
+    border: 1.5px solid #111111;
+    border-radius: 0 !important;
+    padding: 0.5rem 0.95rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-classic-primary:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+    color: #ffffff;
+  }
+
+  .btn-classic-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    background: #ffffff;
+    color: #111111;
+    border: 1.5px solid #111111;
+    border-radius: 0 !important;
+    padding: 0.45rem 0.95rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-classic-secondary:hover {
+    background: #111111;
+    color: #ffffff;
+  }
+
+  /* Full-Width Classic Versions Switcher (Batas Garis Saja, Tanpa Card, Tanpa Garis Kiri) */
+  .classic-versions-bar-full {
+    border-top: 1.5px solid #111111;
+    border-bottom: 1.5px solid #111111;
+    padding: 0.95rem 0 1.15rem 0;
+    margin: 1.25rem 0 1.5rem 0;
+    background: transparent;
+  }
+
+  .versions-bar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 0.85rem;
+    flex-wrap: wrap;
+  }
+
+  .versions-header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #111111;
+    text-transform: uppercase;
+  }
+
+  .concept-doi-inline {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.68rem;
+    color: #64748b;
+  }
+
+  .concept-doi-inline code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.68rem;
+    color: #0f172a;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  .versions-horizontal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 0.85rem;
+  }
+
+  /* Tombol Versi Tanpa Card, Tanpa Garis Kiri */
+  .version-item-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 0.95rem;
+    border: 1px solid #cbd5e1;
+    border-left: 1px solid #cbd5e1;
+    border-radius: 0;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+  }
+
+  .version-item-btn:hover {
+    background: #f8fafc;
+    border-color: #0f172a;
+  }
+
+  .version-item-btn.active {
+    border: 2px solid #111111;
+    border-left: 2px solid #111111;
+    background: #fafafa;
+    box-shadow: none;
+  }
+
+  .version-item-btn.is-archived.active {
+    border: 2px solid #111111;
+    border-left: 2px solid #111111;
+    background: #fafafa;
+    box-shadow: none;
+  }
+
+  .version-item-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  .version-name {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .badge-ver-latest {
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: #ffffff;
+    background: #111111;
+    padding: 1px 6px;
+    letter-spacing: 0.04em;
+  }
+
+  .badge-ver-archived {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    padding: 0 5px;
+    letter-spacing: 0.04em;
+  }
+
+  .version-date {
+    font-size: 0.68rem;
+    color: #64748b;
+    font-variant-numeric: tabular-nums;
+    margin-left: auto;
+  }
+
+  .version-doi-row {
+    margin-bottom: 0.25rem;
+  }
+
+  .version-doi-text {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #0f172a;
+    word-break: break-all;
+  }
+
+  .version-notes {
+    font-size: 0.7rem;
+    color: #475569;
+    line-height: 1.35;
+    margin: 0;
+  }
+
+  .version-click-hint {
+    margin-top: 0.4rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #64748b;
+  }
+
+  .version-item-btn.active .version-click-hint {
+    color: #111111;
+    font-weight: 800;
+  }
+
+  .version-item-btn.is-archived.active .version-click-hint {
+    color: #111111;
+    font-weight: 800;
+  }
+
+  /* Version Notice Bar (Gausah Card, Gausah Garis Kiri, Batas Garis Tipis Saja) */
+  .journal-version-banner {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 0 0.95rem 0;
+    margin-bottom: 1.5rem;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed #cbd5e1;
+    transition: all 0.2s ease;
+  }
+
+  .journal-version-banner.is-archive-mode {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed #cbd5e1;
+  }
+
+  .version-banner-content {
+    width: 100%;
+  }
+
+  .version-banner-top {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 0.35rem;
+    flex-wrap: wrap;
+  }
+
+  .banner-pill-active {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #111111;
+    text-transform: uppercase;
+  }
+
+  .banner-date-label {
+    font-size: 0.68rem;
+    color: #64748b;
+  }
+
+  .version-banner-text {
+    font-size: 0.825rem;
+    line-height: 1.55;
+    color: #334155;
+    margin: 0;
+  }
+
+  .journal-version-banner.is-archive-mode .banner-pill-active {
+    color: #b91c1c;
+  }
+
+  .journal-version-banner.is-archive-mode .banner-date-label {
+    color: #b91c1c;
+  }
+
+  .journal-version-banner.is-archive-mode .version-banner-text {
+    color: #1e293b;
+  }
+
+  .banner-concept-doi code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.75rem;
+    color: #0f172a;
+    text-decoration: underline;
+  }
+
+  .banner-quick-switch {
+    margin-top: 0.65rem;
+  }
+
+  .btn-banner-switch-latest {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #111111;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 0.35rem 0.85rem;
+    border: 1px solid #111111;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .btn-banner-switch-latest:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+  }
+
+  /* V1 Archive Watermark (Batas Garis Saja, Tanpa Card Kuning, Tanpa Garis Kiri) */
+  .v1-archive-watermark {
+    background: transparent;
+    border-top: 1px solid #111111;
+    border-bottom: 1px solid #111111;
+    border-left: none !important;
+    border-right: none !important;
+    padding: 0.65rem 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #111111;
+  }
+
+  .article-subheading-h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 1.5rem 0 0.5rem;
+  }
+
+  .version-banner-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.3rem;
+  }
+
+  .banner-pill-active {
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #166534;
+    text-transform: uppercase;
+  }
+
+  .banner-date-label {
+    font-size: 0.7rem;
+    color: #15803d;
+    font-weight: 600;
+  }
+
+  .version-banner-text {
+    font-size: 0.78rem;
+    color: #14532d;
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  .banner-concept-doi code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.72rem;
+    color: #166534;
+    background: #dcfce7;
+    padding: 1px 5px;
+    border: 1px solid #bbf7d0;
+    font-weight: 700;
+  }
+
+  /* Right Column Hero */
+  .academic-hero-right {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Official Corporate Publication Imprint (Classic Lines - Tanpa Card) */
+  .official-corporate-imprint-box {
+    margin: 2.5rem 0 1rem;
+    padding: 1.25rem 0;
+    background: transparent;
+    border-top: 1.5px solid #111111;
+    border-bottom: 1.5px solid #111111;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .imprint-badge-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.65rem;
+    flex-wrap: wrap;
+  }
+
+  .imprint-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #111111;
+    text-transform: uppercase;
+  }
+
+  .imprint-license {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #111111;
+    background: transparent;
+    border: 1px solid #111111;
+    padding: 0.15rem 0.45rem;
+    border-radius: 0;
+  }
+
+  .imprint-text {
+    font-size: 0.825rem;
+    line-height: 1.6;
+    color: #1e293b;
+    margin: 0 0 0.65rem 0;
+  }
+
+  .imprint-meta-sub {
+    font-size: 0.7rem;
+    color: #64748b;
+    line-height: 1.4;
+    border-top: 1px dashed #cbd5e1;
+    padding-top: 0.5rem;
+  }
+
+  /* Floating PDF Download Dock (Pojok Kanan Bawah - Di Atas Chat Bubble) */
+  .floating-pdf-dock {
+    position: fixed;
+    bottom: 96px;
+    right: 24px;
+    z-index: 9999;
+  }
+
+  @media (max-width: 768px) {
+    .floating-pdf-dock {
+      bottom: 92px;
+      right: 16px;
+    }
+  }
+
+  .btn-floating-pdf {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1.5px solid #0f172a;
+    border-radius: 4px;
+    padding: 0.55rem 0.95rem;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.14);
+    transition: all 0.15s ease;
+  }
+
+  .btn-floating-pdf:hover {
+    background: #0f172a;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.22);
+  }
+
+  .floating-pdf-text {
+    letter-spacing: 0.02em;
+  }
+
+  /* Sharp Headline (Full Width) */
+  .article-headline-sharp {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1.25;
+    color: #111111;
+    margin: 0 0 1.25rem 0;
+    letter-spacing: -0.01em;
+  }
+
+  /* Compact Byline (Full Width, Tanpa Card) */
+  .article-byline-sharp {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.825rem;
+    color: #475569;
+    flex-wrap: wrap;
+    margin-bottom: 0.65rem;
+  }
+
+  .byline-author {
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .byline-sep {
+    color: #cbd5e1;
+  }
+
+  .byline-affil {
+    color: #475569;
+  }
+
+  /* Article History Bar (Batas Garis Saja, Tanpa Card, Tanpa Garis Kiri) */
+  .article-history-bar-sharp {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.775rem;
+    color: #64748b;
+    margin-bottom: 1.25rem;
+    padding: 0.45rem 0 0.85rem 0;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
+    border-radius: 0;
+    flex-wrap: wrap;
+  }
+
+  .history-item strong {
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  .history-sep {
+    color: #cbd5e1;
+    font-size: 0.7rem;
+  }
+
+  /* Classic Abstract (Batas Garis Atas & Bawah, Tanpa Card, Tanpa Garis Kiri) */
+  .paper-abstract-sharp {
+    background: transparent;
+    border: none !important;
+    border-top: 1.5px solid #111111 !important;
+    border-bottom: 1.5px solid #111111 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
+    padding: 1.25rem 0 1.45rem 0;
+    margin: 1.5rem 0 2rem 0;
+  }
+
+  .abstract-badge-clean {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #111111;
+    text-transform: uppercase;
+    margin-bottom: 0.65rem;
+    display: inline-block;
+  }
+
+  .abstract-text {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 0.98rem;
+    line-height: 1.75;
+    color: #1e293b;
+    margin: 0;
+    text-align: justify;
+  }
+
+  /* Featured Media */
+  .article-featured-media-sharp {
+    margin: 0 0 2rem 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #f8fafc;
+  }
+
+  .featured-img-sharp {
+    width: 100%;
+    max-height: 480px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .media-caption-sharp {
+    padding: 0.6rem 0.85rem;
+    font-size: 0.75rem;
+    color: #64748b;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+  }
+
+  /* Sharp Academic Prose Body */
+  .article-prose-sharp {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: #1e293b;
+    margin-bottom: 3rem;
+  }
+
+  .article-prose-sharp p {
+    margin: 0 0 1.35rem 0;
+    text-align: justify;
+  }
+
+  .article-subheading-sharp {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 2.25rem 0 0.85rem 0;
+    line-height: 1.3;
+    padding-bottom: 0.35rem;
+    border-bottom: 1.5px solid #0f172a;
+  }
+
+  .article-content-list-sharp {
+    margin: 1rem 0 1.5rem 1.5rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .article-content-list-sharp li {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #334155;
+  }
+
+  /* Academic Three-Line Table (Standar Publikasi Ilmiah SINTA / Scopus) */
+  .academic-table-wrap,
+  .academic-table-wrapper {
+    margin: 1.75rem 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  .table-title-sharp,
+  .academic-table-caption {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.45rem;
+    line-height: 1.45;
+  }
+
+  .academic-three-line-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+    line-height: 1.45;
+    border-top: 2px solid #0f172a;
+    border-bottom: 2px solid #0f172a;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.01em;
+  }
+
+  .academic-three-line-table th {
+    padding: 0.65rem 0.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    border-bottom: 1px solid #0f172a;
+    text-align: left;
+    background: #f8fafc;
+    vertical-align: bottom;
+  }
+
+  .academic-three-line-table td {
+    padding: 0.55rem 0.75rem;
+    color: #334155;
+    border-bottom: 0.5px solid #f1f5f9;
+    vertical-align: top;
+  }
+
+  .academic-three-line-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .academic-three-line-table tbody tr:hover {
+    background: #fafbfc;
+  }
+
+  .academic-math {
+    font-family: "Cambria Math", "Latin Modern Math", "STIX Two Math", Georgia, serif;
+    font-style: italic;
+  }
+
+  .table-note-sharp {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 0.25rem;
+  }
+
+  /* Sharp Callout Box (Monochrome - Tanpa Card Berlebih) */
+  .academic-callout-box {
+    background: #ffffff;
+    border: 1px solid #0f172a;
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+  }
+
+  .academic-callout-box h4 {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 0.4rem 0;
+  }
+
+  .academic-callout-box p {
+    font-size: 0.9rem;
+    color: #334155;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.6;
+  }
+
+  .academic-callout-box ul {
+    margin: 0.25rem 0 0 1.25rem;
+    padding: 0;
+    font-size: 0.875rem;
+    color: #475569;
+    line-height: 1.55;
+  }
+
+  /* Single Clean Bibliography Section (Format APA 7th Numbered - Bersih dari Kode JSON) */
+  .paper-references-clean {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #0f172a;
+  }
+
+  .references-header-clean {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .references-title-clean {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .references-badge-clean {
+    font-size: 0.725rem;
+    font-weight: 700;
+    color: #0f172a;
+    background: #f8fafc;
+    padding: 0.2rem 0.55rem;
+    border-radius: 3px;
+    border: 1px solid #0f172a;
+  }
+
+  .references-ordered-clean {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .ref-clean-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: #334155;
+  }
+
+  .ref-row-index {
+    font-family: 'SF Mono', Consolas, monospace;
+    font-weight: 700;
+    color: #0f172a;
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    padding-top: 0.05rem;
+  }
+
+  .ref-row-citation {
+    flex: 1;
+  }
+
+  .ref-row-citation a {
+    color: #0f172a;
+    text-decoration: underline;
+    font-weight: 600;
+    word-break: break-all;
+  }
+
+  .ref-row-citation a:hover {
+    color: #334155;
+  }
+
+  /* Academic Citation Box (Classic Lines - Tanpa Card) */
+  .paper-citation-box-clean {
+    margin-top: 2.5rem;
+    padding: 1.25rem 0;
+    background: transparent;
+    border-top: 2px solid #111111;
+    border-bottom: 2px solid #111111;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+  }
+
+  .citation-box-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid #111111;
+    flex-wrap: wrap;
+  }
+
+  .citation-box-title-group {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .citation-box-badge {
+    font-family: 'SF Mono', Consolas, monospace;
+    font-size: 0.685rem;
+    font-weight: 700;
+    background: #111111;
+    color: #ffffff;
+    padding: 0.15rem 0.45rem;
+    border-radius: 0;
+    letter-spacing: 0.05em;
+  }
+
+  .citation-box-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #111111;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .citation-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-cite-tab {
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.35rem 0.7rem;
+    background: #ffffff;
+    border: 1px solid #111111;
+    color: #111111;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-cite-tab:hover {
+    background: #f1f5f9;
+    color: #111111;
+  }
+
+  .btn-cite-tab.active {
+    background: #111111;
+    color: #ffffff;
+    border-color: #111111;
+  }
+
+  .btn-copy-citation {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #ffffff;
+    border: 1.5px solid #111111;
+    color: #111111;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-copy-citation:hover {
+    background: #111111;
+    color: #ffffff;
+  }
+
+  .citation-box-content {
+    background: #ffffff;
+    border: 1px solid #111111;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .citation-pre-clean {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    font-size: 0.775rem;
+    line-height: 1.6;
+    color: #1e293b;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  /* Sharp Signoff Strip */
+  .article-signoff-sharp {
+    margin-top: 3rem;
+    padding: 1rem 0;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.775rem;
+    color: #64748b;
+    flex-wrap: wrap;
+  }
+
+  .signoff-sep {
+    color: #cbd5e1;
+  }
+
+  /* Suggestions Section (Full-Width Clean Newspaper List - No Sidebar, No Boxed Card) */
+  .suggestions-section {
+    background-color: #fafafa;
+    padding: 3.5rem 0 5rem 0;
+    border-top: 1px solid var(--border-light, #e2e8f0);
+    width: 100%;
+  }
+
+  .suggestions-fullwidth-wrap {
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    box-sizing: border-box;
+  }
+
+  .suggestions-header-bar {
+    margin-bottom: 2rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 2px solid #222;
+  }
+
+  .suggestions-heading {
+    font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+    font-weight: 800;
+    color: #111;
+    margin: 0 0 0.35rem 0;
+    line-height: 1.2;
+  }
+
+  .suggestions-sub {
+    font-size: 0.95rem;
+    color: var(--text-muted, #64748b);
+  }
+
+  .articles-clean-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .article-row-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 100%;
+  }
+
+  .article-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+    transition: background-color 0.15s ease;
+  }
+
+  .article-row-link:hover .article-row {
+    background-color: #f4f4f5;
+  }
+
+  .article-thumb-box {
+    flex: 0 0 180px;
+    width: 180px;
+    height: 120px;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+  }
+
+  .article-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.25s ease;
+  }
+
+  .article-row-link:hover .article-thumb-img {
+    transform: scale(1.03);
+  }
+
+  .article-content-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .article-meta-line {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 0.35rem;
+    font-size: 0.75rem;
+  }
+
+  .article-meta-line .meta-tag {
+    font-weight: 800;
+    letter-spacing: 0.05em;
+  }
+
+  .article-meta-line .meta-date,
+  .article-meta-line .meta-readtime {
+    color: var(--text-muted, #64748b);
+    font-weight: 500;
+  }
+
+  .article-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #1e293b;
+    margin: 0 0 0.4rem 0;
+    transition: color 0.15s ease;
+  }
+
+  .article-row-link:hover .article-title {
+    color: var(--red-primary, #dc2626);
+  }
+
+  .article-excerpt {
+    font-size: 0.925rem;
+    line-height: 1.5;
+    color: #475569;
+    margin: 0 0 0.5rem 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .article-arrow-cta {
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-top: auto;
+  }
+
+  @media (max-width: 640px) {
+    .article-row {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .article-thumb-box {
+      flex: none;
+      width: 100%;
+      height: 180px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .author-source-bar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.85rem;
+    }
+    .article-headline {
+      font-size: 1.75rem;
+    }
+  }
+
+  /* =========================================================================
+     SINTA 2 / UNISSULA JOURNAL PAPER STYLING
+     ========================================================================= */
+  .journal-paper-container {
+    background: #ffffff;
+    font-family: 'Times New Roman', Times, serif;
+    color: #1e293b;
+    line-height: 1.75;
+  }
+
+  .journal-masthead-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 0.85rem;
+    border-bottom: 2px solid #0f172a;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .jm-left, .jm-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .jm-right {
+    text-align: right;
+  }
+
+  .jm-journal-name {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: 0.05em;
+  }
+
+  .jm-issn {
+    font-size: 0.775rem;
+    color: #475569;
+  }
+
+  .jm-accreditation {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #166534;
+    background: #dcfce7;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .jm-vol {
+    font-size: 0.825rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .jm-doi {
+    font-size: 0.775rem;
+    color: #2563eb;
+    font-family: monospace;
+  }
+
+  .jm-publisher {
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+
+  .article-paper-meta-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .paper-display-title {
+    font-size: 1.45rem;
+    font-weight: 800;
+    line-height: 1.35;
+    color: #0f172a;
+    margin: 0 auto 0.75rem auto;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .paper-display-subtitle {
+    font-size: 1.05rem;
+    font-weight: 500;
+    font-style: italic;
+    color: #475569;
+    line-height: 1.4;
+    margin: 0 auto 1.5rem auto;
+  }
+
+  .paper-author-block {
+    margin-top: 1rem;
+    padding: 0.75rem 0;
+  }
+
+  .author-primary {
+    font-size: 1.15rem;
+    color: #0f172a;
+    margin-bottom: 0.4rem;
+  }
+
+  .author-affiliations {
+    font-size: 0.85rem;
+    color: #475569;
+    line-height: 1.5;
+  }
+
+  .author-affiliations p {
+    margin: 0.15rem 0;
+  }
+
+  .author-corresp {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 0.35rem;
+  }
+
+  .paper-abstracts-wrapper {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .abstract-box-id, .abstract-box-en {
+    margin-bottom: 1.5rem;
+  }
+
+  .abstract-box-en {
+    margin-bottom: 0;
+    padding-top: 1.25rem;
+    border-top: 1px dashed #cbd5e1;
+  }
+
+  .abstract-heading {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #0f172a;
+    text-align: center;
+    margin: 0 0 0.75rem 0;
+    letter-spacing: 0.04em;
+  }
+
+  .abstract-box-id p, .abstract-box-en p {
+    font-size: 0.925rem;
+    line-height: 1.7;
+    text-align: justify;
+    margin: 0 0 0.85rem 0;
+  }
+
+  .paper-keywords {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #1e293b;
+  }
+
+  .paper-section-divider {
+    border: none;
+    border-top: 2px solid #e2e8f0;
+    margin: 2rem 0;
+  }
+
+  .paper-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: 0.04em;
+    margin: 1.75rem 0 1rem 0;
+    padding-bottom: 0.35rem;
+    border-bottom: 1.5px solid #0f172a;
+  }
+
+  .subsection-title {
+    font-size: 1.025rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 1.25rem 0 0.75rem 0;
+  }
+
+  .paper-section p {
+    font-size: 1rem;
+    line-height: 1.8;
+    text-align: justify;
+    text-indent: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .method-list, .legal-analysis-list {
+    margin: 0.5rem 0 1.25rem 1.5rem;
+    padding-left: 1rem;
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  .method-list li, .legal-analysis-list li {
+    margin-bottom: 0.75rem;
+  }
+
+  .paper-table-container {
+    margin: 2rem 0;
+    overflow-x: auto;
+  }
+
+  .table-caption {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+    line-height: 1.45;
+  }
+
+  .academic-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+    border-top: 2px solid #0f172a;
+    border-bottom: 2px solid #0f172a;
+  }
+
+  .academic-table th {
+    background: transparent;
+    color: #0f172a;
+    font-weight: 700;
+    padding: 0.65rem 0.75rem;
+    text-align: center;
+    border: none;
+    border-bottom: 1px solid #0f172a;
+    font-size: 0.82rem;
+  }
+
+  .academic-table td {
+    padding: 0.55rem 0.75rem;
+    border: none;
+    color: #1e293b;
+    border-bottom: 0.5px solid #e2e8f0;
+  }
+
+  .academic-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .academic-table tbody tr:nth-child(even) {
+    background: transparent;
+  }
+
+  .table-footnote {
+    font-size: 0.775rem;
+    color: #64748b;
+    margin-top: 0.35rem;
+  }
+
+  .framework-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #2563eb;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .framework-item {
+    margin-bottom: 1.25rem;
+  }
+
+  .framework-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .framework-item h4 {
+    font-size: 0.975rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 0.4rem 0;
+  }
+
+  .framework-item p {
+    text-indent: 0 !important;
+    font-size: 0.925rem !important;
+    line-height: 1.65 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .framework-item ul {
+    margin: 0.35rem 0 0 1.25rem;
+    padding-left: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .references-academic-list {
+    margin-top: 1rem;
+    line-height: 1.7;
+  }
+
+  .ref-item {
+    font-size: 0.875rem !important;
+    text-indent: -1.75rem !important;
+    padding-left: 1.75rem !important;
+    margin-bottom: 0.85rem !important;
+    color: #1e293b;
+  }
+
+  .ref-item a {
+    color: #2563eb;
+    text-decoration: none;
+    word-break: break-all;
+  }
+
+  .ref-item a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    .journal-masthead-banner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .jm-right {
+      text-align: left;
+    }
+    .paper-display-title {
+      font-size: 1.2rem;
+    }
+    .paper-section p {
+      text-indent: 0;
+    }
+  }
+
+  /* Academic Print Stylesheet (Clean A4 Paper Output) */
+  @media print {
+    header, footer, nav, aside, .toc-sidebar-dock, .floating-pdf-dock, .btn-download-sharp, .btn-floating-pdf, .reading-progress-track, .scf-header-actions {
+      display: none !important;
+    }
+    body, main, .article-container, .article-inner {
+      background: #ffffff !important;
+      color: #0f172a !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      max-width: 100% !important;
+      box-shadow: none !important;
+    }
+    .article-headline-sharp {
+      font-size: 18pt !important;
+      color: #000000 !important;
+      line-height: 1.3 !important;
+    }
+    .article-header-sharp {
+      border-bottom: 2pt solid #000000 !important;
+      margin-bottom: 1.5rem !important;
+      padding-bottom: 1rem !important;
+    }
+    .paper-abstract-card {
+      background: #f8fafc !important;
+      border: 1pt solid #cbd5e1 !important;
+      page-break-inside: avoid;
+    }
+    @page {
+      size: A4;
+      margin: 18mm 15mm;
+    }
+  }
+  @media print {
+    .paper-citation-box-clean {
+      display: none !important;
+    }
+  }
+
+  /* ORCID Badge */
+  .author-single-wrap {
+    display: inline-flex;
+    align-items: center;
+  }
+  .orcid-link-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: #ffffff;
+    color: #166534;
+    border: 1px solid #166534;
+    padding: 0.08rem 0.35rem;
+    border-radius: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 0.3rem;
+  }
+  .orcid-link-badge:hover {
+    background: #166534;
+    color: #ffffff;
+  }
+
+  /* ── TWO-COLUMN SCHOLARLY WORKSPACE & FROZEN SIDEBAR ── */
+  .scholarly-workspace-wrapper {
+    max-width: 1420px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem 1.5rem;
+  }
+
+  .scholarly-workspace-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 2.25rem;
+    position: relative;
+  }
+
+  /* ── LEFT COLUMN: FROZEN / STICKY ACADEMIC SIDEBAR ── */
+  .journal-sticky-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 5.5rem;
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: transparent;
+    border: none;
+    border-right: 1px solid #e2e8f0;
+    padding: 0 1.25rem 3rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+    z-index: 20;
+  }
+
+  /* 1. Frozen Back & Actions (Border-free) */
+  .sidebar-frozen-nav-card {
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .sidebar-frozen-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #111111;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.55rem 0.85rem;
+    width: 100%;
+    justify-content: flex-start;
+    border-radius: 4px;
+    transition: background 0.15s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .sidebar-frozen-back-btn:hover {
+    background: #dc2626;
+  }
+
+  /* DOI Info Box in Freeze Sidebar */
+  .sidebar-frozen-doi-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 0.55rem 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .sidebar-frozen-doi-kicker {
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: #64748b;
+    letter-spacing: 0.05em;
+  }
+
+  .sidebar-frozen-doi-val {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    color: #0f172a;
+    text-decoration: underline;
+    font-weight: 600;
+    word-break: break-all;
+  }
+
+  .sidebar-frozen-doi-val:hover {
+    color: #dc2626;
+  }
+
+  /* Freeze Sidebar Action Buttons */
+  .sidebar-frozen-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .sidebar-btn-copy-citation {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #ffffff;
+    color: #111111;
+    border: 1.5px solid #111111;
+    border-radius: 4px;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    width: 100%;
+  }
+
+  .sidebar-btn-copy-citation:hover {
+    background: #111111;
+    color: #ffffff;
+  }
+
+  .sidebar-btn-pdf-download {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #dc2626;
+    color: #ffffff;
+    border: 1.5px solid #dc2626;
+    border-radius: 4px;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    width: 100%;
+  }
+
+  .sidebar-btn-pdf-download:hover {
+    background: #b91c1c;
+    border-color: #b91c1c;
+  }
+
+  /* 2. Version Switcher Panel in Sidebar */
+  .sidebar-versions-panel {
+    border-bottom: 1.5px solid #111111;
+    padding-bottom: 1rem;
+  }
+
+  .sb-panel-header {
+    margin-bottom: 0.65rem;
+  }
+
+  .sb-kicker {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #dc2626;
+    letter-spacing: 0.05em;
+  }
+
+  .sb-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #111111;
+    margin: 0.15rem 0 0 0;
+  }
+
+  .sidebar-versions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .sidebar-version-item-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #f8fafc;
+    border: 1px solid #cccccc;
+    padding: 0.65rem 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .sidebar-version-item-btn:hover {
+    border-color: #111111;
+    background: #ffffff;
+  }
+
+  .sidebar-version-item-btn.active {
+    background: #ffffff;
+    border: 2px solid #111111;
+    box-shadow: 2px 2px 0px #111111;
+  }
+
+  .sb-v-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+  }
+
+  .sb-v-badge-name {
+    font-weight: 800;
+    font-size: 0.82rem;
+    color: #111111;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .sb-badge-tag-latest {
+    font-size: 0.62rem;
+    font-weight: 800;
+    background: #111111;
+    color: #ffffff;
+    padding: 0.1rem 0.4rem;
+    letter-spacing: 0.02em;
+  }
+
+  .sidebar-version-item-btn.active .sb-badge-tag-latest {
+    background: #dc2626;
+  }
+
+  .sb-badge-tag-archived {
+    font-size: 0.62rem;
+    font-weight: 700;
+    background: #e2e8f0;
+    color: #475569;
+    padding: 0.1rem 0.35rem;
+  }
+
+  .sb-v-doi-row {
+    font-family: monospace;
+    font-size: 0.68rem;
+    color: #475569;
+    word-break: break-all;
+    margin-bottom: 0.15rem;
+  }
+
+  .sb-v-date-row {
+    font-size: 0.7rem;
+    color: #64748b;
+    margin-bottom: 0.35rem;
+  }
+
+  .sb-v-click-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #64748b;
+  }
+
+  .sidebar-version-item-btn.active .sb-v-click-indicator {
+    color: #166534;
+  }
+
+  .sidebar-version-item-btn.active .sb-dot-indicator {
+    background: #16a34a;
+  }
+
+  .sb-dot-indicator {
+    width: 6px;
+    height: 6px;
+    background: #94a3b8;
+    border-radius: 50%;
+  }
+
+  .sidebar-concept-doi-wrap {
+    margin-top: 0.75rem;
+    padding-top: 0.55rem;
+    border-top: 1px dashed #cccccc;
+    font-size: 0.68rem;
+    color: #475569;
+  }
+
+  .sb-c-label {
+    display: block;
+    margin-bottom: 0.15rem;
+  }
+
+  .sb-c-link {
+    color: #0f172a;
+    font-family: monospace;
+    text-decoration: underline;
+    font-weight: 700;
+  }
+
+  /* Clean Official Indexing Logos in Freeze Sidebar (No Card, Full to Bottom) */
+  .sidebar-indexing-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    padding-top: 0.25rem;
+  }
+
+  .sidebar-indexing-kicker {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #475569;
+    letter-spacing: 0.06em;
+  }
+
+  .sidebar-indexing-clean-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem 0.75rem;
+    padding-top: 0.35rem;
+  }
+
+  .sb-index-clean-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    text-decoration: none;
+    gap: 0.4rem;
+    padding: 0.4rem 0.2rem;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+
+  .sb-index-clean-item:hover {
+    transform: translateY(-2px);
+    opacity: 0.75;
+  }
+
+  .sb-index-clean-img {
+    height: 40px;
+    max-width: 105px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  .sb-index-clean-img.scopus-img {
+    height: 34px;
+    max-width: 105px;
+  }
+
+  .sb-index-clean-name {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #334155;
+    letter-spacing: -0.01em;
+  }
+
+  .scopus-badge-img {
+    height: 18px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .meta-doi-sub {
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    color: #475569;
+    background: #f1f5f9;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .corp-quote-block {
+    margin: 2rem 0;
+    padding: 1.25rem 1.5rem;
+    border-left: 4px solid #dc2626;
+    background: #f8fafc;
+    border-radius: 0 6px 6px 0;
+    font-size: 1.15rem;
+    font-style: italic;
+    color: #1e293b;
+    line-height: 1.7;
+  }
+
+  /* ── RIGHT COLUMN: ARTICLE MAIN COLUMN ── */
+  .article-main-column {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Index indicators in header with logos */
+  .index-indicators-right-logos {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+  }
+
+  .index-badges-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+  }
+
+  .index-logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem 0.4rem;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    text-decoration: none;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+
+  .index-logo-badge:hover {
+    transform: translateY(-2px);
+    opacity: 0.75;
+  }
+
+  .index-logo-badge img {
+    height: 24px;
+    max-width: 80px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* ── REALTIME PDF MASTER READER & MULTI-TABS ── */
+  .embedded-pdf-master-section {
+    margin: 2rem 0 2.5rem 0;
+    border: 2px solid #111111;
+    background: #ffffff;
+  }
+
+  .pdf-version-tabs-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #111111;
+    color: #ffffff;
+    padding: 0.45rem 0.85rem;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .pdf-version-tabs-left {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .pdf-tabs-prefix {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: #94a3b8;
+    letter-spacing: 0.04em;
+    margin-right: 0.25rem;
+  }
+
+  .btn-pdf-tab-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #222222;
+    color: #cccccc;
+    border: 1px solid #444444;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.12s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .btn-pdf-tab-toggle:hover {
+    background: #333333;
+    color: #ffffff;
+    border-color: #666666;
+  }
+
+  .btn-pdf-tab-toggle.active {
+    background: #ffffff;
+    color: #111111;
+    border-color: #ffffff;
+    font-weight: 800;
+  }
+
+  .pdf-version-tabs-right {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-left: auto;
+  }
+
+  .btn-pdf-viewer-ctrl {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: transparent;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 0.32rem 0.65rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.12s ease;
+  }
+
+  .btn-pdf-viewer-ctrl:hover {
+    background: #ffffff;
+    color: #111111;
+    border-color: #ffffff;
+  }
+
+  .btn-ctrl-download {
+    background: #dc2626;
+    border-color: #dc2626;
+    color: #ffffff;
+  }
+
+  .btn-ctrl-download:hover {
+    background: #b91c1c;
+    border-color: #b91c1c;
+    color: #ffffff;
+  }
+
+  .embedded-pdf-viewport {
+    width: 100%;
+    background: #525659;
+  }
+
+  .embedded-pdf-frame-full {
+    width: 100%;
+    height: 950px;
+    border: none;
+    display: block;
+    background: #525659;
+  }
+
+  @media (max-width: 1080px) {
+    .scholarly-workspace-layout {
+      flex-direction: column;
+    }
+    .journal-sticky-sidebar {
+      width: 100%;
+      position: static;
+      max-height: none;
+      border-right: none;
+      padding-right: 0;
+    }
+    .embedded-pdf-frame-full {
+      height: 700px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .scholarly-workspace-wrapper {
+      padding: 1.5rem 0.75rem 3.5rem 0.75rem;
+    }
+    .pdf-version-tabs-right {
+      width: 100%;
+      justify-content: flex-start;
+      margin-top: 0.35rem;
+    }
+    .embedded-pdf-frame-full {
+      height: 550px;
+    }
+    .article-actions-strip-full {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .action-buttons-left {
+      width: 100%;
+      flex-direction: column;
+    }
+    .btn-classic-primary,
+    .btn-classic-secondary {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+    .index-indicators-right-logos {
+      width: 100%;
+    }
+    .article-headline-sharp {
+      font-size: 1.45rem;
+    }
+    .journal-masthead-top {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .classic-journal-name {
+      font-size: 0.95rem;
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════════════ */
+  /* 🏢 DEDICATED CORPORATE NEWSROOM / PRESS RELEASE EDITORIAL STYLES   */
+  /* ══════════════════════════════════════════════════════════════════ */
+  .corporate-article-container {
+    background: #ffffff;
+    padding: 3rem 0 5rem 0;
+  }
+
+  .corporate-article-inner {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .corp-article-header {
+    border-bottom: 1px solid var(--border-light, #e2e8f0);
+    padding-bottom: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .corp-meta-top-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .corp-tag-badge {
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .corp-verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #166534;
+    background: #dcfce7;
+    border: 1px solid #bbf7d0;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+  }
+
+  .corp-article-title {
+    font-size: clamp(2rem, 3.8vw, 3rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--text-dark, #0f172a);
+    margin: 0 0 1.25rem 0;
+    letter-spacing: -0.015em;
+  }
+
+  .corp-article-lead {
+    font-size: 1.2rem;
+    line-height: 1.65;
+    color: #334155;
+    font-weight: 500;
+    margin: 0 0 1.75rem 0;
+  }
+
+  .corp-byline-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    border-top: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f1f5f9;
+    flex-wrap: wrap;
+  }
+
+  .corp-author-info {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .corp-avatar-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2e8f0;
+  }
+
+  .corp-author-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .corp-author-name {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .corp-author-role {
+    font-size: 0.78rem;
+    color: #64748b;
+  }
+
+  .corp-meta-stats {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.84rem;
+    color: #64748b;
+  }
+
+  .corp-stat-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .corp-meta-sep {
+    color: #cbd5e1;
+  }
+
+  .corp-share-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .share-row-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #64748b;
+  }
+
+  .share-buttons-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-share-social {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 0.35rem 0.85rem;
+    border-radius: 6px;
+    text-decoration: none;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-share-social:hover {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+  }
+
+  .btn-share-wa:hover {
+    background: #25D366;
+    border-color: #25D366;
+    color: #ffffff;
+  }
+
+  .btn-share-in:hover {
+    background: #0077b5;
+    border-color: #0077b5;
+    color: #ffffff;
+  }
+
+  .btn-share-x:hover {
+    background: #000000;
+    border-color: #000000;
+    color: #ffffff;
+  }
+
+  .corp-featured-media-box {
+    margin: 0 0 2.5rem 0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+  }
+
+  .corp-featured-img {
+    width: 100%;
+    max-height: 520px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .corp-media-caption {
+    font-size: 0.8rem;
+    color: #64748b;
+    padding: 0.75rem 1rem;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    font-style: italic;
+  }
+
+  /* Editorial Body */
+  .corp-editorial-body {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #1e293b;
+    margin-bottom: 4rem;
+  }
+
+  .corp-body-para {
+    margin: 0 0 1.6rem 0;
+    line-height: 1.8;
+    color: #334155;
+  }
+
+  .corp-heading-sub {
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 2.5rem 0 1rem 0;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+
+  .corp-bullet-list {
+    margin: 0 0 1.75rem 1.5rem;
+    padding: 0;
+    color: #334155;
+    line-height: 1.8;
+  }
+
+  .corp-bullet-list li {
+    margin-bottom: 0.65rem;
+  }
+
+  .corp-rich-block {
+    margin: 2rem 0;
+  }
+
+  /* Boilerplate & Press Inquiries */
+  .corp-boilerplate-section {
+    margin-top: 3.5rem;
+    border-top: 2px solid #0f172a;
+    padding-top: 2rem;
+  }
+
+  .corp-boilerplate-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 2rem;
+  }
+
+  .bp-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .bp-text {
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: #475569;
+    margin: 0 0 1.5rem 0;
+  }
+
+  .bp-contact-card {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .bp-contact-title {
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #0f172a;
+    display: block;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+  }
+
+  .bp-contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #334155;
+  }
+
+  .bp-contact-grid a {
+    color: #dc2626;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .bp-contact-grid a:hover {
+    text-decoration: underline;
+  }
+
+  .corp-back-bottom-cta {
+    margin-top: 2.5rem;
+    text-align: center;
+  }
+
+  .btn-corp-back {
+    display: inline-flex;
+    align-items: center;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 700;
+    padding: 0.75rem 1.75rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .btn-corp-back:hover {
+    background: #1e293b;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .corp-article-title {
+      font-size: 1.75rem;
+    }
+    .corp-byline-bar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .bp-contact-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+</style>
+
+<script>
+  function initOjsFeatures() {
+    // Turnitin Exemption Copy
+    const turnitinBtn = document.getElementById('btn-copy-turnitin-text');
+    if (turnitinBtn) {
+      turnitinBtn.addEventListener('click', () => {
+        const statement = turnitinBtn.getAttribute('data-statement') || '';
+        navigator.clipboard.writeText(statement).then(() => {
+          const label = document.getElementById('turnitin-btn-label');
+          if (label) {
+            const original = label.textContent;
+            label.textContent = '✓ Pernyataan Tersalin!';
+            setTimeout(() => {
+              label.textContent = original;
+            }, 2500);
+          }
+        });
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initOjsFeatures);
+  } else {
+    initOjsFeatures();
+  }
+</script>
+
+<script>
+  function initCitationBox() {
+    const box = document.querySelector('.paper-citation-box-clean');
+    if (!box) return;
+
+    const apaText = box.getAttribute('data-apa') || '';
+    const bibtexText = box.getAttribute('data-bibtex') || '';
+
+    const tabApa = document.getElementById('btn-tab-apa');
+    const tabBibtex = document.getElementById('btn-tab-bibtex');
+    const codeEl = document.getElementById('citation-display-code');
+    const copyBtn = document.getElementById('btn-copy-active-cite');
+
+    if (tabApa && tabBibtex && codeEl && copyBtn) {
+      tabApa.addEventListener('click', () => {
+        tabApa.classList.add('active');
+        tabBibtex.classList.remove('active');
+        codeEl.textContent = apaText;
+        copyBtn.setAttribute('data-cite', apaText);
+      });
+
+      tabBibtex.addEventListener('click', () => {
+        tabBibtex.classList.add('active');
+        tabApa.classList.remove('active');
+        codeEl.textContent = bibtexText;
+        copyBtn.setAttribute('data-cite', bibtexText);
+      });
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        const text = copyBtn.getAttribute('data-cite') || apaText;
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(() => {
+          const label = copyBtn.querySelector('.btn-copy-label');
+          if (label) {
+            const original = label.textContent;
+            label.textContent = '✓ Tersalin ke Clipboard!';
+            setTimeout(() => {
+              label.textContent = original;
+            }, 2000);
+          }
+        });
+      });
+    }
+
+    const handleCopyApa = (btn: HTMLElement, labelId: string) => {
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(apaText).then(() => {
+          const label = document.getElementById(labelId);
+          if (label) {
+            const original = label.textContent;
+            label.textContent = '✓ Sitasi Tersalin!';
+            setTimeout(() => {
+              label.textContent = original;
+            }, 2000);
+          }
+        });
+      });
+    };
+
+    const sideCopyBtn = document.getElementById('btn-copy-apa-citation');
+    if (sideCopyBtn) handleCopyApa(sideCopyBtn, 'btn-copy-citation-text');
+
+    const freezeCopyBtn = document.getElementById('sidebar-btn-copy-apa-citation');
+    if (freezeCopyBtn) handleCopyApa(freezeCopyBtn, 'sidebar-btn-copy-citation-text');
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCitationBox);
+  } else {
+    initCitationBox();
+  }
+</script>
+
+<!-- Interactive Version Switcher Data & Script (Zenodo CERN Architecture) -->
+<script id="version-meta-data" type="application/json" set:html={JSON.stringify(clientVersionPayload)}></script>
+
+<script>
+  function initDynamicVersionSwitcher() {
+    const metaEl = document.getElementById('version-meta-data');
+    if (!metaEl) return;
+
+    let config;
+    try {
+      config = JSON.parse(metaEl.textContent || '{}');
+    } catch (_) {
+      return;
+    }
+
+    if (!config || !config.hasMultipleVersions) {
+      return;
+    }
+
+    const layerV2 = document.getElementById('layer-version-2');
+    const layerV1 = document.getElementById('layer-version-1');
+    const bannerBox = document.getElementById('journal-version-banner-box');
+    const bannerPill = document.getElementById('banner-pill-label');
+    const bannerDate = document.getElementById('banner-date-label');
+    const bannerDesc = document.getElementById('banner-desc-text');
+    const bannerSwitchWrap = document.getElementById('banner-switch-wrap');
+    const quickSwitchBtn = document.getElementById('btn-banner-switch-latest');
+    const headline = document.querySelector('.article-headline-sharp');
+    const abstractEl = document.querySelector('#abstrak .abstract-text');
+    const citationCode = document.getElementById('citation-display-code');
+
+    function switchVersion(verNum) {
+      const target = config.versionsMap ? config.versionsMap[String(verNum)] : null;
+      if (!target) return;
+      const isV1 = String(verNum) === '1';
+
+      // 1. Toggle Article Body Layers
+      if (layerV2 && layerV1) {
+        layerV2.style.display = isV1 ? 'none' : 'block';
+        layerV1.style.display = isV1 ? 'block' : 'none';
+      }
+
+      // 2. Toggle active state on Sidebar version buttons
+      document.querySelectorAll('.sidebar-version-item-btn').forEach(btn => {
+        const btnVer = btn.getAttribute('data-version-target');
+        const hint = btn.querySelector('.sb-indicator-text');
+        if (btnVer === String(verNum)) {
+          btn.classList.add('active');
+          if (hint) hint.textContent = '● Naskah Aktif Ditampilkan';
+        } else {
+          btn.classList.remove('active');
+          if (hint) hint.textContent = '↗ Muat Naskah Versi Ini';
+        }
+      });
+
+      // 3. Toggle active state on PDF Reader Multi-Tabs
+      document.querySelectorAll('.btn-pdf-tab-toggle').forEach(tab => {
+        const tabVer = tab.getAttribute('data-pdf-ver');
+        if (tabVer === String(verNum)) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+
+      // 4. Update Headline & Abstract
+      if (headline && target.title) {
+        headline.textContent = target.title;
+      }
+      if (abstractEl && target.abstract) {
+        abstractEl.textContent = target.abstract;
+      }
+
+      // 5. Update Banner Notice
+      if (bannerBox) {
+        if (target.isLatest) {
+          bannerBox.classList.remove('is-archive-mode');
+          if (bannerPill) bannerPill.textContent = 'PUBLIKASI RESMI TERBARU • ' + (target.versionLabel || ('VERSION ' + verNum)).toUpperCase();
+          if (bannerDate) bannerDate.textContent = 'Terbit: ' + target.date;
+          if (bannerDesc) {
+            bannerDesc.innerHTML = 'Anda sedang membaca <strong>' + (target.versionLabel || ('Version ' + verNum)) + ' (Latest Peer-Reviewed Article)</strong> yang diterbitkan dalam standar bahasa Inggris akademis (Full Academic English) pada <em>Journal of Coastal Frontiers &amp; Applied Development (JCFAD)</em> Vol. 1 No. 1. Naskah kerja awal (Version 1 Preprint) tetap terarsip secara permanen di repositori CERN Zenodo via Concept DOI <a href="https://doi.org/' + config.conceptDoi + '" target="_blank" rel="noopener noreferrer" class="banner-concept-doi"><code>' + config.conceptDoi + '</code></a>.';
+          }
+          if (bannerSwitchWrap) bannerSwitchWrap.style.display = 'none';
+        } else if (isV1) {
+          bannerBox.classList.add('is-archive-mode');
+          if (bannerPill) bannerPill.textContent = '⚠️ ARSIP WORKING PAPER / PREPRINT • VERSION 1';
+          if (bannerDate) bannerDate.textContent = 'Arsip: ' + target.date;
+          if (bannerDesc) {
+            bannerDesc.innerHTML = 'Perhatian: Anda sedang membaca <strong>Version 1 (Initial Preprint Archive)</strong> naskah bahasa Indonesia. Versi terbitan peer-reviewed resmi terbaru dalam Full Academic English tersedia pada <strong>Version ' + (config.currentVersion || '4') + '</strong>.';
+          }
+          if (bannerSwitchWrap) bannerSwitchWrap.style.display = 'block';
+        } else {
+          bannerBox.classList.add('is-archive-mode');
+          if (bannerPill) bannerPill.textContent = '⚠️ ARSIP SEBELUMNYA • ' + (target.versionLabel || ('VERSION ' + verNum)).toUpperCase();
+          if (bannerDate) bannerDate.textContent = 'Arsip: ' + target.date;
+          if (bannerDesc) {
+            bannerDesc.innerHTML = 'Perhatian: Anda sedang membaca <strong>' + (target.versionLabel || ('Version ' + verNum)) + '</strong>. Versi terbitan peer-reviewed resmi terbaru (Definitive Edition) tersedia pada <strong>Version ' + (config.currentVersion || '4') + '</strong>.';
+          }
+          if (bannerSwitchWrap) bannerSwitchWrap.style.display = 'block';
+        }
+      }
+
+      // 6. Update Embedded PDF Master Iframe in Realtime (Zero Load Error)
+      const iframe = document.getElementById('main-embedded-pdf-iframe') || document.querySelector('.embedded-pdf-frame');
+      if (iframe && target.pdfUrl) {
+        iframe.src = target.pdfUrl + '#toolbar=1&navpanes=0&pagemode=none&view=FitH';
+      }
+
+      // 7. Update PDF Viewer Controls (Fullscreen & Direct Download)
+      const fsBtn = document.getElementById('btn-pdf-viewer-fullscreen');
+      if (fsBtn && target.pdfUrl) fsBtn.setAttribute('href', target.pdfUrl);
+      const dlBtn = document.getElementById('btn-pdf-viewer-download');
+      if (dlBtn && target.pdfUrl) dlBtn.setAttribute('href', target.pdfUrl);
+
+      document.querySelectorAll('a[download], .btn-classic-primary, .btn-download-sharp, .btn-floating-pdf').forEach(a => {
+        a.setAttribute('href', target.pdfUrl);
+      });
+
+      // 8. Update DOI Pill
+      document.querySelectorAll('.meta-doi-pill').forEach(a => {
+        a.setAttribute('href', 'https://doi.org/' + target.doi);
+        a.textContent = 'DOI: ' + target.doi + ' ↗';
+      });
+
+      // 9. Update Citation text
+      if (citationCode && target.citation) {
+        citationCode.textContent = target.citation;
+        const copyBtn = document.getElementById('btn-copy-active-cite');
+        if (copyBtn) copyBtn.setAttribute('data-cite', target.citation);
+      }
+
+      // 10. Update URL param ?v=X without reload
+      try {
+        const u = new URL(window.location.href);
+        u.searchParams.set('v', String(verNum));
+        window.history.replaceState({}, '', u.toString());
+      } catch (_) {}
+    }
+
+    // Bind event listeners to Sidebar version buttons
+    document.querySelectorAll('.sidebar-version-item-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const v = btn.getAttribute('data-version-target');
+        switchVersion(v);
+      });
+    });
+
+    // Bind event listeners to PDF Viewer Multi-Tabs
+    document.querySelectorAll('.btn-pdf-tab-toggle').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        e.preventDefault();
+        const v = tab.getAttribute('data-pdf-ver');
+        switchVersion(v);
+      });
+    });
+
+    if (quickSwitchBtn) {
+      quickSwitchBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchVersion(config.currentVersion || '4');
+      });
+    }
+
+    // Check URL parameter ?v=1 or ?v=2 on load
+    try {
+      const p = new URLSearchParams(window.location.search);
+      const vParam = p.get('v');
+      if (vParam) {
+        switchVersion(vParam);
+      }
+    } catch (_) {}
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDynamicVersionSwitcher);
+  } else {
+    initDynamicVersionSwitcher();
+  }
+</script>
+
+<!-- Corporate Newsroom Interactive Scripts & Domain Enforcer -->
+<script is:inline define:vars={{ isAcademicPaper, articleSlug: article.slug }}>
+  // Enforce Clean Domain Separation on Browser Level:
+  // Paper Ilmiah -> WAJIB di journal.chainasiaconnect.co.id
+  // Berita Korporasi -> WAJIB di www.chainasiaconnect.co.id
+  (function enforceDomainSeparation() {
+    const host = window.location.hostname.toLowerCase();
+    const isLocal = host === 'localhost' || host === '127.0.0.1';
+    if (isLocal) return;
+
+    if (isAcademicPaper) {
+      if (host !== 'journal.chainasiaconnect.co.id') {
+        window.location.replace('https://journal.chainasiaconnect.co.id/' + articleSlug);
+      }
+    } else {
+      if (host === 'journal.chainasiaconnect.co.id') {
+        window.location.replace('https://www.chainasiaconnect.co.id/newsroom/' + articleSlug);
+      }
+    }
+  })();
+
+  // Salin Tautan Berita Korporasi ke Clipboard
+  document.addEventListener('DOMContentLoaded', function() {
+    const copyBtn = document.getElementById('btn-copy-corp-url');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const url = copyBtn.getAttribute('data-url') || window.location.href;
+        navigator.clipboard.writeText(url).then(function() {
+          const textEl = document.getElementById('btn-copy-corp-text');
+          if (textEl) {
+            const original = textEl.textContent;
+            textEl.textContent = '✓ Tautan Tersalin!';
+            copyBtn.style.background = '#dcfce7';
+            copyBtn.style.color = '#166534';
+            copyBtn.style.borderColor = '#86efac';
+            setTimeout(function() {
+              textEl.textContent = original;
+              copyBtn.style.background = '';
+              copyBtn.style.color = '';
+              copyBtn.style.borderColor = '';
+            }, 2500);
+          }
+        });
+      });
+    }
+  });
+</script>

@@ -1,0 +1,407 @@
+/* Times New Roman Classic Corporate Theme - PT CHAIN ASIA CONECT */
+
+:root {
+  /* Red & White Color Palette */
+  --bg-white: #ffffff;
+  --bg-light: #f8fafc;
+  --bg-alt: #f1f5f9;
+  
+  /* Brand Red Palette (Merah Corporate) */
+  --red-primary: #dc2626;
+  --red-dark: #991b1b;
+  --red-deep: #7f1d1d;
+  --red-light: #fef2f2;
+  --red-soft-bg: rgba(220, 38, 38, 0.04);
+
+  /* Typography Colors */
+  --text-dark: #0f172a;
+  --text-body: #1e293b;
+  --text-muted: #64748b;
+
+  /* Borders & Dividers */
+  --border-light: #e2e8f0;
+  --border-red: rgba(220, 38, 38, 0.25);
+
+  /* Font Family - Times New Roman */
+  --font-heading: 'Times New Roman', Times, Georgia, serif;
+  --font-body: 'Times New Roman', Times, Georgia, serif;
+
+  /* Spacing & Layout */
+  --container-width: 1240px;
+  --transition-smooth: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-body);
+  background-color: var(--bg-white);
+  color: var(--text-dark);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  background-color: var(--bg-white);
+  color: var(--text-body);
+  font-family: var(--font-body);
+}
+
+main {
+  position: relative;
+  z-index: 10;
+  background-color: var(--bg-white);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+  min-height: 100vh;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-light);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--red-primary);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--red-dark);
+}
+
+/* Base Typography - Times New Roman */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--text-dark);
+  letter-spacing: -0.01em;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+p, span, div, li, a, button, input {
+  font-family: var(--font-body);
+}
+
+p {
+  line-height: 1.8;
+  color: var(--text-body);
+  font-size: 1.1rem;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Universal Mobile Overflow Prevention & Email Text Wrapping Rules */
+a, span, p, h1, h2, h3, h4, h5, h6, li, button, td, th {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+a[href^="mailto:"],
+a[href^="http"],
+.dir-email,
+.info-link,
+.c-link,
+.wbs-email,
+.apply-btn,
+.footer-info-list a,
+.email-stack a,
+.footer-links a {
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  word-wrap: break-word !important;
+  hyphens: auto;
+}
+
+@media (max-width: 480px) {
+  a[href^="mailto:"],
+  .dir-email,
+  .info-link,
+  .c-link,
+  .wbs-email,
+  .apply-btn {
+    font-size: clamp(0.85rem, 3.8vw, 1.1rem) !important;
+  }
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 1.15rem;
+  }
+}
+
+/* Fullwidth Sections */
+.fullwidth-section {
+  width: 100%;
+  padding: 5rem 0;
+  border-bottom: 1px solid var(--border-light);
+  position: relative;
+  background: var(--bg-white);
+}
+
+.fullwidth-section.alt-section {
+  background-color: var(--bg-light);
+}
+
+.fullwidth-section.red-hero-section {
+  background: linear-gradient(180deg, var(--red-light) 0%, var(--bg-white) 100%);
+}
+
+/* Red Dividers */
+.red-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--red-primary) 50%, transparent 100%);
+  opacity: 0.3;
+  margin: 2rem 0;
+}
+
+.red-line-small {
+  width: 60px;
+  height: 3px;
+  background: var(--red-primary);
+  margin: 1rem 0;
+}
+
+.red-line-center {
+  margin: 1rem auto;
+}
+
+/* Red Text Utility */
+.red-text {
+  color: var(--red-primary);
+}
+
+/* High-Contrast Modern Corporate Button System (No Washed-Out White Glare) */
+.btn-red,
+.btn-more-red,
+.btn-red-simple,
+.btn-primary-clean,
+.btn-neu-red {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.85rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  border-radius: 50px;
+  border: 1px solid #b91c1c;
+  background: #dc2626;
+  color: #ffffff !important;
+  text-decoration: none;
+  box-shadow: 
+    0 4px 16px rgba(185, 28, 28, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.15);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-red:hover,
+.btn-more-red:hover,
+.btn-red-simple:hover,
+.btn-primary-clean:hover,
+.btn-neu-red:hover {
+  background: #b91c1c;
+  border-color: #991b1b;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 24px rgba(185, 28, 28, 0.52),
+    0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.btn-red:active,
+.btn-more-red:active,
+.btn-red-simple:active,
+.btn-primary-clean:active,
+.btn-neu-red:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Secondary High-Contrast Clean Button */
+.btn-secondary-clean,
+.btn-outline-simple,
+.btn-neu-light,
+.slider-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.85rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  border-radius: 50px;
+  border: 1.5px solid #94a3b8;
+  background: #ffffff;
+  color: #0f172a !important;
+  text-decoration: none;
+  box-shadow: 
+    0 4px 14px rgba(15, 23, 42, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-secondary-clean:hover,
+.btn-outline-simple:hover,
+.btn-neu-light:hover,
+.slider-btn:hover {
+  background: #f8fafc;
+  border-color: #dc2626;
+  color: #dc2626 !important;
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 20px rgba(220, 38, 38, 0.2),
+    0 2px 6px rgba(15, 23, 42, 0.08);
+}
+
+.btn-secondary-clean:active,
+.btn-outline-simple:active,
+.btn-neu-light:active,
+.slider-btn:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.btn-outline-simple:active,
+.btn-neu-light:active,
+.slider-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 2px 2px 5px rgba(0, 0, 0, 0.12),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.8);
+}
+
+.slider-btn.red-btn {
+  background: #dc2626;
+  color: #ffffff !important;
+  box-shadow: 
+    4px 4px 12px rgba(220, 38, 38, 0.35),
+    -3px -3px 8px rgba(255, 255, 255, 0.7);
+}
+.slider-btn.red-btn:hover {
+  background: #b91c1c;
+  color: #ffffff !important;
+}
+
+/* Editorial Grid */
+.editorial-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3.5rem;
+  align-items: center;
+}
+
+@media (max-width: 992px) {
+  .editorial-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .fullwidth-section {
+    padding: 3.5rem 0;
+  }
+}
+
+/* Global Subpage Hero Top Clearance for Fixed Transparent Navbar */
+.page-hero-banner {
+  padding-top: clamp(7.5rem, 12vh, 9rem) !important;
+}
+
+@media (max-width: 640px) {
+  .page-hero-banner {
+    padding-top: 6.5rem !important;
+  }
+  
+  .fullwidth-section {
+    padding: 2.75rem 0 !important;
+  }
+
+  p {
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  h1 {
+    font-size: clamp(1.85rem, 6.5vw, 2.8rem);
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 5.2vw, 2.2rem);
+  }
+
+  h3 {
+    font-size: clamp(1.25rem, 4.4vw, 1.7rem);
+  }
+
+  .btn-red,
+  .btn-more-red,
+  .btn-red-simple,
+  .btn-primary-clean,
+  .btn-neu-red,
+  .btn-secondary-clean,
+  .btn-outline-simple,
+  .btn-neu-light,
+  .slider-btn {
+    min-height: 44px;
+    padding: 0.75rem 1.4rem;
+  }
+}
+
+/* Touch & Tap Polish */
+@media (hover: none) and (pointer: coarse) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Smooth Scroll Reveal Animations */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.delay-1 { transition-delay: 0.1s; }
+.delay-2 { transition-delay: 0.2s; }
+.delay-3 { transition-delay: 0.3s; }
+.delay-4 { transition-delay: 0.4s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+
+

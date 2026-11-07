@@ -1,0 +1,376 @@
+---
+import '../styles/global.css';
+import 'lenis/dist/lenis.css';
+import TelegramChatBubble from '../components/TelegramChatBubble.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  image?: string;
+  ogType?: string;
+  articleMeta?: {
+    publishedTime?: string;
+    author?: string;
+    section?: string;
+  };
+  scholarlyMeta?: {
+    title?: string;
+    authors?: string[];
+    publicationDate?: string;
+    doi?: string;
+    journalTitle?: string;
+    issn?: string;
+    abstract?: string;
+    pdfUrl?: string;
+    references?: string[];
+  };
+  extraSchema?: Record<string, any>;
+}
+
+const {
+  title = "PT CHAIN ASIA CONECT | Official Corporate Portal",
+  description = "PT CHAIN ASIA CONECT - Officially registered legal entity (SK Kemenkumham AHU-A117353.AH.01.30, NIB 0709260109599, KBLI 62193, NPWP 10.000.000.1-094.6336). President Director: Ilham Pradani. Enterprise Supply Chain, Medical Engineering Machine & Diagnostic Software Systems Licensing across Indonesia & Asia Region.",
+  canonical = "https://www.chainasiaconnect.co.id/",
+  image = "https://www.chainasiaconnect.co.id/images/CAC-LOGO.jpg",
+  ogType = "website",
+  articleMeta,
+  scholarlyMeta,
+  extraSchema
+} = Astro.props;
+
+const isJournalContext = Boolean(
+  scholarlyMeta ||
+  canonical.includes('journal.chainasiaconnect.co.id') ||
+  Astro.url.pathname.startsWith('/journal') ||
+  title.includes('JCFAD')
+);
+
+// Gambar default untuk Google Search Snippet, Bing Rich Results, dan Social Preview
+const searchViewImage = isJournalContext 
+  ? (image && image !== "https://www.chainasiaconnect.co.id/images/CAC-LOGO.jpg" ? image : "https://journal.chainasiaconnect.co.id/images/jcfad-seal.png")
+  : image;
+
+// JSON-LD Structured Data Schema for Google indexing (Dipisahkan secara tegas antara Jurnal Ilmiah vs Portal Korporat)
+const schemaData = isJournalContext
+  ? {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Periodical",
+          "@id": "https://journal.chainasiaconnect.co.id/#periodical",
+          "name": "Journal of Coastal Frontiers & Applied Development",
+          "alternateName": "JCFAD",
+          "url": "https://journal.chainasiaconnect.co.id/",
+          "description": "Open-access, peer-reviewed scholarly journal publishing empirical research on regional economics, supply chain finance, cold-chain engineering, and commercial contract jurisprudence in Indonesia's 3T frontier regions (Krui, Pesisir Barat).",
+          "inLanguage": ["id", "en"],
+          "isAccessibleForFree": true,
+          "license": "https://creativecommons.org/licenses/by/4.0/",
+          "publishingPrinciples": "https://journal.chainasiaconnect.co.id/ethics",
+          "editor": {
+            "@type": "Person",
+            "name": "Ilham Pradani, S.H.",
+            "jobTitle": "Editor-in-Chief & Lead Investigator",
+            "identifier": "https://orcid.org/0009-0008-1310-6169",
+            "sameAs": [
+              "https://orcid.org/0009-0008-1310-6169",
+              "https://ilhampradani.me"
+            ]
+          },
+          "publisher": {
+            "@type": "Organization",
+            "@id": "https://journal.chainasiaconnect.co.id/#publisher",
+            "name": "PT CHAIN ASIA CONECT Research & Development Division",
+            "url": "https://journal.chainasiaconnect.co.id/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://journal.chainasiaconnect.co.id/images/jcfad-seal.png"
+            }
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://journal.chainasiaconnect.co.id/#website",
+          "url": "https://journal.chainasiaconnect.co.id/",
+          "name": "Journal of Coastal Frontiers & Applied Development (JCFAD)",
+          "publisher": {
+            "@id": "https://journal.chainasiaconnect.co.id/#publisher"
+          },
+          "inLanguage": "id-ID"
+        }
+      ]
+    }
+  : {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.chainasiaconnect.co.id/#organization",
+          "name": "PT CHAIN ASIA CONECT",
+          "legalName": "PT CHAIN ASIA CONECT",
+          "url": "https://www.chainasiaconnect.co.id/",
+          "logo": "https://www.chainasiaconnect.co.id/images/CAC-LOGO.jpg",
+          "description": description,
+          "foundingDate": "2026-09-01",
+          "taxID": "10.000.000.1-094.6336",
+          "identifier": "NIB: 0709260109599",
+          "sameAs": [
+            "https://ilhampradani.me"
+          ],
+          "founder": {
+            "@type": "Person",
+            "name": "Ilham Pradani",
+            "jobTitle": "President Director & Founder",
+            "url": "https://ilhampradani.me"
+          },
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "ID",
+            "addressRegion": "Indonesia & Asia Region"
+          },
+          "contactPoint": [
+            {
+              "@type": "ContactPoint",
+              "email": "ilhampradani@chainasiaconnect.co.id",
+              "contactType": "president director desk",
+              "availableLanguage": ["English", "Indonesian"]
+            },
+            {
+              "@type": "ContactPoint",
+              "email": "info@chainasiaconnect.co.id",
+              "contactType": "customer service",
+              "availableLanguage": ["English", "Indonesian"]
+            }
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.chainasiaconnect.co.id/#website",
+          "url": "https://www.chainasiaconnect.co.id/",
+          "name": "PT CHAIN ASIA CONECT",
+          "publisher": {
+            "@id": "https://www.chainasiaconnect.co.id/#organization"
+          },
+          "inLanguage": "en-US"
+        }
+      ]
+    };
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- AI Search Engines (SearchGPT, Perplexity, Gemini, Claude Context Document) -->
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="AI Machine Readable Context" />
+
+    <!-- Google Search & Browser Circular Favicons (Dynamic Context: Academic Journal SVG vs Corporate CAC) -->
+    {isJournalContext ? (
+      <>
+        <link rel="icon" type="image/svg+xml" href="/journal-favicon.svg" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/images/jcfad-seal.png" />
+        <link rel="icon" type="image/x-icon" href="/journal-favicon.svg" />
+        <link rel="apple-touch-icon" href="/images/jcfad-seal.png" />
+      </>
+    ) : (
+      <>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+      </>
+    )}
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="canonical" href={canonical} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#dc2626" />
+
+    <!-- Search Engine Directives & Indexing Meta Tags (Google, Bing, Copilot) -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="keywords" content={isJournalContext ? "Journal of Coastal Frontiers & Applied Development, JCFAD, Open Access Scholarly Journal, Empirical Research Krui Pesisir Barat, Supply Chain Finance, Cold-Chain Thermodynamics, Commercial Law KUHPerdata, Zenodo CERN DOI, Ilham Pradani, ORCID 0009-0008-1310-6169" : "PT CHAIN ASIA CONECT, Ilham Pradani, Medical Engineering Machine, Diagnostic Software Licensing, DICOM PACS Licensing, Supply Chain Indonesia, Real Business Ecosystem Asia, NIB 0709260109599, SK Kemenkumham AHU-A117353, chainasiaconnect.co.id"} />
+    <meta name="author" content={isJournalContext ? "Ilham Pradani (ORCID: 0009-0008-1310-6169)" : "Ilham Pradani - PT CHAIN ASIA CONECT"} />
+    <meta name="publisher" content={isJournalContext ? "PT CHAIN ASIA CONECT Research & Development Division (JCFAD)" : "PT CHAIN ASIA CONECT"} />
+    <meta name="copyright" content="CC BY 4.0 Open Access - PT CHAIN ASIA CONECT" />
+    <meta name="geo.region" content="ID" />
+    <meta name="geo.placename" content="Indonesia" />
+
+    <!-- Google Scholar & Academic Metadata (Highwire Press, PRISM & Dublin Core Standards) -->
+    {scholarlyMeta && (
+      <>
+        <meta name="citation_title" content={scholarlyMeta.title || title} />
+        {scholarlyMeta.authors && scholarlyMeta.authors.map(author => (
+          <>
+            <meta name="citation_author" content={author} />
+            <meta name="citation_author_institution" content="Research & Development Division, PT CHAIN ASIA CONECT" />
+            <meta name="citation_author_orcid" content="0009-0008-1310-6169" />
+            <meta name="citation_author_email" content="r-d@chainasiaconnect.co.id" />
+          </>
+        ))}
+        {scholarlyMeta.publicationDate && (
+          <>
+            <meta name="citation_publication_date" content={scholarlyMeta.publicationDate.split('T')[0].replace(/-/g, '/')} />
+            <meta name="citation_online_date" content={scholarlyMeta.publicationDate.split('T')[0].replace(/-/g, '/')} />
+          </>
+        )}
+        <meta name="citation_journal_title" content={scholarlyMeta.journalTitle || "Journal of Coastal Frontiers & Applied Development"} />
+        <meta name="citation_journal_abbrev" content="JCFAD" />
+        <meta name="citation_publisher" content="PT CHAIN ASIA CONECT Research & Development Division" />
+        <meta name="citation_volume" content="1" />
+        <meta name="citation_issue" content="1" />
+        <meta name="citation_firstpage" content="1" />
+        <meta name="citation_lastpage" content="12" />
+        {scholarlyMeta.issn && /^\d{4}-\d{3}[\dX]$/i.test(scholarlyMeta.issn) && (
+          <meta name="citation_issn" content={scholarlyMeta.issn} />
+        )}
+        {scholarlyMeta.doi && (
+          <meta name="citation_doi" content={scholarlyMeta.doi} />
+        )}
+        <meta name="citation_language" content="id" />
+        {scholarlyMeta.abstract && (
+          <meta name="citation_abstract" content={scholarlyMeta.abstract} />
+        )}
+        {scholarlyMeta.pdfUrl && (
+          <meta name="citation_pdf_url" content={scholarlyMeta.pdfUrl} />
+        )}
+        <meta name="citation_abstract_html_url" content={canonical} />
+        <meta name="citation_fulltext_html_url" content={canonical} />
+        {scholarlyMeta.references && scholarlyMeta.references.map(ref => (
+          <meta name="citation_reference" content={ref.replace(/<[^>]*>/g, '').trim()} />
+        ))}
+
+        <!-- Dublin Core Metadata for Academic Repositories, OAI-PMH & Crossref -->
+        <meta name="DC.title" content={scholarlyMeta.title || title} />
+        {scholarlyMeta.authors && scholarlyMeta.authors.map(author => (
+          <meta name="DC.creator" content={author} />
+        ))}
+        <meta name="DC.publisher" content="PT CHAIN ASIA CONECT Research & Development Division" />
+        <meta name="DC.source" content="Journal of Coastal Frontiers & Applied Development (JCFAD)" />
+        {scholarlyMeta.publicationDate && (
+          <meta name="DC.date" content={scholarlyMeta.publicationDate.split('T')[0]} />
+        )}
+        {scholarlyMeta.doi && (
+          <meta name="DC.identifier" content={`doi:${scholarlyMeta.doi}`} />
+        )}
+        <meta name="DC.type" content="Text.Serial.Journal" />
+        <meta name="DC.format" content="application/pdf" />
+        <meta name="DC.language" content="id" />
+        <meta name="DC.rights" content="https://creativecommons.org/licenses/by/4.0/" />
+      </>
+    )}
+
+    <!-- Open Graph / Facebook (Google, Bing, WhatsApp, Telegram, LinkedIn) -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={searchViewImage} />
+    <meta property="og:image:secure_url" content={searchViewImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content={isJournalContext ? "Journal of Coastal Frontiers & Applied Development (JCFAD)" : "PT CHAIN ASIA CONECT"} />
+    <meta property="og:locale" content="id_ID" />
+    {articleMeta?.publishedTime && (
+      <meta property="article:published_time" content={articleMeta.publishedTime} />
+    )}
+    {articleMeta?.author && (
+      <meta property="article:author" content={articleMeta.author} />
+    )}
+    {articleMeta?.section && (
+      <meta property="article:section" content={articleMeta.section} />
+    )}
+
+    <!-- Twitter Cards (Bing Copilot, SearchGPT, Twitter/X Rich Previews) -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonical} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={searchViewImage} />
+
+    <!-- Google Identity Services (OAuth 2.0 / SSO) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <!-- Schema.org Structured Data for Google Rich Results & AI Search Engine Graph -->
+    <script type="application/ld+json" set:html={JSON.stringify(extraSchema || schemaData)} />
+  </head>
+  <body>
+    <slot />
+    <TelegramChatBubble />
+    <script is:inline src="/js/i18n.js"></script>
+    <script is:inline src="/js/chain-auth.js"></script>
+    <script>
+      import Lenis from 'lenis';
+
+      function initLenis() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          return;
+        }
+
+        const lenis = new Lenis({
+          duration: 1.3, // Silky slow-motion inertia scroll
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          orientation: 'vertical',
+          gestureOrientation: 'vertical',
+          smoothWheel: true,
+          wheelMultiplier: 0.9,
+          touchMultiplier: 1.4,
+        });
+
+        // Expose globally so components can hook into lenis scroll events
+        (window as any).lenis = lenis;
+
+        function raf(time: number) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
+
+        requestAnimationFrame(raf);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initLenis);
+      } else {
+        initLenis();
+      }
+    </script>
+    <script is:inline>
+      function initScrollReveal() {
+        const revealElements = document.querySelectorAll('.reveal-on-scroll, section > .container');
+        if (!('IntersectionObserver' in window)) {
+          revealElements.forEach(el => el.classList.add('is-revealed'));
+          return;
+        }
+        const observer = new IntersectionObserver((entries, obs) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-revealed');
+              obs.unobserve(entry.target);
+            }
+          });
+        }, {
+          threshold: 0.08,
+          rootMargin: '0px 0px -30px 0px'
+        });
+        revealElements.forEach(el => {
+          if (!el.classList.contains('reveal-on-scroll')) {
+            el.classList.add('reveal-on-scroll');
+          }
+          observer.observe(el);
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initScrollReveal);
+      } else {
+        initScrollReveal();
+      }
+    </script>
+  </body>
+</html>
+

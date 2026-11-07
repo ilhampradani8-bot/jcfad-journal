@@ -1,0 +1,191 @@
+---
+import Layout from '../layouts/Layout.astro';
+import JournalHeader from '../components/JournalHeader.astro';
+import Footer from '../components/Footer.astro';
+
+const journalTitle = "Journal of Coastal Frontiers & Applied Development";
+const journalAbbr = "JCFAD";
+---
+
+<Layout
+  title={`Editorial Board | ${journalTitle} (${journalAbbr})`}
+  description="Official Editorial Board and Lead Investigators of the Journal of Coastal Frontiers & Applied Development (JCFAD)."
+  canonical="https://journal.chainasiaconnect.co.id/editorial-board"
+>
+  <JournalHeader />
+
+  <main class="classic-page-container">
+    <div class="container classic-page-inner">
+      <div class="page-header-box">
+        <div class="page-sup">JCFAD SCHOLARLY GOVERNANCE</div>
+        <h1 class="page-title">Editorial Board &amp; Scientific Reviewers</h1>
+        <p class="page-desc">
+          The editorial and review operations of the <em>Journal of Coastal Frontiers &amp; Applied Development</em> adhere strictly to the Committee on Publication Ethics (COPE) Code of Conduct.
+        </p>
+      </div>
+
+      <div class="editorial-board-grid">
+        <div class="editorial-card-classic">
+          <div class="editor-role-badge">Editor-in-Chief &amp; Lead Investigator</div>
+          <h2 class="editor-name">Ilham Pradani, S.H.</h2>
+          <div class="editor-affil">
+            <div><strong>Affiliation:</strong> Research &amp; Development Division, PT CHAIN ASIA CONECT</div>
+            <div><strong>Specialization:</strong> Indonesian Commercial Contract Law (KUHPerdata), Frontier Supply Chain Modeling, Maritime Regional Economics</div>
+            <div><strong>ORCID iD:</strong> <a href="https://orcid.org/0009-0008-1310-6169" target="_blank" rel="noopener noreferrer">0009-0008-1310-6169</a></div>
+            <div><strong>Correspondence:</strong> <code>r-d@chainasiaconnect.co.id</code></div>
+          </div>
+        </div>
+
+        <div class="editorial-card-classic">
+          <div class="editor-role-badge">Peer Review &amp; Methodological Oversight</div>
+          <h2 class="editor-name">JCFAD Advisory Review Panel</h2>
+          <div class="editor-affil">
+            <div><strong>Division:</strong> Scientific Working Group for Coastal &amp; Conservation Frontiers</div>
+            <div><strong>Scope of Review:</strong> Single &amp; Double-Blind Peer Review of Applied Technical Models, Sensor Log Validation, and Legal Contract Analysis</div>
+            <div><strong>Institutional Host:</strong> PT CHAIN ASIA CONECT, R&amp;D Center, Pesisir Barat (Krui) &amp; Jakarta</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="editorial-ethics-notice">
+        <h3>Editorial Integrity &amp; Transparency Statement</h3>
+        <p>
+          All manuscript submissions undergo rigorous initial plagiarism scanning and double verification of empirical field data collected across the Krui (Pesisir Barat) - TNBBS corridor. The journal operates with zero author-facing submission or article processing charges (APC Free / Diamond Open Access).
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .classic-page-container {
+    padding: 3rem 0 5rem;
+    background: #ffffff;
+    min-height: 75vh;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #111111;
+  }
+
+  .classic-page-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .page-header-box {
+    border-bottom: 2px solid #111111;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .page-sup {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #dc2626;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0 0 0.8rem;
+    color: #000000;
+  }
+
+  .page-desc {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #444444;
+    margin: 0;
+  }
+
+  .editorial-board-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .editorial-card-classic {
+    border: 1px solid #222222;
+    padding: 2rem;
+    background: #fafafa;
+    border-radius: 0 !important;
+  }
+
+  .editor-role-badge {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    background: #111111;
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .editor-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    color: #000000;
+  }
+
+  .editor-affil {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #333333;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .editor-affil a {
+    color: #000000;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  .editorial-ethics-notice {
+    border-top: 1px solid #cccccc;
+    padding-top: 2rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #555555;
+  }
+
+  .editorial-ethics-notice h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #111111;
+  }
+
+  @media (max-width: 640px) {
+    .classic-page-container {
+      padding: 1.75rem 0 3.5rem;
+    }
+    .classic-page-inner {
+      padding: 0 1rem;
+    }
+    .page-title {
+      font-size: 1.65rem;
+    }
+    .page-desc {
+      font-size: 0.95rem;
+    }
+    .editorial-card-classic {
+      padding: 1.25rem 1rem;
+    }
+    .editor-name {
+      font-size: 1.3rem;
+    }
+  }
+</style>

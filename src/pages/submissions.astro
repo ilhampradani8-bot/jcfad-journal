@@ -1,0 +1,186 @@
+---
+import Layout from '../layouts/Layout.astro';
+import JournalHeader from '../components/JournalHeader.astro';
+import Footer from '../components/Footer.astro';
+
+const journalTitle = "Journal of Coastal Frontiers & Applied Development";
+const journalAbbr = "JCFAD";
+---
+
+<Layout
+  title={`Submissions & Author Guidelines | ${journalTitle} (${journalAbbr})`}
+  description="Author guidelines, manuscript preparation instructions, and submission procedures for JCFAD."
+  canonical="https://journal.chainasiaconnect.co.id/submissions"
+>
+  <JournalHeader />
+
+  <main class="classic-page-container">
+    <div class="container classic-page-inner">
+      <div class="page-header-box">
+        <div class="page-sup">JCFAD MANUSCRIPT SUBMISSION</div>
+        <h1 class="page-title">Author Guidelines &amp; Submissions</h1>
+        <p class="page-desc">
+          <em>Journal of Coastal Frontiers &amp; Applied Development</em> welcomes empirical investigations, legal analyses, and technical models. All submissions are processed free of charge.
+        </p>
+      </div>
+
+      <div class="content-sections">
+        <section class="submission-block">
+          <h2>1. Manuscript Structure (IMRAD)</h2>
+          <p>
+            Submissions must be prepared in clear Bahasa Indonesia or English using the standard scholarly structure:
+          </p>
+          <ul class="sub-list">
+            <li><strong>Title &amp; Author Details:</strong> Concise title, author names, institutional affiliations, email addresses, and verified ORCID identifiers.</li>
+            <li><strong>Abstract:</strong> Structured abstract (150–250 words) outlining Background, Objective, Empirical Methodology, Key Findings, and Policy/Practical Implications.</li>
+            <li><strong>Introduction &amp; Literature:</strong> Theoretical foundation, problem formulation, and clearly stated research questions.</li>
+            <li><strong>Methodology:</strong> Comprehensive description of field sampling, empirical sensor logging, legal doctrinal analysis, or economic modeling.</li>
+            <li><strong>Results &amp; Discussion:</strong> Rigorous presentation of empirical data, accompanied by tables, diagrams, and contextual comparison with existing literature.</li>
+            <li><strong>Conclusion &amp; References:</strong> Clear conclusions and comprehensive reference list formatted in APA 7th style with active DOIs.</li>
+          </ul>
+        </section>
+
+        <section class="submission-block">
+          <h2>2. Submission Process</h2>
+          <p>
+            Manuscripts along with supplementary datasets and institutional cover letters should be submitted directly via email to the editorial office:
+          </p>
+          <div class="sub-contact-box">
+            <div><strong>Editorial Correspondence Desk:</strong></div>
+            <code>r-d@chainasiaconnect.co.id</code>
+            <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #555555;">
+              PT CHAIN ASIA CONECT Research &amp; Development Division<br/>
+              Krui (Pesisir Barat) &amp; Jakarta Central Desk
+            </div>
+          </div>
+        </section>
+
+        <section class="submission-block">
+          <h2>3. Zero Article Processing Charges (Diamond Open Access)</h2>
+          <p>
+            JCFAD is fully funded through institutional R&amp;D endowments. Authors are never charged submission fees, editorial processing fees, or open-access publication charges.
+          </p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .classic-page-container {
+    padding: 3rem 0 5rem;
+    background: #ffffff;
+    min-height: 75vh;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #111111;
+  }
+
+  .classic-page-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .page-header-box {
+    border-bottom: 2px solid #111111;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .page-sup {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #dc2626;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0 0 0.8rem;
+    color: #000000;
+  }
+
+  .page-desc {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #444444;
+    margin: 0;
+  }
+
+  .content-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .submission-block h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 0 0 0.8rem;
+    color: #111111;
+    border-bottom: 1px solid #eeeeee;
+    padding-bottom: 0.4rem;
+  }
+
+  .submission-block p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #333333;
+    margin: 0;
+  }
+
+  .sub-list {
+    margin: 0.8rem 0 0 1.2rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    font-size: 0.98rem;
+    line-height: 1.7;
+    color: #333333;
+  }
+
+  .sub-contact-box {
+    margin-top: 1rem;
+    border: 1px solid #222222;
+    padding: 1.5rem;
+    background: #fafafa;
+    border-radius: 0 !important;
+  }
+
+  .sub-contact-box code {
+    font-size: 1.1rem;
+    color: #000000;
+    font-weight: 700;
+  }
+
+  @media (max-width: 640px) {
+    .classic-page-container {
+      padding: 1.75rem 0 3.5rem;
+    }
+    .classic-page-inner {
+      padding: 0 1rem;
+    }
+    .page-title {
+      font-size: 1.65rem;
+    }
+    .page-desc {
+      font-size: 0.95rem;
+    }
+    .submission-block h2 {
+      font-size: 1.2rem;
+    }
+    .sub-list {
+      margin-left: 0.5rem;
+    }
+    .sub-contact-box {
+      padding: 1rem;
+    }
+  }
+</style>

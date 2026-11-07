@@ -1,0 +1,229 @@
+---
+import Layout from '../layouts/Layout.astro';
+import JournalHeader from '../components/JournalHeader.astro';
+import Footer from '../components/Footer.astro';
+
+const journalTitle = "Journal of Coastal Frontiers & Applied Development";
+const journalAbbr = "JCFAD";
+---
+
+<Layout
+  title={`Indexing & Repositories | ${journalTitle} (${journalAbbr})`}
+  description="Academic indexing, persistent identifiers (DOI), and digital repository integrations for JCFAD."
+  canonical="https://journal.chainasiaconnect.co.id/indexing"
+>
+  <JournalHeader />
+
+  <main class="classic-page-container">
+    <div class="container classic-page-inner">
+      <div class="page-header-box">
+        <div class="page-sup">JCFAD SCIENTIFIC DISSEMINATION</div>
+        <h1 class="page-title">Indexing &amp; Digital Repositories</h1>
+        <p class="page-desc">
+          Articles published in <em>Journal of Coastal Frontiers &amp; Applied Development</em> are permanently archived, assigned digital object identifiers (DOIs), and indexed across academic search engines.
+        </p>
+      </div>
+
+      <div class="index-full-list">
+        <!-- 0. Scopus Elsevier -->
+        <div class="index-row-card">
+          <div class="index-logo-wrapper">
+            <img src="/images/indexes/scopus.png" alt="Scopus" style="max-height: 42px;" />
+          </div>
+          <div class="index-details">
+            <h3>Scopus (Elsevier) Citation Standards</h3>
+            <p>
+              Publication metadata, peer-review integrity protocols, and bibliographic citations are curated to conform with Scopus Elsevier indexation benchmarks, ensuring international discoverability across global scholarly databases.
+            </p>
+          </div>
+        </div>
+
+        <!-- 1. Google Scholar -->
+        <div class="index-row-card">
+          <div class="index-logo-wrapper">
+            <img src="/images/indexes/google-scholar.webp" alt="Google Scholar" />
+          </div>
+          <div class="index-details">
+            <h3>Google Scholar</h3>
+            <p>
+              Indexed via Highwire Press citation schema and Dublin Core standard metadata tags. Articles and citation graphs are crawlable and trackable by Google Scholar bots.
+            </p>
+          </div>
+        </div>
+
+        <!-- 2. Zenodo CERN -->
+        <div class="index-row-card">
+          <div class="index-logo-wrapper">
+            <img src="/images/indexes/zenodo.png" alt="Zenodo" />
+          </div>
+          <div class="index-details">
+            <h3>Zenodo Open Science Archive (CERN)</h3>
+            <p>
+              Preprints and data records are permanently preserved in CERN's high-reliability data center under the European OpenAIRE infrastructure, receiving citable DataCite DOIs.
+            </p>
+          </div>
+        </div>
+
+        <!-- 3. ResearchGate -->
+        <div class="index-row-card">
+          <div class="index-logo-wrapper">
+            <img src="/images/indexes/researchgate.svg" alt="ResearchGate" />
+          </div>
+          <div class="index-details">
+            <h3>ResearchGate</h3>
+            <p>
+              Full-text working papers and empirical findings are linked across international researcher networks, enabling direct scientist-to-scientist correspondence and citation metrics.
+            </p>
+          </div>
+        </div>
+
+        <!-- 4. Crossref -->
+        <div class="index-row-card">
+          <div class="index-logo-wrapper">
+            <img src="/images/indexes/crossref.png" alt="Crossref" />
+          </div>
+          <div class="index-details">
+            <h3>Crossref Metadata Standards</h3>
+            <p>
+              Adheres to the official Crossref metadata schema and DOI syntax standards, ensuring interoperability across reference management tools (Zotero, Mendeley, EndNote).
+            </p>
+          </div>
+        </div>
+
+        <!-- 5. ORCID -->
+        <div class="index-row-card">
+          <div class="index-logo-wrapper">
+            <img src="/images/indexes/orcid.png" alt="ORCID" />
+          </div>
+          <div class="index-details">
+            <h3>ORCID Registry</h3>
+            <p>
+              All papers are bound to the verified Open Researcher and Contributor ID (<a href="https://orcid.org/0009-0008-1310-6169" target="_blank" rel="noopener noreferrer">ORCID: 0009-0008-1310-6169</a>), eliminating author ambiguity.
+            </p>
+          </div>
+        </div>
+
+        <!-- 6. SINTA Guidelines -->
+        <div class="index-row-card">
+          <div class="index-logo-wrapper">
+            <img src="/images/indexes/sinta.png" alt="SINTA" />
+          </div>
+          <div class="index-details">
+            <h3>SINTA &amp; National Accreditation Standards</h3>
+            <p>
+              Publication format, editorial structures, and peer review methodologies conform to Kemendikbudristek SINTA editorial standards for scientific periodicals.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .classic-page-container {
+    padding: 3rem 0 5rem;
+    background: #ffffff;
+    min-height: 75vh;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #111111;
+  }
+
+  .classic-page-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .page-header-box {
+    border-bottom: 2px solid #111111;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .page-sup {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #dc2626;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0 0 0.8rem;
+    color: #000000;
+  }
+
+  .page-desc {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #444444;
+    margin: 0;
+  }
+
+  .index-full-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .index-row-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid #222222;
+    background: #fafafa;
+    border-radius: 0 !important;
+  }
+
+  .index-logo-wrapper {
+    flex-shrink: 0;
+    width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .index-logo-wrapper img {
+    max-width: 100%;
+    max-height: 50px;
+    object-fit: contain;
+  }
+
+  .index-details h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.4rem;
+    color: #111111;
+  }
+
+  .index-details p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #444444;
+    margin: 0;
+  }
+
+  .index-details a {
+    color: #000000;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 600px) {
+    .index-row-card {
+      flex-direction: column;
+    }
+    .index-logo-wrapper {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+</style>

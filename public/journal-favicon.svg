@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Circular Base Badge -->
+  <circle cx="32" cy="32" r="30" fill="#111111" stroke="#dc2626" stroke-width="2.5"/>
+  <circle cx="32" cy="32" r="26" fill="#ffffff"/>
+  
+  <!-- Academic Shield Outline -->
+  <path d="M 22 17 L 42 17 C 42 30 38 41 32 48 C 26 41 22 30 22 17 Z" fill="#111111"/>
+  <path d="M 24 19 L 40 19 C 40 29 37 38 32 44 C 27 38 24 29 24 19 Z" fill="#ffffff"/>
+  
+  <!-- Coastal Waves / Sea Motif -->
+  <path d="M 26 28 Q 29 24 32 28 Q 35 32 38 28" fill="none" stroke="#dc2626" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M 27 33 Q 29.5 30 32 33 Q 34.5 36 37 33" fill="none" stroke="#111111" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- Open Book Symbol -->
+  <path d="M 27 39 Q 32 37 32 40 Q 32 37 37 39 L 37 39.5 Q 32 38 32 41 Q 32 38 27 39.5 Z" fill="#111111"/>
+  
+  <!-- Small Star at Top of Shield -->
+  <polygon points="32,21 33,23.5 35.5,23.5 33.5,25 34.2,27.5 32,26 29.8,27.5 30.5,25 28.5,23.5 31,23.5" fill="#dc2626"/>
+  
+  <!-- Text Label -->
+  <text x="32" y="56" font-family="Georgia, serif" font-size="7" font-weight="900" fill="#111111" text-anchor="middle" letter-spacing="0.5">JCFAD</text>
+</svg>

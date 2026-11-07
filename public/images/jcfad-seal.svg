@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
+  <!-- Outer Academic Seal Double Border -->
+  <circle cx="80" cy="80" r="76" fill="#ffffff" stroke="#111111" stroke-width="3"/>
+  <circle cx="80" cy="80" r="71" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="80" cy="80" r="67" fill="none" stroke="#111111" stroke-width="0.8" stroke-dasharray="2 2"/>
+  
+  <!-- Center Classic Academic Shield -->
+  <path d="M 56 46 L 104 46 C 104 74 96 98 80 114 C 64 98 56 74 56 46 Z" fill="#111111" stroke="#111111" stroke-width="1.5"/>
+  <path d="M 60 50 L 100 50 C 100 72 93 92 80 106 C 67 92 60 72 60 50 Z" fill="#ffffff"/>
+
+  <!-- Coastal Horizon & Waves Motif (Pesisir Barat / Krui) -->
+  <path d="M 64 68 Q 72 62 80 68 Q 88 74 96 68" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 66 76 Q 73 71 80 76 Q 87 81 94 76" fill="none" stroke="#111111" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- Academic Open Book / Quill Symbol Base -->
+  <path d="M 68 88 Q 80 84 80 89 Q 80 84 92 88 L 92 89 Q 80 86 80 91 Q 80 86 68 89 Z" fill="#111111"/>
+
+  <!-- Red Accent Star of Scholarly Rigor -->
+  <polygon points="80,54 81.8,59 87,59 82.8,62 84.5,67 80,63.5 75.5,67 77.2,62 73,59 78.2,59" fill="#dc2626"/>
+
+  <!-- Text Top & Bottom -->
+  <text x="80" y="26" font-family="Georgia, serif" font-size="10.5" font-weight="bold" fill="#111111" text-anchor="middle" letter-spacing="2">JCFAD</text>
+  <text x="80" y="38" font-family="-apple-system, sans-serif" font-size="5.5" font-weight="700" fill="#dc2626" text-anchor="middle" letter-spacing="1.2">SCHOLARLY JOURNAL</text>
+  <text x="80" y="132" font-family="Georgia, serif" font-size="6.8" font-weight="bold" fill="#111111" text-anchor="middle" letter-spacing="1">PESISIR BARAT</text>
+  <text x="80" y="142" font-family="-apple-system, sans-serif" font-size="5.5" font-weight="600" fill="#666666" text-anchor="middle" letter-spacing="0.5">EST. 2026 - OPEN ACCESS</text>
+</svg>

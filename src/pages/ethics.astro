@@ -1,0 +1,146 @@
+---
+import Layout from '../layouts/Layout.astro';
+import JournalHeader from '../components/JournalHeader.astro';
+import Footer from '../components/Footer.astro';
+
+const journalTitle = "Journal of Coastal Frontiers & Applied Development";
+const journalAbbr = "JCFAD";
+---
+
+<Layout
+  title={`Publication Ethics & COPE | ${journalTitle} (${journalAbbr})`}
+  description="Publication ethics, malpractice statements, preprint guidelines, and COPE compliance standards of JCFAD."
+  canonical="https://journal.chainasiaconnect.co.id/ethics"
+>
+  <JournalHeader />
+
+  <main class="classic-page-container">
+    <div class="container classic-page-inner">
+      <div class="page-header-box">
+        <div class="page-sup">JCFAD ETHICAL FRAMEWORK</div>
+        <h1 class="page-title">Publication Ethics &amp; Malpractice Statement</h1>
+        <p class="page-desc">
+          <em>Journal of Coastal Frontiers &amp; Applied Development</em> adheres strictly to the highest ethical and scientific publishing standards defined by the Committee on Publication Ethics (COPE).
+        </p>
+      </div>
+
+      <div class="content-sections">
+        <section class="ethics-block">
+          <h2>1. Duties of Editors</h2>
+          <p>
+            The Editor-in-Chief evaluates submitted manuscripts exclusively based on their academic merit, relevance to frontier coastal development, methodological validity, and legal rigor—without regard to authors' nationality, institutional standing, or personal background. Decisions to publish are made transparently and free from commercial pressure.
+          </p>
+        </section>
+
+        <section class="ethics-block">
+          <h2>2. Duties of Authors &amp; Originality</h2>
+          <p>
+            Authors must confirm that their work represents entirely original findings. All empirical data gathered across the Krui region must be genuine and verifiable. Plagiarism in any form—including unauthorized data reproduction or paraphrasing without citation—constitutes unacceptable scientific misconduct.
+          </p>
+        </section>
+
+        <section class="ethics-block">
+          <h2>3. Preprint &amp; Working Paper Policy (COPE Standards)</h2>
+          <p>
+            JCFAD supports early scientific communication through author preprints. Depositing a preliminary manuscript as an open-access working paper on Zenodo (CERN) or the JCFAD repository is recognized as a valid method for establishing scientific priority of discovery (<em>Prior Art</em>). In accordance with COPE guidelines, such preprint depositions do not constitute prior publication and are explicitly excluded from dual-publication similarity penalties.
+          </p>
+        </section>
+
+        <section class="ethics-block">
+          <h2>4. Data Availability &amp; Transparency</h2>
+          <p>
+            Authors are encouraged to deposit empirical field datasets, sensor telemetry logs, and contractual models alongside their manuscripts in open-access data repositories with persistent identifiers.
+          </p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .classic-page-container {
+    padding: 3rem 0 5rem;
+    background: #ffffff;
+    min-height: 75vh;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #111111;
+  }
+
+  .classic-page-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .page-header-box {
+    border-bottom: 2px solid #111111;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .page-sup {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #dc2626;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0 0 0.8rem;
+    color: #000000;
+  }
+
+  .page-desc {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #444444;
+    margin: 0;
+  }
+
+  .content-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .ethics-block h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 0 0 0.8rem;
+    color: #111111;
+    border-bottom: 1px solid #eeeeee;
+    padding-bottom: 0.4rem;
+  }
+
+  .ethics-block p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #333333;
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .classic-page-container {
+      padding: 1.75rem 0 3.5rem;
+    }
+    .classic-page-inner {
+      padding: 0 1rem;
+    }
+    .page-title {
+      font-size: 1.65rem;
+    }
+    .page-desc {
+      font-size: 0.95rem;
+    }
+    .ethics-block h2 {
+      font-size: 1.2rem;
+    }
+  }
+</style>
