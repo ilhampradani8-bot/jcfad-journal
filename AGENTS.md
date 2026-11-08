@@ -11,12 +11,13 @@ This repository (`/root/journal`) contains the complete standalone code and asse
 
 ## 📚 Book Engine Guardrails & Typography Standards (LOCKED RULES)
 1. **Zero Card / Frameless Math**: Rumus matematika DILARANG dibungkus card, box abu-abu (`#box(fill: luma(248)...)`), atau border apa pun. Wajib native block math `$ equation $` dengan spasi vertikal `#v(0.85em)`.
-2. **Booktabs Dynamic Typography**: Seluruh tabel markdown wajib dikonversi ke `#table(...)` Typst standar Booktabs (tanpa garis vertikal). Tabel dengan 5+ kolom wajib memakai font `7.5pt` dan inset `4pt` agar tidak tumpang tindih (*zero overflow*).
-3. **Zero Blank Pages (Anti Halaman Kosong)**: Dilarang menggunakan `#pagebreak(to: "odd")` ganda. Gunakan `#pagebreak()` bersih agar pembaca PDF digital tidak menemukan halaman kosong.
-4. **Running Header & Footer Wajib**: Setiap halaman (mulai halaman Romawi & Arab) wajib memiliki garis hairline tipis, nomor halaman di pojok luar (*outer margin*), dan metadata penerbit di pojok dalam.
-5. **Integritas Penutup Bab Akhir**: Bab terakhir DILARANG terpotong di tengah jalan. Wajib memuat subbab penutup tuntas, Sintesis Komprehensif, Epilog reflektif, dan Daftar Pustaka Terpilih.
-6. **Gaya Penulisan Humanis (Anti-Robotik)**: Hindari pola template AI berulang (`1. **X** – Y`). Tulisan wajib mengalir dengan panjang paragraf asimetris, kaya transisi alami, analogi membumi, dan gaya skeptis-kritis khas pengguna.
-7. **Automated PDF Review Engine**: Kompilasi buku wajib melewati modul audit `review_book_pdf` dan lulus dengan skor minimal 95%.
+2. **Inline Math Zero-Space Rule**: Rumus inline Typst WAJIB rapat tanpa spasi di tepi dalam (`$expr$`, BUKAN `$ expr $`). Spasi di tepi dalam tanda `$` mengubah rumus menjadi display math dan memutus baris paragraf (memicu kurung gantung / *orphan parentheses*). Koma desimal LaTeX `{,}` dinormalisasi menjadi `0.71`.
+3. **Booktabs Dynamic Typography**: Seluruh tabel markdown wajib dikonversi ke `#table(...)` Typst standar Booktabs (tanpa garis vertikal). Tabel dengan 5+ kolom wajib memakai font `7.5pt` dan inset `4pt` agar tidak tumpang tindih (*zero overflow*).
+4. **Zero Blank Pages (Anti Halaman Kosong)**: Dilarang menggunakan `#pagebreak(to: "odd")` ganda. Gunakan `#pagebreak()` bersih agar pembaca PDF digital tidak menemukan halaman kosong.
+5. **Running Header & Footer Wajib**: Setiap halaman (mulai halaman Romawi & Arab) wajib memiliki garis hairline tipis, nomor halaman di pojok luar (*outer margin*), dan metadata penerbit di pojok dalam.
+6. **Integritas Penutup Bab Akhir**: Bab terakhir DILARANG terpotong di tengah jalan. Wajib memuat subbab penutup tuntas, Sintesis Komprehensif, Epilog reflektif, dan Daftar Pustaka Terpilih.
+7. **Gaya Penulisan Humanis (Anti-Robotik)**: Hindari pola template AI berulang (`1. **X** – Y`). Tulisan wajib mengalir dengan panjang paragraf asimetris, kaya transisi alami, analogi membumi, dan gaya skeptis-kritis khas pengguna (Target Burstiness Index >= 0.65; buku ini terverifikasi 0.74).
+8. **Automated Geometric PDF Review Engine**: Kompilasi buku wajib melewati modul audit `review_book_pdf` (menggunakan PyMuPDF inspection untuk zero orphan parens & zero malformed decimals) dan harus lulus 100%. Score Turnitin & AI Stilometrika hanya ditampilkan di website (`/book`), bukan di dalam isi berkas PDF buku cetak.
 
 ## 🛠 Commands
 - `npm run dev`: Start local Astro dev server
