@@ -1609,7 +1609,7 @@ async function sendTelegramFailureNotification(errorMsg, liveMsgId) {
 
 ⏰ <b>Waktu:</b> ${nowWib} WIB
 ━━━━━━━━━━━━━━━━━━━━━━
-<i>Silakan periksa log server di /root/chainasiaweb/logs/auto-article.log</i>`;
+<i>Silakan periksa log server di /root/journal/logs/auto-article.log</i>`;
 
     if (liveMsgId) {
       await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageText`, {
