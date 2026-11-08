@@ -6,74 +6,80 @@
 
 ---
 
-## 📌 Ringkasan Sesi & Pencapaian Utama
+## 📌 Ringkasan Status & Pencapaian Terkini
 
-Pada sesi ini telah berhasil dibangun dan diuji sistem generator buku akademik & non-fiksi profesional yang **terpisah 100%** dari mesin artikel jurnal harian.
+Pada repositori ini telah berhasil dibangun, diuji, dan dideploy mesin pembuat buku ilmiah monograf (*Scholarly Monograph Generator*) berstandar penerbitan cetak ISO-B5 internasional yang **terpisah 100%** dari mesin artikel jurnal harian.
 
-1. **Skrip Eksekusi Mandiri**: 
-   - Generator Utama: [`/root/journal/scripts/generate-book.mjs`](file:///root/journal/scripts/generate-book.mjs)
-   - Kompiler Typst Khusus: [`/root/journal/scripts/compile-book-typst.py`](file:///root/journal/scripts/compile-book-typst.py)
-2. **Arsitektur Tanpa Gangguan**: Tidak menyentuh database D1, cron job harian (`/etc/cron.d/chainasia-auto-article`), atau portal artikel JCFAD.
-3. **100% Versi Revisi Tripartit**: Tiap bab melewati siklus `Draf Awal (gpt-oss-20b)` $\rightarrow$ `Audit Reviewer Kritis (qwen3.8-27b)` $\rightarrow$ `Full Revision Pass (gpt-oss-120b / fallback 20b)` sebelum disimpan permanen ke disk.
-4. **Standar Cetak Percetakan (Print-Ready)**:
-   - Layout Typst format **ISO-B5 (176 × 250 mm)** atau **ISO-A5**.
-   - Gutter margin sisi dalam 2,5 cm (aman untuk jilid lem panas / *perfect binding*).
-   - Penomoran romawi (`i, ii, iii`) untuk prakata dan angka biasa (`1, 2, 3...`) untuk isi buku.
-   - Daftar isi otomatis (*Table of Contents*) presisi dengan titik-titik.
-   - Halaman judul, hak cipta (tercantum ORCID: `0009-0008-1310-6169`), dan running header dua sisi (genap: judul buku, ganjil: nama penulis).
-   - Aturan *Recto*: Setiap bab baru selalu dimulai di halaman ganjil (sebelah kanan).
-5. **Hasil Nyata yang Telah Selesai Dikompilasi**:
-   - **Buku 1 (Empati Sintetis - 10 Bab Lengkap)**:
-     - Judul: *Empati Sintetis: Psikologi Bahasa AI, Jerat Manipulasi Kognitif, dan Kedaulatan Hukum Individu*
-     - Total: **62 Halaman Buku Cetak ISO-B5** (~15.000 kata naskah revisi berbobot).
-     - Berkas PDF: [`/root/journal/books/output/empati-sintetis-buku-cetak-print-ready.pdf`](file:///root/journal/books/output/empati-sintetis-buku-cetak-print-ready.pdf)
-     - Direktori Cache Naskah: [`/root/journal/books/cache/empati-sintetis-buku-cetak/`](file:///root/journal/books/cache/empati-sintetis-buku-cetak/)
-   - **Buku Uji Coba Awal (Rantai Dingin 3T - 2 Bab)**:
-     - Total: **19 Halaman Buku Cetak ISO-B5** di `books/output/buku-panduan-tata-kelola-digital-rantai-dingin-3t-print-ready.pdf`.
+### 🏆 Buku 1 yang Telah Selesai & Terbit Publik:
+- **Judul**: *Empati Sintetis: Psikologi Bahasa AI, Jerat Manipulasi Kognitif, dan Kedaulatan Hukum Individu*
+- **Penulis**: Ilham Pradani (ORCID: `0009-0008-1310-6169`)
+- **Format**: Monograf Ilmiah Penuh (10 Bab Lengkap + Sintesis Komprehensif + Epilog + Daftar Pustaka Terpilih).
+- **Ketebalan**: **64 Halaman Bersih ISO-B5** (Padat, 0 Halaman Kosong).
+- **Tabel & Rumus**: 43 Tabel Data (*Booktabs Three-Line Rules*) & 24 Display Math Bersih (*Frameless*).
+- **Skor Audit Mutu**: **100.0% (LULUS SEMPURNA / SIAP TERBIT & CETAK)**.
+- **URL Publik & PDF Reader**: [`https://journal.chainasiaconnect.co.id/book`](https://journal.chainasiaconnect.co.id/book)
+- **Unduh PDF Langsung**: [`https://journal.chainasiaconnect.co.id/books/empati-sintetis.pdf`](https://journal.chainasiaconnect.co.id/books/empati-sintetis.pdf)
+- **Lokasi Berkas Lokal**:
+  - Berkas Typst Master: `/root/journal/books/cache/empati-sintetis-buku-cetak/book_master.typ`
+  - PDF Cetak: `/root/journal/books/output/empati-sintetis-buku-cetak-print-ready.pdf`
+  - Berkas Draf Tiap Bab: `/root/journal/books/cache/empati-sintetis-buku-cetak/chapter-01-final.json` s/d `chapter-10-final.json`
 
 ---
 
-## 🌐 Sumber API Buku Gratis (Telah Diverifikasi)
+## 🛑 STANDAR EMAS & ATURAN MUTLAK (LOCKED GUARDRAILS)
 
-Mesin telah disiapkan untuk menarik referensi buku pembanding guna mencari celah pasar (*novelty gap*):
-* **Crossref Monographs API**: Buku & monograf ilmiah penerbit dunia (Springer, CRC Press, Routledge 2024–2026).
-* **Open Library API (Internet Archive)**: Jutaan buku dunia & buku teks nasional Indonesia (Pusat Perbukuan, Balai Pustaka).
-* **OpenAlex Books API**: Buku akademik global beserta metrik sitasi internasional (`OPENALEX_API_KEY`).
+Setiap sesi AI baru **WAJIB** mematuhi 7 prinsip desain percetakan berikut tanpa terkecuali:
+
+1. **Zero Card / Frameless Math (Dilarang Pakai Card Abu-Abu)**:
+   - Rumus matematika **DILARANG KERAS** dibungkus card, box abu-abu (`#box(fill: luma(248)...)`), atau border apa pun karena berkesan seperti template AI murahan.
+   - Wajib menggunakan *native Typst block math*:
+     ```typst
+     #v(0.85em)
+     $ "Sim"(s_1, s_2) = (bold(e)_(s_1) dot bold(e)_(s_2)) / (norm(bold(e)_(s_1)) norm(bold(e)_(s_2))) $
+     #v(0.85em)
+     ```
+2. **Booktabs Dynamic Typography (Anti-Tumpang Tindih Tabel)**:
+   - Seluruh tabel markdown wajib dikonversi ke `#table(...)` Typst standar Booktabs (tanpa garis vertikal).
+   - Untuk tabel dengan **5 atau 6 kolom**, ukuran font **WAJIB otomatis turun ke 7.5pt** dengan `inset: (x: 4pt, y: 4.5pt)` dan `leading: 0.4em` agar teks panjang tidak saling tumpang tindih (*zero text overflow*).
+   - Tabel 4 kolom memakai font 8pt; tabel 2-3 kolom memakai 8.5pt.
+3. **Zero Blank Pages (Anti Halaman Kosong)**:
+   - Dilarang keras menggunakan `#pagebreak(to: "odd")` ganda di dalam naskah.
+   - Wajib menggunakan `#pagebreak()` bersih agar pembaca digital tidak menemukan halaman kosong yang membingungkan.
+4. **Running Header & Footer Wajib Ada di Setiap Halaman**:
+   - Mulai halaman Romawi (Prakata) hingga akhir buku:
+     - **Header**: Garis hairline `0.35pt`, Halaman Genap menampilkan Judul Monograf, Halaman Ganjil menampilkan Nama Penulis (*Ilham Pradani*).
+     - **Footer**: Garis hairline tipis `0.25pt`, **nomor halaman tebal di margin luar**, dan metadata penerbit (*PT CHAIN ASIA CONECT — Scholarly Series*) di margin dalam.
+5. **Integritas Bab Akhir (Anti-Terpotong)**:
+   - Bab terakhir (Bab 10) **DILARANG terpotong di tengah jalan**.
+   - Wajib memuat subbab penutup tuntas, Sintesis Komprehensif, Epilog reflektif (*Menjaga Jiwa di Hadapan Mesin yang Berpura-pura Peduli*), dan Daftar Pustaka Terpilih.
+6. **Integritas Edisi Ilmiah & Gaya Humanis**:
+   - Buku ini adalah **Edisi Monograf Ilmiah Murni** (*Scholarly Monograph*): rumus, tabel data, fMRI, nilai p-value, dan rujukan hukum TETAP UTUH dan tidak boleh disederhanakan menjadi fiksi picisan.
+   - Hindari pola template AI berulang (`1. **X** – Y`). Tulisan wajib mengalir dengan panjang paragraf asimetris, kaya transisi alami, analogi membumi, dan gaya skeptis-kritis khas pengguna.
+7. **Automated PDF Review Engine**:
+   - Setiap kompilasi PDF wajib diverifikasi otomatis oleh modul `review_book_pdf` di skrip kompilasi dan harus lulus dengan skor minimal 95% (saat ini 100% Lulus Sempurna).
 
 ---
 
-## 💡 3 Konsep Buku Berdampak Tinggi (Siap Dieksekusi di Sesi Baru)
+## 🛠️ Panduan Perintah Cepat untuk Sesi Baru
 
-Tiga konsep buku lintas disiplin yang memadukan **Isu Internasional** dengan **Dimensi Personal (Hukum + Psikologi + Bahasa/Linguistik + AI)**:
-
-### 1. Empati Sintetis (Synthetic Empathy) — *Paling Direkomendasikan*
-* **Tema**: Analisis linguistik terhadap bahasa persuasif chatbot AI yang memanipulasi psikologi kognitif manusia, serta batas pertanggungjawaban hukum perdata/pidana (*cognitive liberty & consent*).
-* **Judul**: *Synthetic Empathy: The Psychology of Language, Algorithmic Deception, and the Law of Cognitive Liberty*
-* **Judul Indo**: *Empati Sintetis: Psikologi Bahasa AI, Jerat Manipulasi Kognitif, dan Kedaulatan Hukum Individu*
-
-### 2. Hak untuk Sunyi (The Right to Disconnect)
-* **Tema**: Psikologi kelelahan mental (*burnout*) di era kerja jarak jauh global, linguistik tekanan dalam komunikasi korporat digital, dan pengakuan yuridis hak asasi untuk tidak dapat dihubungi.
-* **Judul**: *The Architecture of Digital Solitude: Mental Sovereignty, Workplace Linguistics, and the Right to Disconnect*
-
-### 3. Linguistik Forensik & Pembuktian Niat
-* **Tema**: Membedakan tulisan manusia vs teks sintetis AI dalam pembuktian hukum pengadilan, profiling psikologis, dan steganografi gaya bahasa (*stylometry*).
-* **Judul**: *Words on Trial: Forensic Linguistics, Cognitive Profiling, and Evidence in the Algorithmic Age*
-
----
-
-## 🚀 Perintah Cepat untuk Sesi Baru
-
-Buka sesi baru, lalu cukup berikan instruksi kepada asisten:
+Bila membuka sesi baru, gunakan perintah-perintah berikut:
 
 ```bash
-# Perintah mengeksekusi pembuatan buku di sesi baru:
-node /root/journal/scripts/generate-book.mjs \
-  --title="Empati Sintetis: Psikologi Bahasa AI, Jerat Manipulasi Kognitif, dan Kedaulatan Hukum Individu" \
-  --subtitle="Kajian Lintas Disiplin Linguistik Komputasional, Bias Psikologis, dan Kedaulatan Mental" \
-  --chapters=10 \
-  --author="Ilham Pradani" \
-  --size="iso-b5"
+# 1. Mengompilasi ulang buku dari cache JSON ke PDF berstandar cetak:
+python3 /root/journal/scripts/compile-book-typst.py empati-sintetis-buku-cetak
+
+# 2. Build ulang website Astro:
+npm run build
+
+# 3. Deploy langsung ke Cloudflare Pages (menggunakan kredensial global):
+npx wrangler pages deploy dist --project-name=jcfad-journal --branch=main
+
+# 4. Sinkronisasi Git ganda (GitHub + VPS):
+autopush "pesan commit"
 ```
 
-Dokumen PDF buku utuh siap cetak puluhan bab akan langsung tercipta di `/root/journal/books/output/`.
+---
 
+## 💡 Konsep Buku Berikutnya yang Tersedia di Antrean
+1. **Buku 2**: *Hak untuk Sunyi (The Right to Disconnect)* — Psikologi kelelahan mental, linguistik tekanan korporat, dan kedaulatan waktu kerja digital.
+2. **Buku 3**: *Linguistik Forensik & Pembuktian Niat* — Membedakan teks manusia vs AI di peradilan pidana/perdata dan steganografi gaya bahasa (*stylometry*).
