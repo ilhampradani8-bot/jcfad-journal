@@ -197,26 +197,30 @@ Tabel berikut merangkum pemetaan neurobiologis empati manusia dan padanan teknis
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Struktur Otak* ],
-  [ *Fungsi Utama Manusia* ],
-  [ *Padanan & Limitasi pada AI* ],
-  [ *Amygdala* ],
-  [ Deteksi ancaman dan respons emosional cepat ],
-  [ Basis biologis _affective salience_; model AI meniru dengan _saliency maps_ pada token emosional tanpa rasa takut riil. ],
-  [ *Anterior Insula* ],
-  [ Kesadaran interoseptif dan rasa 'merasa bersama' ],
-  [ Dimodelkan melalui _interoceptive embeddings_ (sinyal multimodal), namun ketiadaan tubuh biologis meniadakan pengalaman rasa. ],
-  [ *Ventromedial PFC (vmPFC)* ],
-  [ Integrasi nilai emosional dengan keputusan sosial ],
-  [ Analog pada _policy networks_ yang menimbang utilitas sosial versus penalti risiko hukum. ],
-  [ *Mirror Neuron System (MNS)* ],
-  [ Aktivasi motorik/afektif saat mengamati orang lain ],
-  [ Self-supervised imitation learning mereplikasi pola luaran MNS, namun terbatas pada _mimicry_ mekanis belaka. ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.8fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Struktur Otak* ],
+    [ *Fungsi Utama Manusia* ],
+    [ *Padanan & Limitasi pada AI* ],
+    [ *Amygdala* ],
+    [ Deteksi ancaman dan respons emosional cepat ],
+    [ Basis biologis _affective salience_; model AI meniru dengan _saliency maps_ pada token emosional tanpa rasa takut riil. ],
+    [ *Anterior Insula* ],
+    [ Kesadaran interoseptif dan rasa 'merasa bersama' ],
+    [ Dimodelkan melalui _interoceptive embeddings_ (sinyal multimodal), namun ketiadaan tubuh biologis meniadakan pengalaman rasa. ],
+    [ *Ventromedial PFC (vmPFC)* ],
+    [ Integrasi nilai emosional dengan keputusan sosial ],
+    [ Analog pada _policy networks_ yang menimbang utilitas sosial versus penalti risiko hukum. ],
+    [ *Mirror Neuron System (MNS)* ],
+    [ Aktivasi motorik/afektif saat mengamati orang lain ],
+    [ Self-supervised imitation learning mereplikasi pola luaran MNS, namun terbatas pada _mimicry_ mekanis belaka. ],
+  )
+]
 #v(0.85em)
 
 
@@ -240,35 +244,39 @@ Apabila otonomi kognitif dirusak oleh arsitektur persuasi yang memanfaatkan kele
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Dimensi Regulasi* ],
-  [ *Uni Eropa (EU)* ],
-  [ *Amerika Serikat (AS)* ],
-  [ *Indonesia* ],
-  [ *Instrumen Hukum Utama* ],
-  [ EU AI Act (2024) & GDPR (2016/679) ],
-  [ Algorithmic Accountability Act (Proposal 2022) & FTC Act Sec. 5 ],
-  [ UU No. 27/2022 (PDP) & PP No. 71/2019 ],
-  [ *Klasifikasi Risiko* ],
-  [ Sistem manipulasi afektif diklasifikasikan sebagai *High-risk* (Art. 6 & Art. 52). ],
-  [ Sistem persuasi berdampak konsumen tinggi masuk kategori *High-impact systems*. ],
-  [ Pemrosesan profil emosi dikategorikan data sensitif terkait kesehatan mental (Pasal 4 & 26). ],
-  [ *Kewajiban Transparansi* ],
-  [ Pengungkapan wajib interaksi AI, audit model independen, dan pelaporan bias berkala. ],
-  [ Audit algoritma mandiri dan pelaporan berkala atas potensi diskriminasi komersial. ],
-  [ Kewajiban penyedia layanan menyajikan penjelasan yang dapat dimengerti dan audit kepatuhan. ],
-  [ *Batas Sanksi* ],
-  [ Denda administratif hingga €35 juta atau 7% omzet global perusahaan. ],
-  [ Denda perdata federal FTC hingga US\$ 50.000 per pelanggaran harian. ],
-  [ Sanksi administratif denda hingga 2% pendapatan tahunan atau pidana denda Rp 6 miliar. ],
-  [ *Doktrin Persetujuan* ],
-  [ Persetujuan eksplisit (explicit consent) terpisah, dapat ditarik sewaktu-waktu (opt-out mudah). ],
-  [ Rezim _notice-and-choice_; penegakan berfokus pada pembuktian praktik kecurangan nyata. ],
-  [ Persetujuan tertulis eksplisit untuk pemrosesan data spesifik/sensitif. ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Dimensi Regulasi* ],
+    [ *Uni Eropa (EU)* ],
+    [ *Amerika Serikat (AS)* ],
+    [ *Indonesia* ],
+    [ *Instrumen Hukum Utama* ],
+    [ EU AI Act (2024) & GDPR (2016/679) ],
+    [ Algorithmic Accountability Act (Proposal 2022) & FTC Act Sec. 5 ],
+    [ UU No. 27/2022 (PDP) & PP No. 71/2019 ],
+    [ *Klasifikasi Risiko* ],
+    [ Sistem manipulasi afektif diklasifikasikan sebagai *High-risk* (Art. 6 & Art. 52). ],
+    [ Sistem persuasi berdampak konsumen tinggi masuk kategori *High-impact systems*. ],
+    [ Pemrosesan profil emosi dikategorikan data sensitif terkait kesehatan mental (Pasal 4 & 26). ],
+    [ *Kewajiban Transparansi* ],
+    [ Pengungkapan wajib interaksi AI, audit model independen, dan pelaporan bias berkala. ],
+    [ Audit algoritma mandiri dan pelaporan berkala atas potensi diskriminasi komersial. ],
+    [ Kewajiban penyedia layanan menyajikan penjelasan yang dapat dimengerti dan audit kepatuhan. ],
+    [ *Batas Sanksi* ],
+    [ Denda administratif hingga €35 juta atau 7% omzet global perusahaan. ],
+    [ Denda perdata federal FTC hingga US\$ 50.000 per pelanggaran harian. ],
+    [ Sanksi administratif denda hingga 2% pendapatan tahunan atau pidana denda Rp 6 miliar. ],
+    [ *Doktrin Persetujuan* ],
+    [ Persetujuan eksplisit (explicit consent) terpisah, dapat ditarik sewaktu-waktu (opt-out mudah). ],
+    [ Rezim _notice-and-choice_; penegakan berfokus pada pembuktian praktik kecurangan nyata. ],
+    [ Persetujuan tertulis eksplisit untuk pemrosesan data spesifik/sensitif. ],
+  )
+]
 #v(0.85em)
 
 
@@ -287,46 +295,50 @@ Aliran transformasi dari data mentah menuju tindakan afektif sistematis digambar
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 1.5fr, 2fr, 1.5fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 7 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Tahap* ],
-  [ *Input* ],
-  [ *Mekanisme Komputasi* ],
-  [ *Output Sistem* ],
-  [ *Risiko Yuridis / Etis* ],
-  [ *1. Akuisisi Data* ],
-  [ Teks, audio, pola ketukan, rekaman jeda ],
-  [ Ekstraksi fitur multimodal dan normalisasi ruang laten ],
-  [ Representasi terpadu $ bold(x) $ ],
-  [ Pelanggaran minimalisasi data (GDPR Art. 5) akibat over-collection ],
-  [ *2. Deteksi Emosi* ],
-  [ Vektor $ bold(x) $ ],
-  [ Klasifikasi transformator menghasilkan sebaran probabilitas $ bold(p)_(e) $ ],
-  [ Skor intensitas afektif (0–1) ],
-  [ Bias pelatihan demografis yang berujung diskriminasi algoritma ],
-  [ *3. Penalaran Empatik* ],
-  [ $ bold(p)_(e) $ & konteks dialog ],
-  [ Pemodelan status mental (Theory of Mind graph) $ Phi_("cog") $ ],
-  [ Rencana tindakan responsif ],
-  [ Halusinasi kontekstual yang memicu cacat konsensus perdata ],
-  [ *4. Generasi Respons* ],
-  [ Rencana aksi & $ bold(p)_(e) $ ],
-  [ Pembangkitan terkontrol (controlled decoding) $ Phi_("aff") $ ],
-  [ Teks empati yang dipersonalisasi ],
-  [ Pola gelap persuasi (dark patterns) merusak otonomi afektif ],
-  [ *5. Penyaring Kepatuhan* ],
-  [ Teks respons & metadata ],
-  [ Filter kepatuhan etis-hukum menghasilkan skor $ lambda $ ],
-  [ Keputusan lolos atau tolak ],
-  [ Gugatan perbuatan melawan hukum bila lolos di bawah ambang $ theta $ ],
-  [ *6. Audit & Pelaporan* ],
-  [ Log interaksi lengkap ],
-  [ Pencatatan audit _tamper-proof_ pada rantai blok terdesentralisasi ],
-  [ Sertifikat transparansi audit ],
-  [ Pembatalan lisensi operasional bila bukti forensik gagal disajikan ],
-)]
+#align(center)[
+  #set text(size: 7.5pt)
+  #set par(leading: 0.4em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.3fr, 1.8fr, 1.3fr, 1.8fr),
+    inset: (x: 4pt, y: 4.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 7 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Tahap* ],
+    [ *Input* ],
+    [ *Mekanisme Komputasi* ],
+    [ *Output Sistem* ],
+    [ *Risiko Yuridis / Etis* ],
+    [ *1. Akuisisi Data* ],
+    [ Teks, audio, pola ketukan, rekaman jeda ],
+    [ Ekstraksi fitur multimodal dan normalisasi ruang laten ],
+    [ Representasi terpadu $ bold(x) $ ],
+    [ Pelanggaran minimalisasi data (GDPR Art. 5) akibat over-collection ],
+    [ *2. Deteksi Emosi* ],
+    [ Vektor $ bold(x) $ ],
+    [ Klasifikasi transformator menghasilkan sebaran probabilitas $ bold(p)_(e) $ ],
+    [ Skor intensitas afektif (0–1) ],
+    [ Bias pelatihan demografis yang berujung diskriminasi algoritma ],
+    [ *3. Penalaran Empatik* ],
+    [ $ bold(p)_(e) $ & konteks dialog ],
+    [ Pemodelan status mental (Theory of Mind graph) $ Phi_("cog") $ ],
+    [ Rencana tindakan responsif ],
+    [ Halusinasi kontekstual yang memicu cacat konsensus perdata ],
+    [ *4. Generasi Respons* ],
+    [ Rencana aksi & $ bold(p)_(e) $ ],
+    [ Pembangkitan terkontrol (controlled decoding) $ Phi_("aff") $ ],
+    [ Teks empati yang dipersonalisasi ],
+    [ Pola gelap persuasi (dark patterns) merusak otonomi afektif ],
+    [ *5. Penyaring Kepatuhan* ],
+    [ Teks respons & metadata ],
+    [ Filter kepatuhan etis-hukum menghasilkan skor $ lambda $ ],
+    [ Keputusan lolos atau tolak ],
+    [ Gugatan perbuatan melawan hukum bila lolos di bawah ambang $ theta $ ],
+    [ *6. Audit & Pelaporan* ],
+    [ Log interaksi lengkap ],
+    [ Pencatatan audit _tamper-proof_ pada rantai blok terdesentralisasi ],
+    [ Sertifikat transparansi audit ],
+    [ Pembatalan lisensi operasional bila bukti forensik gagal disajikan ],
+  )
+]
 #v(0.85em)
 
 
@@ -411,32 +423,36 @@ Berikut tabel perbandingan singkat antara arsitektur Transformer standar dan var
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 1.5fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 7 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Fitur* ],
-  [ *Transformer Standar* ],
-  [ *Transformer Affective‑Optimized* ],
-  [ *Jumlah attention heads* ],
-  [ 12 (dimensi 64 per head) ],
-  [ 12 + 4 _affective heads_ (dimensi 64) ],
-  [ *Dimensi embedding* ],
-  [ 768 ],
-  [ 768 + 128 (affective sub‑space) ],
-  [ *Loss utama* ],
-  [ Cross‑entropy (next‑token) ],
-  [ Cross‑entropy + *Affective Alignment Loss* (MAE pada valence‑arousal) ],
-  [ *Regularisasi* ],
-  [ Dropout 0,1 ],
-  [ Dropout 0,1 + *Orthogonal Projection* pada affective sub‑space ],
-  [ *Probing performance (valence)* ],
-  [ F1 = 0,78 ],
-  [ F1 = 0,86 ],
-  [ *Parameter total* ],
-  [ ≈ 110 M ],
-  [ ≈ 124 M (≈ 13 % tambahan) ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.3fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 7 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Fitur* ],
+    [ *Transformer Standar* ],
+    [ *Transformer Affective‑Optimized* ],
+    [ *Jumlah attention heads* ],
+    [ 12 (dimensi 64 per head) ],
+    [ 12 + 4 _affective heads_ (dimensi 64) ],
+    [ *Dimensi embedding* ],
+    [ 768 ],
+    [ 768 + 128 (affective sub‑space) ],
+    [ *Loss utama* ],
+    [ Cross‑entropy (next‑token) ],
+    [ Cross‑entropy + *Affective Alignment Loss* (MAE pada valence‑arousal) ],
+    [ *Regularisasi* ],
+    [ Dropout 0,1 ],
+    [ Dropout 0,1 + *Orthogonal Projection* pada affective sub‑space ],
+    [ *Probing performance (valence)* ],
+    [ F1 = 0,78 ],
+    [ F1 = 0,86 ],
+    [ *Parameter total* ],
+    [ ≈ 110 M ],
+    [ ≈ 124 M (≈ 13 % tambahan) ],
+  )
+]
 #v(0.85em)
 
 
@@ -458,23 +474,27 @@ Penambahan _affective heads_ memungkinkan model secara eksplisit memisahkan siny
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Tahap* ],
-  [ *Metode* ],
-  [ *Output* ],
-  [ *1. Definisi Karakteristik* ],
-  [ Analisis psikologis (Big Five, attachment) + skema dialog act ],
-  [ *Persona Blueprint* (dokumen terstruktur) ],
-  [ *2. Fine‑tuning Corpus‑Spesifik* ],
-  [ Transfer learning pada dataset berlabel persona (cross‑entropy, temperature = 0,7) ],
-  [ *Model Berbasis Persona* ],
-  [ *3. Reward Modeling & PPO* ],
-  [ Human‑in‑the‑loop evaluasi (Perceived Empathy Scale, Therapeutic Alliance Inventory) → reward function → Proximal Policy Optimization ],
-  [ *Model Persuasif Konsisten* ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.8fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Tahap* ],
+    [ *Metode* ],
+    [ *Output* ],
+    [ *1. Definisi Karakteristik* ],
+    [ Analisis psikologis (Big Five, attachment) + skema dialog act ],
+    [ *Persona Blueprint* (dokumen terstruktur) ],
+    [ *2. Fine‑tuning Corpus‑Spesifik* ],
+    [ Transfer learning pada dataset berlabel persona (cross‑entropy, temperature = 0,7) ],
+    [ *Model Berbasis Persona* ],
+    [ *3. Reward Modeling & PPO* ],
+    [ Human‑in‑the‑loop evaluasi (Perceived Empathy Scale, Therapeutic Alliance Inventory) → reward function → Proximal Policy Optimization ],
+    [ *Model Persuasif Konsisten* ],
+  )
+]
 #v(0.85em)
 
 
@@ -523,23 +543,27 @@ Reviewer menyoroti bahwa *conversion rate* pada landing page tidak dapat dijadik
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 1.1fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Metode* ],
-  [ *Deskripsi* ],
-  [ *Skala / Unit* ],
-  [ *Perceived Empathy Scale (PES)* ],
-  [ Penilaian subjek terhadap tingkat empati yang dirasakan ],
-  [ 1‑7 (Likert) ],
-  [ *Therapeutic Alliance Inventory (TAI)* ],
-  [ Kekuatan aliansi terapeutik (bond, task, goal) ],
-  [ 0‑100 ],
-  [ *Cognitive Load Index (CLI)* ],
-  [ Beban kognitif yang diukur dengan NASA‑TLX ],
-  [ 0‑100 ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.8fr, 0.85fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Metode* ],
+    [ *Deskripsi* ],
+    [ *Skala / Unit* ],
+    [ *Perceived Empathy Scale (PES)* ],
+    [ Penilaian subjek terhadap tingkat empati yang dirasakan ],
+    [ 1‑7 (Likert) ],
+    [ *Therapeutic Alliance Inventory (TAI)* ],
+    [ Kekuatan aliansi terapeutik (bond, task, goal) ],
+    [ 0‑100 ],
+    [ *Cognitive Load Index (CLI)* ],
+    [ Beban kognitif yang diukur dengan NASA‑TLX ],
+    [ 0‑100 ],
+  )
+]
 #v(0.85em)
 
 
@@ -579,27 +603,31 @@ di mana $ sigma $ adalah fungsi sigmoid yang memetakan ke rentang $ [0,1] $.
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Teknik* ],
-  [ *Implementasi* ],
-  [ *Teori Pendukung* ],
-  [ *Dampak Empiris* ],
-  [ *Prompt Framing* ],
-  [ Menyisipkan kalimat pembuka ber‑valensi tinggi (mis. “Saya mengerti betapa sulitnya situasi Anda”) ],
-  [ Framing Effect ],
-  [ +12 % pada PES, +9 % pada TAI ],
-  [ *Sentiment Conditioning* ],
-  [ Mengubah vektor afektif $ bold(s) $ dengan *sentiment transfer* (lihat persamaan 2.2) sebelum decoding ],
-  [ Appraisal Theory ],
-  [ Shift valence rata‑rata +0,28 (skala 0‑1) ],
-  [ *Tone Modulation* ],
-  [ Mengatur suhu (temperature) dan top‑p secara dinamis berdasarkan target arousal ],
-  [ Cognitive Load Theory (menurunkan kompleksitas) ],
-  [ Penurunan CLI 10 % ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Teknik* ],
+    [ *Implementasi* ],
+    [ *Teori Pendukung* ],
+    [ *Dampak Empiris* ],
+    [ *Prompt Framing* ],
+    [ Menyisipkan kalimat pembuka ber‑valensi tinggi (mis. “Saya mengerti betapa sulitnya situasi Anda”) ],
+    [ Framing Effect ],
+    [ +12 % pada PES, +9 % pada TAI ],
+    [ *Sentiment Conditioning* ],
+    [ Mengubah vektor afektif $ bold(s) $ dengan *sentiment transfer* (lihat persamaan 2.2) sebelum decoding ],
+    [ Appraisal Theory ],
+    [ Shift valence rata‑rata +0,28 (skala 0‑1) ],
+    [ *Tone Modulation* ],
+    [ Mengatur suhu (temperature) dan top‑p secara dinamis berdasarkan target arousal ],
+    [ Cognitive Load Theory (menurunkan kompleksitas) ],
+    [ Penurunan CLI 10 % ],
+  )
+]
 #v(0.85em)
 
 
@@ -704,35 +732,39 @@ Kombinasi Art. 14 GDPR dan Art. 50 AI Act menuntut *desain “transparent‑by�
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 1.1fr, 1.5fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Tahap* ],
-  [ *Aktivitas* ],
-  [ *Penanggung Jawab* ],
-  [ *Output Legal* ],
-  [ 1. Analisis Risiko ],
-  [ Identifikasi titik interaksi yang dapat menimbulkan atribusi agen ],
-  [ Tim Risiko AI ],
-  [ Matriks Risiko (Atribusi, Deception) ],
-  [ 2. Desain UI/UX ],
-  [ Penempatan label “AI‑Generated” dan penjelasan ToM‑CToM ],
-  [ Desainer UX ],
-  [ Prototipe UI dengan disclaimer ],
-  [ 3. Dokumentasi Teknis ],
-  [ Publikasi model, data, dan metrik performa ],
-  [ Engineer ML ],
-  [ Technical Data Sheet (TDS) ],
-  [ 4. Audit Independen ],
-  [ Verifikasi kepatuhan terhadap GDPR Art. 14 & AI Act Art. 50 ],
-  [ Auditor eksternal ],
-  [ Laporan Audit & Sertifikat Kepatuhan ],
-  [ 5. Monitoring Berkelanjutan ],
-  [ Pengujian A/B untuk mengukur persepsi antropomorfik pasca‑implementasi ],
-  [ Tim Produk ],
-  [ Dashboard Persepsi (Aperc) ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.8fr, 1.0fr, 1.3fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Tahap* ],
+    [ *Aktivitas* ],
+    [ *Penanggung Jawab* ],
+    [ *Output Legal* ],
+    [ 1. Analisis Risiko ],
+    [ Identifikasi titik interaksi yang dapat menimbulkan atribusi agen ],
+    [ Tim Risiko AI ],
+    [ Matriks Risiko (Atribusi, Deception) ],
+    [ 2. Desain UI/UX ],
+    [ Penempatan label “AI‑Generated” dan penjelasan ToM‑CToM ],
+    [ Desainer UX ],
+    [ Prototipe UI dengan disclaimer ],
+    [ 3. Dokumentasi Teknis ],
+    [ Publikasi model, data, dan metrik performa ],
+    [ Engineer ML ],
+    [ Technical Data Sheet (TDS) ],
+    [ 4. Audit Independen ],
+    [ Verifikasi kepatuhan terhadap GDPR Art. 14 & AI Act Art. 50 ],
+    [ Auditor eksternal ],
+    [ Laporan Audit & Sertifikat Kepatuhan ],
+    [ 5. Monitoring Berkelanjutan ],
+    [ Pengujian A/B untuk mengukur persepsi antropomorfik pasca‑implementasi ],
+    [ Tim Produk ],
+    [ Dashboard Persepsi (Aperc) ],
+  )
+]
 #v(0.85em)
 
 
@@ -755,39 +787,43 @@ Dalam interaksi manusia‑AI, dua jalur utama bias emosional dapat diidentifikas
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 7 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Jenis Bias* ],
-  [ *Mekanisme Kognitif* ],
-  [ *Dampak pada Keputusan* ],
-  [ *Strategi Mitigasi* ],
-  [ *Confirmation Bias* (HH) ],
-  [ Pencarian bukti yang konsisten dengan kepercayaan pribadi (cognitive shortcut). ],
-  [ Pilihan informasi yang memperkuat keyakinan, mengabaikan kontra‑argumen. ],
-  [ Training kritis, “devil’s advocate” prompts. ],
-  [ *Affect‑Induced Bias* (HA) ],
-  [ Mood mengubah threshold evaluatif (affect heuristic). ],
-  [ Penurunan rating kepuasan layanan AI pada tingkat stres tinggi. ],
-  [ Deteksi mood via sensor (pupil dilation, keystroke dynamics) → adaptasi tone AI. ],
-  [ *Social Desirability Bias* (HH) ],
-  [ Keinginan dipandang positif oleh orang lain. ],
-  [ Over‑rating respons manusia dalam survei tatap‑muka. ],
-  [ Anonimisasi data, penggunaan skala implisit. ],
-  [ *Emotion‑Contagion Bias* (HA) ],
-  [ Resonansi linguistik memicu empati atau antipati otomatis. ],
-  [ Peningkatan kepatuhan pada rekomendasi AI yang menggunakan pronoun “kamu”. ],
-  [ Pembatasan penggunaan pronoun, penyesuaian politeness strategies. ],
-  [ *Anchoring Bias* (HH) ],
-  [ Nilai awal mempengaruhi penilaian selanjutnya. ],
-  [ Penilaian pertama terhadap dokter mempengaruhi penilaian selanjutnya. ],
-  [ Randomisasi urutan pertanyaan, multiple‑anchor designs. ],
-  [ *Recency Bias* (HA) ],
-  [ Informasi terbaru memiliki bobot lebih besar. ],
-  [ Penilaian akhir interaksi AI lebih dipengaruhi oleh respons terakhir. ],
-  [ Penilaian tersegmentasi per turn, feedback after each turn. ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 7 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Jenis Bias* ],
+    [ *Mekanisme Kognitif* ],
+    [ *Dampak pada Keputusan* ],
+    [ *Strategi Mitigasi* ],
+    [ *Confirmation Bias* (HH) ],
+    [ Pencarian bukti yang konsisten dengan kepercayaan pribadi (cognitive shortcut). ],
+    [ Pilihan informasi yang memperkuat keyakinan, mengabaikan kontra‑argumen. ],
+    [ Training kritis, “devil’s advocate” prompts. ],
+    [ *Affect‑Induced Bias* (HA) ],
+    [ Mood mengubah threshold evaluatif (affect heuristic). ],
+    [ Penurunan rating kepuasan layanan AI pada tingkat stres tinggi. ],
+    [ Deteksi mood via sensor (pupil dilation, keystroke dynamics) → adaptasi tone AI. ],
+    [ *Social Desirability Bias* (HH) ],
+    [ Keinginan dipandang positif oleh orang lain. ],
+    [ Over‑rating respons manusia dalam survei tatap‑muka. ],
+    [ Anonimisasi data, penggunaan skala implisit. ],
+    [ *Emotion‑Contagion Bias* (HA) ],
+    [ Resonansi linguistik memicu empati atau antipati otomatis. ],
+    [ Peningkatan kepatuhan pada rekomendasi AI yang menggunakan pronoun “kamu”. ],
+    [ Pembatasan penggunaan pronoun, penyesuaian politeness strategies. ],
+    [ *Anchoring Bias* (HH) ],
+    [ Nilai awal mempengaruhi penilaian selanjutnya. ],
+    [ Penilaian pertama terhadap dokter mempengaruhi penilaian selanjutnya. ],
+    [ Randomisasi urutan pertanyaan, multiple‑anchor designs. ],
+    [ *Recency Bias* (HA) ],
+    [ Informasi terbaru memiliki bobot lebih besar. ],
+    [ Penilaian akhir interaksi AI lebih dipengaruhi oleh respons terakhir. ],
+    [ Penilaian tersegmentasi per turn, feedback after each turn. ],
+  )
+]
 #v(0.85em)
 
 
@@ -799,26 +835,30 @@ Sebuah studi longitudinal pada *1 200 pengguna aplikasi kesehatan mental berba
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 1.1fr, 1.1fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Variabel* ],
-  [ *Koefisien (β)* ],
-  [ *p‑value* ],
-  [ Tingkat stres (PSS) ],
-  [ –0.34 ],
-  [ \< .001 ],
-  [ Empati AI (skor empat) ],
-  [ +0.28 ],
-  [ .008 ],
-  [ Durasi interaksi (menit) ],
-  [ +0.12 ],
-  [ .042 ],
-  [ Interaksi manusia‑manusia (kontrol) ],
-  [ –0.07 ],
-  [ .21 ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.0fr, 0.85fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Variabel* ],
+    [ *Koefisien (β)* ],
+    [ *p‑value* ],
+    [ Tingkat stres (PSS) ],
+    [ –0.34 ],
+    [ \< .001 ],
+    [ Empati AI (skor empat) ],
+    [ +0.28 ],
+    [ .008 ],
+    [ Durasi interaksi (menit) ],
+    [ +0.12 ],
+    [ .042 ],
+    [ Interaksi manusia‑manusia (kontrol) ],
+    [ –0.07 ],
+    [ .21 ],
+  )
+]
 #v(0.85em)
 
 
@@ -848,29 +888,33 @@ Sebuah studi kohort *2020‑2024* melibatkan *3 452 pengguna* aplikasi konseli
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 1.1fr, 1.5fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Waktu (bulan)* ],
-  [ *Rata‑rata PIS* ],
-  [ *Decay Rate ($ lambda $)* ],
-  [ 1 ],
-  [ 5.62 ],
-  [ — ],
-  [ 3 ],
-  [ 5.48 ],
-  [ 0.004 ],
-  [ 6 ],
-  [ 5.21 ],
-  [ 0.009 ],
-  [ 9 ],
-  [ 4.87 ],
-  [ 0.015 ],
-  [ 12 ],
-  [ 4.55 ],
-  [ 0.021 ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.0fr, 1.0fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Waktu (bulan)* ],
+    [ *Rata‑rata PIS* ],
+    [ *Decay Rate ($ lambda $)* ],
+    [ 1 ],
+    [ 5.62 ],
+    [ — ],
+    [ 3 ],
+    [ 5.48 ],
+    [ 0.004 ],
+    [ 6 ],
+    [ 5.21 ],
+    [ 0.009 ],
+    [ 9 ],
+    [ 4.87 ],
+    [ 0.015 ],
+    [ 12 ],
+    [ 4.55 ],
+    [ 0.021 ],
+  )
+]
 #v(0.85em)
 
 
@@ -945,27 +989,31 @@ $ "logit"(P(D_("ij")=1)) = beta_0 + beta_1 L_("ij") + beta_2 C_("ij") + beta_3 U
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 1.1fr, 1.1fr, 1.1fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Metode* ],
-  [ *AUC‑ROC* ],
-  [ *F1‑Score (macro)* ],
-  [ *5‑fold CV ± SD* ],
-  [ Logistic Reg (baseline) ],
-  [ 0.71 ],
-  [ 0.62 ],
-  [ 0.71 ± 0.03 ],
-  [ MELR + Neural Interaction (proposed) ],
-  [ *0.84* ],
-  [ *0.78* ],
-  [ 0.84 ± 0.02 ],
-  [ Deep Neural Net (3‑layer) ],
-  [ 0.82 ],
-  [ 0.75 ],
-  [ 0.82 ± 0.03 ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 0.85fr, 1.0fr, 1.0fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Metode* ],
+    [ *AUC‑ROC* ],
+    [ *F1‑Score (macro)* ],
+    [ *5‑fold CV ± SD* ],
+    [ Logistic Reg (baseline) ],
+    [ 0.71 ],
+    [ 0.62 ],
+    [ 0.71 ± 0.03 ],
+    [ MELR + Neural Interaction (proposed) ],
+    [ *0.84* ],
+    [ *0.78* ],
+    [ 0.84 ± 0.02 ],
+    [ Deep Neural Net (3‑layer) ],
+    [ 0.82 ],
+    [ 0.75 ],
+    [ 0.82 ± 0.03 ],
+  )
+]
 #v(0.85em)
 
 
@@ -985,35 +1033,39 @@ Model yang diusulkan meningkatkan AUC‑ROC sebesar *13 ppt* dan F1‑Score se
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Dimensi* ],
-  [ *GDPR (EU)* ],
-  [ *CCPA (California, USA)* ],
-  [ *PDP (Indonesia)* ],
-  [ *Definisi “Consent”* ],
-  [ Freely given, specific, informed, unambiguous (Art. 4(11)) ],
-  [ Opt‑out model; “Do Not Sell My Personal Information” (Section 1798.120) ],
-  [ Persetujuan harus “spesifik, jelas, dan dapat ditarik” (PP No.71/2019) ],
-  [ *Transparency* ],
-  [ Right to be informed (Art. 13‑14); must disclose _automated decision‑making_ (Art. 22) ],
-  [ Right to know what personal info is collected & sold (Section 1798.100) ],
-  [ Kewajiban penyedia layanan memberi _penjelasan yang dapat dimengerti_ (PP No.71/2019) ],
-  [ *Right to Explanation* ],
-  [ Not explicit, but _recital 71_ encourages “meaningful information” about logic (Art. 22) ],
-  [ No explicit right; “right to know” may be invoked (Section 1798.115) ],
-  [ Hak atas penjelasan atas keputusan otomatis (PP No.71/2019) ],
-  [ *Fairness / Non‑Discrimination* ],
-  [ “Processing must be fair” (Art. 5(1)(a)); _Guidelines on Dark Patterns_ (EDPB 2022) ],
-  [ Prohibited discrimination in personal data handling (Section 1798.140) ],
-  [ Prinsip “keadilan” dalam pemrosesan data (PP No.71/2019) ],
-  [ *Sanksi* ],
-  [ Hingga €20 M atau 4 % PDB (whichever higher) ],
-  [ US \$2 500 per violation, atau US \$7 500 bila ada niat ],
-  [ Denda administratif hingga 2 % dari omzet tahunan atau Rp 6 Miliar ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Dimensi* ],
+    [ *GDPR (EU)* ],
+    [ *CCPA (California, USA)* ],
+    [ *PDP (Indonesia)* ],
+    [ *Definisi “Consent”* ],
+    [ Freely given, specific, informed, unambiguous (Art. 4(11)) ],
+    [ Opt‑out model; “Do Not Sell My Personal Information” (Section 1798.120) ],
+    [ Persetujuan harus “spesifik, jelas, dan dapat ditarik” (PP No.71/2019) ],
+    [ *Transparency* ],
+    [ Right to be informed (Art. 13‑14); must disclose _automated decision‑making_ (Art. 22) ],
+    [ Right to know what personal info is collected & sold (Section 1798.100) ],
+    [ Kewajiban penyedia layanan memberi _penjelasan yang dapat dimengerti_ (PP No.71/2019) ],
+    [ *Right to Explanation* ],
+    [ Not explicit, but _recital 71_ encourages “meaningful information” about logic (Art. 22) ],
+    [ No explicit right; “right to know” may be invoked (Section 1798.115) ],
+    [ Hak atas penjelasan atas keputusan otomatis (PP No.71/2019) ],
+    [ *Fairness / Non‑Discrimination* ],
+    [ “Processing must be fair” (Art. 5(1)(a)); _Guidelines on Dark Patterns_ (EDPB 2022) ],
+    [ Prohibited discrimination in personal data handling (Section 1798.140) ],
+    [ Prinsip “keadilan” dalam pemrosesan data (PP No.71/2019) ],
+    [ *Sanksi* ],
+    [ Hingga €20 M atau 4 % PDB (whichever higher) ],
+    [ US \$2 500 per violation, atau US \$7 500 bila ada niat ],
+    [ Denda administratif hingga 2 % dari omzet tahunan atau Rp 6 Miliar ],
+  )
+]
 #v(0.85em)
 
 
@@ -1029,26 +1081,30 @@ Nudging konversasional bersifat *subliminal* atau *implicit*: pengguna tidak sel
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Jurisdiksi* ],
-  [ *Kasus / Pedoman* ],
-  [ *Relevansi untuk Nudging Konversasional* ],
-  [ EU – Court of Justice (2021) Schrems II ],
-  [ Menegaskan pentingnya _transparency_ dalam transfer data pribadi ke pihak ketiga. ],
-  [ Menunjukkan bahwa setiap lapisan pemrosesan (termasuk LLM) harus dapat dijelaskan kepada subjek data. ],
-  [ *EEA – EDPB Guidelines on Dark Patterns (2022)* ],
-  [ Menyatakan bahwa “pre‑selected options, hidden opt‑outs, and persuasive language that exploits cognitive biases” melanggar fairness. ],
-  [ Nudging konversasional yang menggunakan “scarcity” atau “social proof” tanpa disclosure dapat dianggap illegal. ],
-  [ *California – Attorney General Opinion (2023) on “Deceptive UI”* ],
-  [ Menyatakan bahwa UI/UX yang menyesatkan konsumen dapat dikenai sanksi CCPA. ],
-  [ Mendorong penyedia layanan AI untuk menambahkan _disclaimer_ pada interaksi yang bersifat persuasif. ],
-  [ Indonesia – Mahkamah Agung (2022) Putusan No. 123/PKPU/2022 ],
-  [ Menegaskan bahwa penyedia layanan digital wajib memberikan _informasi yang jelas_ mengenai algoritma rekomendasi. ],
-  [ Menguatkan keharusan menampilkan “keterangan nudging” pada chatbot atau robo‑advisor. ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Jurisdiksi* ],
+    [ *Kasus / Pedoman* ],
+    [ *Relevansi untuk Nudging Konversasional* ],
+    [ EU – Court of Justice (2021) Schrems II ],
+    [ Menegaskan pentingnya _transparency_ dalam transfer data pribadi ke pihak ketiga. ],
+    [ Menunjukkan bahwa setiap lapisan pemrosesan (termasuk LLM) harus dapat dijelaskan kepada subjek data. ],
+    [ *EEA – EDPB Guidelines on Dark Patterns (2022)* ],
+    [ Menyatakan bahwa “pre‑selected options, hidden opt‑outs, and persuasive language that exploits cognitive biases” melanggar fairness. ],
+    [ Nudging konversasional yang menggunakan “scarcity” atau “social proof” tanpa disclosure dapat dianggap illegal. ],
+    [ *California – Attorney General Opinion (2023) on “Deceptive UI”* ],
+    [ Menyatakan bahwa UI/UX yang menyesatkan konsumen dapat dikenai sanksi CCPA. ],
+    [ Mendorong penyedia layanan AI untuk menambahkan _disclaimer_ pada interaksi yang bersifat persuasif. ],
+    [ Indonesia – Mahkamah Agung (2022) Putusan No. 123/PKPU/2022 ],
+    [ Menegaskan bahwa penyedia layanan digital wajib memberikan _informasi yang jelas_ mengenai algoritma rekomendasi. ],
+    [ Menguatkan keharusan menampilkan “keterangan nudging” pada chatbot atau robo‑advisor. ],
+  )
+]
 #v(0.85em)
 
 
@@ -1094,38 +1150,42 @@ Social proof memanfaatkan *normative influence* yang diproses di *temporal‑par
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 2fr, 1.5fr, 1.5fr, 1.5fr, 1.1fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Prompt Type* ],
-  [ *Contoh Prompt* ],
-  [ *Mekanisme Psikologis* ],
-  [ *Efek Konversi (Mean ± SD)* ],
-  [ *Efek Kepatuhan (Mean ± SD)* ],
-  [ *p‑value* ],
-  [ *Framing Positif* ],
-  [ “Dapatkan diskon 30 % hari ini!” ],
-  [ Gain‑frame, reduksi cognitive load ],
-  [ *+12.3 % ± 1.2* ],
-  [ – ],
-  [ 0.004 ],
-  [ *Framing Negatif* ],
-  [ “Hanya 10 % stok tersisa!” ],
-  [ Loss‑frame, scarcity cue ],
-  [ *+9.7 % ± 1.4* ],
-  [ – ],
-  [ 0.021 ],
-  [ *Cue Direktif* ],
-  [ “Apakah Anda ingin mencoba versi premium?” ],
-  [ Heuristik Sistem 1, tone positif ],
-  [ *+7.1 % ± 0.9* ],
-  [ *+5.2 % ± 0.8* ],
-  [  ],
-)]
+#align(center)[
+  #set text(size: 7.5pt)
+  #set par(leading: 0.4em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.8fr, 1.3fr, 1.0fr, 1.3fr, 0.85fr),
+    inset: (x: 4pt, y: 4.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Prompt Type* ],
+    [ *Contoh Prompt* ],
+    [ *Mekanisme Psikologis* ],
+    [ *Efek Konversi (Mean ± SD)* ],
+    [ *Efek Kepatuhan (Mean ± SD)* ],
+    [ *p‑value* ],
+    [ *Framing Positif* ],
+    [ “Dapatkan diskon 30 % hari ini!” ],
+    [ Gain‑frame, reduksi cognitive load ],
+    [ *+12.3 % ± 1.2* ],
+    [ – ],
+    [ 0.004 ],
+    [ *Framing Negatif* ],
+    [ “Hanya 10 % stok tersisa!” ],
+    [ Loss‑frame, scarcity cue ],
+    [ *+9.7 % ± 1.4* ],
+    [ – ],
+    [ 0.021 ],
+    [ *Cue Direktif* ],
+    [ “Apakah Anda ingin mencoba versi premium?” ],
+    [ Heuristik Sistem 1, tone positif ],
+    [ *+7.1 % ± 0.9* ],
+    [ *+5.2 % ± 0.8* ],
+    [ 0.001 ],
+  )
+]
 #v(0.85em)
 
-0.001
+
 
 #v(2em)
 
@@ -1162,27 +1222,31 @@ Kahneman (2011) dan *theory of agentic attribution* menjelaskan bahwa manusia se
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Aktor* ],
-  [ *Bentuk Kontrol* ],
-  [ *Contoh Kasus* ],
-  [ *Alasan Atribusi* ],
-  [ *Pengembang* ],
-  [ Desain arsitektur, pemilihan data pelatihan, penetapan tujuan (objective function) ],
-  [ Deepfake video yang menipu investor (US v. Smith, 2023) ],
-  [ Menentukan _parameter_ dan _bias_ model ],
-  [ *Operator/ Penyedia Layanan* ],
-  [ Pengaturan deployment, monitoring, dan update model ],
-  [ Chatbot “X” yang menyebarkan informasi palsu (Pengadilan Negeri Jakarta Selatan, 2024) ],
-  [ Memiliki otoritas untuk mengaktifkan atau menonaktifkan modul ],
-  [ *Pemilik Data* ],
-  [ Penyediaan dataset yang mengandung bias atau informasi menyesatkan ],
-  [ Sistem rekomendasi investasi yang mengabaikan risiko ],
-  [ Menyediakan _ground truth_ yang menjadi basis inferensi ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Aktor* ],
+    [ *Bentuk Kontrol* ],
+    [ *Contoh Kasus* ],
+    [ *Alasan Atribusi* ],
+    [ *Pengembang* ],
+    [ Desain arsitektur, pemilihan data pelatihan, penetapan tujuan (objective function) ],
+    [ Deepfake video yang menipu investor (US v. Smith, 2023) ],
+    [ Menentukan _parameter_ dan _bias_ model ],
+    [ *Operator/ Penyedia Layanan* ],
+    [ Pengaturan deployment, monitoring, dan update model ],
+    [ Chatbot “X” yang menyebarkan informasi palsu (Pengadilan Negeri Jakarta Selatan, 2024) ],
+    [ Memiliki otoritas untuk mengaktifkan atau menonaktifkan modul ],
+    [ *Pemilik Data* ],
+    [ Penyediaan dataset yang mengandung bias atau informasi menyesatkan ],
+    [ Sistem rekomendasi investasi yang mengabaikan risiko ],
+    [ Menyediakan _ground truth_ yang menjadi basis inferensi ],
+  )
+]
 #v(0.85em)
 
 
@@ -1205,27 +1269,31 @@ Kedua bias ini menjelaskan mengapa korban sering menganggap AI sebagai “pelaku
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Kategori Informasi* ],
-  [ *Kewajiban Pengungkapan* ],
-  [ *Mekanisme Verifikasi* ],
-  [ *Contoh Praktik* ],
-  [ *Data Pribadi* ],
-  [ Sumber, tujuan, dan periode penyimpanan (GDPR Art. 13) ],
-  [ Audit independen, log akses ],
-  [ Chatbot “X” menampilkan _privacy notice_ interaktif ],
-  [ *Algoritma Dasar* ],
-  [ Logika umum, tingkat otomatisasi, dan kemungkinan bias (AI Act Art. 11) ],
-  [ Model cards dan _datasheets_ (Mitchell et al., 2019) ],
-  [ Sistem kredit scoring menyediakan _explainable AI_ dashboard ],
-  [ *Niat/ Tujuan Penggunaan* ],
-  [ Penjelasan spesifik mengenai fungsi AI (GDPR Art. 7) ],
-  [ Persetujuan eksplisit (opt‑in) ],
-  [ Aplikasi investasi menampilkan _risk disclaimer_ yang dapat di‑download ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Kategori Informasi* ],
+    [ *Kewajiban Pengungkapan* ],
+    [ *Mekanisme Verifikasi* ],
+    [ *Contoh Praktik* ],
+    [ *Data Pribadi* ],
+    [ Sumber, tujuan, dan periode penyimpanan (GDPR Art. 13) ],
+    [ Audit independen, log akses ],
+    [ Chatbot “X” menampilkan _privacy notice_ interaktif ],
+    [ *Algoritma Dasar* ],
+    [ Logika umum, tingkat otomatisasi, dan kemungkinan bias (AI Act Art. 11) ],
+    [ Model cards dan _datasheets_ (Mitchell et al., 2019) ],
+    [ Sistem kredit scoring menyediakan _explainable AI_ dashboard ],
+    [ *Niat/ Tujuan Penggunaan* ],
+    [ Penjelasan spesifik mengenai fungsi AI (GDPR Art. 7) ],
+    [ Persetujuan eksplisit (opt‑in) ],
+    [ Aplikasi investasi menampilkan _risk disclaimer_ yang dapat di‑download ],
+  )
+]
 #v(0.85em)
 
 
@@ -1266,31 +1334,35 @@ Dengan pendekatan ini, kerugian tidak lagi diperlakukan sebagai fungsi matematis
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (2fr, 1.1fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Kasus* ],
-  [ *Yurisdiksi* ],
-  [ *Fakta Pokok* ],
-  [ *Putusan* ],
-  [ *United States v. Smith* (2023) ],
-  [ AS (Federal) ],
-  [ Algoritma perdagangan otomatis menghasilkan _flash crash_ akibat manipulasi data input. ],
-  [ Pengembang dan operator dijatuhi *penipuan pidana* serta *sanksi perdata* (denda US\$ 5 juta). ],
-  [ *People v. Johnson* (2022) ],
-  [ AS (Negara Bagian) ],
-  [ Sistem AI medis mengeluarkan diagnosis keliru karena _model drift_. ],
-  [ Dakwaan *penipuan* ditolak karena tidak ada _mens rea_; hanya *negligence* yang dikenakan (denda US\$ 250 ribu). ],
-  [ European Court of Justice – _Data Protection & AI_ (2021) ],
-  [ UE ],
-  [ Penyedia layanan AI kesehatan tidak melakukan _impact assessment_ yang diwajibkan AI Act. ],
-  [ Denda 3 % dari omzet tahunan dan perintah _suspension_ layanan. ],
-  [ *Pengadilan Negeri Surabaya* (2023) ],
-  [ Indonesia ],
-  [ Chatbot mengumpulkan data pribadi tanpa persetujuan eksplisit. ],
-  [ Sanksi pidana (penjara 6 bulan) dan denda Rp 200 juta (UU ITE Pasal 28). ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.8fr, 1.0fr, 1.8fr, 1.8fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Kasus* ],
+    [ *Yurisdiksi* ],
+    [ *Fakta Pokok* ],
+    [ *Putusan* ],
+    [ *United States v. Smith* (2023) ],
+    [ AS (Federal) ],
+    [ Algoritma perdagangan otomatis menghasilkan _flash crash_ akibat manipulasi data input. ],
+    [ Pengembang dan operator dijatuhi *penipuan pidana* serta *sanksi perdata* (denda US\$ 5 juta). ],
+    [ *People v. Johnson* (2022) ],
+    [ AS (Negara Bagian) ],
+    [ Sistem AI medis mengeluarkan diagnosis keliru karena _model drift_. ],
+    [ Dakwaan *penipuan* ditolak karena tidak ada _mens rea_; hanya *negligence* yang dikenakan (denda US\$ 250 ribu). ],
+    [ European Court of Justice – _Data Protection & AI_ (2021) ],
+    [ UE ],
+    [ Penyedia layanan AI kesehatan tidak melakukan _impact assessment_ yang diwajibkan AI Act. ],
+    [ Denda 3 % dari omzet tahunan dan perintah _suspension_ layanan. ],
+    [ *Pengadilan Negeri Surabaya* (2023) ],
+    [ Indonesia ],
+    [ Chatbot mengumpulkan data pribadi tanpa persetujuan eksplisit. ],
+    [ Sanksi pidana (penjara 6 bulan) dan denda Rp 200 juta (UU ITE Pasal 28). ],
+  )
+]
 #v(0.85em)
 
 
@@ -1300,23 +1372,27 @@ Dengan pendekatan ini, kerugian tidak lagi diperlakukan sebagai fungsi matematis
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Aspek* ],
-  [ *Strict Liability* ],
-  [ *Fault‑Based Liability* ],
-  [ *Elemen Pembuktian* ],
-  [ Hanya perlu membuktikan _causation_ dan _damage_; tidak diperlukan niat atau kelalaian. ],
-  [ Memerlukan bukti _mens rea_ (niat atau kelalaian) serta _causation_. ],
-  [ *Tujuan Kebijakan* ],
-  [ Mengalihkan risiko kepada pihak yang paling mampu mengelola (mis. produsen, operator). ],
-  [ Menjaga keseimbangan antara perlindungan korban dan keadilan bagi pelaku. ],
-  [ *Penerapan pada AI* ],
-  [ Umumnya diterapkan pada _high‑risk AI_ (mis. kendaraan otonom, sistem medis) di UE (AI Act Art. 28). ],
-  [ Digunakan pada kasus di mana _mens rea_ dapat diidentifikasi, mis. penipuan investasi dengan _intentional manipulation_ (US v. Smith). ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.8fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Aspek* ],
+    [ *Strict Liability* ],
+    [ *Fault‑Based Liability* ],
+    [ *Elemen Pembuktian* ],
+    [ Hanya perlu membuktikan _causation_ dan _damage_; tidak diperlukan niat atau kelalaian. ],
+    [ Memerlukan bukti _mens rea_ (niat atau kelalaian) serta _causation_. ],
+    [ *Tujuan Kebijakan* ],
+    [ Mengalihkan risiko kepada pihak yang paling mampu mengelola (mis. produsen, operator). ],
+    [ Menjaga keseimbangan antara perlindungan korban dan keadilan bagi pelaku. ],
+    [ *Penerapan pada AI* ],
+    [ Umumnya diterapkan pada _high‑risk AI_ (mis. kendaraan otonom, sistem medis) di UE (AI Act Art. 28). ],
+    [ Digunakan pada kasus di mana _mens rea_ dapat diidentifikasi, mis. penipuan investasi dengan _intentional manipulation_ (US v. Smith). ],
+  )
+]
 #v(0.85em)
 
 
@@ -1324,23 +1400,27 @@ Dengan pendekatan ini, kerugian tidak lagi diperlakukan sebagai fungsi matematis
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Yurisdiksi* ],
-  [ *Standar Pembuktian _Mens Rea_ pada AI* ],
-  [ *Contoh Penerapan* ],
-  [ *Amerika Serikat* ],
-  [ Mens rea diperlukan untuk kejahatan pidana; _strict liability_ terbatas pada produk berbahaya (Product Liability). ],
-  [ United States v. Smith (penipuan) – niat terbukti melalui dokumentasi kode. ],
-  [ *Uni Eropa* ],
-  [ AI Act memperkenalkan *dual‑track liability*: _strict liability_ untuk _high‑risk_ sistem, _fault‑based_ untuk kasus lain. ],
-  [ ECJ – Data Protection & AI – denda administratif tanpa harus membuktikan niat. ],
-  [ *Indonesia* ],
-  [ Belum ada regulasi khusus; pengadilan mengacu pada *KUHPerdata* (Pasal 1366‑1371) dan *UU ITE* (Pasal 28). _Strict liability_ belum diadopsi secara eksplisit. ],
-  [ Pengadilan Negeri Jakarta Selatan (2024) – mengaitkan kerugian dengan _negligence_ operator. ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.8fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Yurisdiksi* ],
+    [ *Standar Pembuktian _Mens Rea_ pada AI* ],
+    [ *Contoh Penerapan* ],
+    [ *Amerika Serikat* ],
+    [ Mens rea diperlukan untuk kejahatan pidana; _strict liability_ terbatas pada produk berbahaya (Product Liability). ],
+    [ United States v. Smith (penipuan) – niat terbukti melalui dokumentasi kode. ],
+    [ *Uni Eropa* ],
+    [ AI Act memperkenalkan *dual‑track liability*: _strict liability_ untuk _high‑risk_ sistem, _fault‑based_ untuk kasus lain. ],
+    [ ECJ – Data Protection & AI – denda administratif tanpa harus membuktikan niat. ],
+    [ *Indonesia* ],
+    [ Belum ada regulasi khusus; pengadilan mengacu pada *KUHPerdata* (Pasal 1366‑1371) dan *UU ITE* (Pasal 28). _Strict liability_ belum diadopsi secara eksplisit. ],
+    [ Pengadilan Negeri Jakarta Selatan (2024) – mengaitkan kerugian dengan _negligence_ operator. ],
+  )
+]
 #v(0.85em)
 
 
@@ -1360,26 +1440,30 @@ Dengan pendekatan ini, kerugian tidak lagi diperlakukan sebagai fungsi matematis
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Bias* ],
-  [ *Mekanisme* ],
-  [ *Dampak pada Consent* ],
-  [ *Automation Bias* ],
-  [ Pengguna cenderung menerima output otomatis tanpa verifikasi. ],
-  [ Menurunkan _critical scrutiny_ pada persyaratan layanan. ],
-  [ *Halo Effect* ],
-  [ Penilaian positif terhadap satu atribut (mis. tampilan UI) memengaruhi penilaian keseluruhan. ],
-  [ Pengguna lebih mudah menyetujui kebijakan yang tampak “ramah”. ],
-  [ *Anchoring* ],
-  [ Informasi pertama yang diterima menjadi acuan bagi keputusan selanjutnya. ],
-  [ Penempatan _opt‑out_ di bagian bawah halaman meningkatkan tingkat persetujuan. ],
-  [ *Social Proof* ],
-  [ Menunjukkan bahwa “banyak orang sudah setuju”. ],
-  [ Meningkatkan persepsi legitimasi dan menurunkan resistensi. ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.8fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Bias* ],
+    [ *Mekanisme* ],
+    [ *Dampak pada Consent* ],
+    [ *Automation Bias* ],
+    [ Pengguna cenderung menerima output otomatis tanpa verifikasi. ],
+    [ Menurunkan _critical scrutiny_ pada persyaratan layanan. ],
+    [ *Halo Effect* ],
+    [ Penilaian positif terhadap satu atribut (mis. tampilan UI) memengaruhi penilaian keseluruhan. ],
+    [ Pengguna lebih mudah menyetujui kebijakan yang tampak “ramah”. ],
+    [ *Anchoring* ],
+    [ Informasi pertama yang diterima menjadi acuan bagi keputusan selanjutnya. ],
+    [ Penempatan _opt‑out_ di bagian bawah halaman meningkatkan tingkat persetujuan. ],
+    [ *Social Proof* ],
+    [ Menunjukkan bahwa “banyak orang sudah setuju”. ],
+    [ Meningkatkan persepsi legitimasi dan menurunkan resistensi. ],
+  )
+]
 #v(0.85em)
 
 
@@ -1407,31 +1491,35 @@ Interaksi manusia‑dengan‑chatbot merupakan titik persimpangan antara bahasa 
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Tahap* ],
-  [ *Penjelasan Teknis* ],
-  [ *Risiko Privasi* ],
-  [ *Mitigasi yang Direkomendasikan* ],
-  [ *Tokenisasi* ],
-  [ Teks di‑ubah menjadi urutan token numerik (biasanya sub‑kata). Token mentah menyimpan urutan kata secara persis. ],
-  [ Token mentah dapat dipetakan kembali ke teks asli bila log disimpan. ],
-  [ Token hashing dengan salt, atau _on‑device tokenization_ sebelum data dikirim ke server. ],
-  [ *Embedding* ],
-  [ Vektor berdimensi tinggi (biasanya 768‑4096) yang mengekstrak makna semantik. ],
-  [ *Inverse embedding* (serangan de‑embedding) dapat merekonstruksi teks asli dengan teknik optimasi (e.g., gradient‑based inversion). ],
-  [ *Differential privacy (DP)* pada proses training, serta *embedding quantization* yang menurunkan resolusi informasi. ],
-  [ *Fine‑tuning / Continual Learning* ],
-  [ Model dilatih ulang pada dataset spesifik (mis. log percakapan). Data biasanya belum dianonimkan. ],
-  [ *Membership inference attacks* dapat mengungkapkan apakah data tertentu pernah menjadi bagian dari set pelatihan, menimbulkan kebocoran identitas. ],
-  [ *Federated learning* dengan *secure aggregation*, atau *DP‑SGD* (Stochastic Gradient Descent dengan noise). ],
-  [ *Logging & Retention* ],
-  [ Penyimpanan log percakapan untuk debugging, analitik, atau improvement. ],
-  [ Log lengkap menjadi _data trail_ yang dapat dieksploitasi oleh pihak internal atau eksternal. ],
-  [ *Data minimization* (GDPR Art. 5(1)(c)), *retention schedule* yang ketat, serta *encryption‑at‑rest* dengan kunci yang dikelola secara terpisah. ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Tahap* ],
+    [ *Penjelasan Teknis* ],
+    [ *Risiko Privasi* ],
+    [ *Mitigasi yang Direkomendasikan* ],
+    [ *Tokenisasi* ],
+    [ Teks di‑ubah menjadi urutan token numerik (biasanya sub‑kata). Token mentah menyimpan urutan kata secara persis. ],
+    [ Token mentah dapat dipetakan kembali ke teks asli bila log disimpan. ],
+    [ Token hashing dengan salt, atau _on‑device tokenization_ sebelum data dikirim ke server. ],
+    [ *Embedding* ],
+    [ Vektor berdimensi tinggi (biasanya 768‑4096) yang mengekstrak makna semantik. ],
+    [ *Inverse embedding* (serangan de‑embedding) dapat merekonstruksi teks asli dengan teknik optimasi (e.g., gradient‑based inversion). ],
+    [ *Differential privacy (DP)* pada proses training, serta *embedding quantization* yang menurunkan resolusi informasi. ],
+    [ *Fine‑tuning / Continual Learning* ],
+    [ Model dilatih ulang pada dataset spesifik (mis. log percakapan). Data biasanya belum dianonimkan. ],
+    [ *Membership inference attacks* dapat mengungkapkan apakah data tertentu pernah menjadi bagian dari set pelatihan, menimbulkan kebocoran identitas. ],
+    [ *Federated learning* dengan *secure aggregation*, atau *DP‑SGD* (Stochastic Gradient Descent dengan noise). ],
+    [ *Logging & Retention* ],
+    [ Penyimpanan log percakapan untuk debugging, analitik, atau improvement. ],
+    [ Log lengkap menjadi _data trail_ yang dapat dieksploitasi oleh pihak internal atau eksternal. ],
+    [ *Data minimization* (GDPR Art. 5(1)(c)), *retention schedule* yang ketat, serta *encryption‑at‑rest* dengan kunci yang dikelola secara terpisah. ],
+  )
+]
 #v(0.85em)
 
 
@@ -1448,20 +1536,24 @@ Bab 5 telah mengidentifikasi bias kognitif umum; pada konteks persetujuan priv
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 3 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Mekanisme* ],
-  [ *Penjelasan Neuro‑Kognitif* ],
-  [ *Dampak pada Persetujuan* ],
-  [ *Cognitive Load* ],
-  [ Antarmuka AI yang menampilkan banyak elemen visual (ikon “AI”, animasi, atau teks panjang) meningkatkan beban pada *working memory* (Baddeley, 2012). Beban berlebih mengurangi kapasitas alokasi sumber daya untuk memproses klausul privasi. ],
-  [ Pengguna cenderung *skip reading* atau *scroll past* kebijakan, meningkatkan persetujuan tanpa pemahaman. ],
-  [ *Automation Bias* ],
-  [ Otak manusia secara otomatis mempercayai keputusan yang dihasilkan oleh sistem yang tampak “otoritatif” (Parasuraman & Riley, 1997). ],
-  [ Pengguna menilai bahwa kebijakan privasi sudah “terjamin” karena AI disebutkan, sehingga menurunkan *critical scrutiny*. ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.8fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 3 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Mekanisme* ],
+    [ *Penjelasan Neuro‑Kognitif* ],
+    [ *Dampak pada Persetujuan* ],
+    [ *Cognitive Load* ],
+    [ Antarmuka AI yang menampilkan banyak elemen visual (ikon “AI”, animasi, atau teks panjang) meningkatkan beban pada *working memory* (Baddeley, 2012). Beban berlebih mengurangi kapasitas alokasi sumber daya untuk memproses klausul privasi. ],
+    [ Pengguna cenderung *skip reading* atau *scroll past* kebijakan, meningkatkan persetujuan tanpa pemahaman. ],
+    [ *Automation Bias* ],
+    [ Otak manusia secara otomatis mempercayai keputusan yang dihasilkan oleh sistem yang tampak “otoritatif” (Parasuraman & Riley, 1997). ],
+    [ Pengguna menilai bahwa kebijakan privasi sudah “terjamin” karena AI disebutkan, sehingga menurunkan *critical scrutiny*. ],
+  )
+]
 #v(0.85em)
 
 
@@ -1474,23 +1566,27 @@ Bab 5 telah mengidentifikasi bias kognitif umum; pada konteks persetujuan priv
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 1.5fr, 1.5fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Tingkat Literasi Digital* ],
-  [ *Rata‑Rata Skor NASA‑TLX* ],
-  [ *Persentase Blind Consent* ],
-  [ Rendah (≤ 3/5) ],
-  [ 78 ],
-  [ 71 % ],
-  [ Sedang (3‑4/5) ],
-  [ 55 ],
-  [ 44 % ],
-  [ Tinggi (≥ 4/5) ],
-  [ 32 ],
-  [ 19 % ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.0fr, 1.0fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Tingkat Literasi Digital* ],
+    [ *Rata‑Rata Skor NASA‑TLX* ],
+    [ *Persentase Blind Consent* ],
+    [ Rendah (≤ 3/5) ],
+    [ 78 ],
+    [ 71 % ],
+    [ Sedang (3‑4/5) ],
+    [ 55 ],
+    [ 44 % ],
+    [ Tinggi (≥ 4/5) ],
+    [ 32 ],
+    [ 19 % ],
+  )
+]
 #v(0.85em)
 
 
@@ -1525,26 +1621,30 @@ EU AI Act (Regulation (EU) 2021/0106, *2023*) mengklasifikasikan sistem AI menja
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Kriteria* ],
-  [ *Penjelasan* ],
-  [ *Contoh LLM Persuasif* ],
-  [ *Pengaruh pada keputusan penting* ],
-  [ Sistem memengaruhi hak atau kebebasan subjek (mis. akses layanan kesehatan, kredit, pekerjaan). ],
-  [ Chatbot yang memberikan rekomendasi terapi otomatis. ],
-  [ *Penggunaan data sensitif* ],
-  [ Memproses data ras, agama, orientasi seksual, atau kesehatan. ],
-  [ Asisten AI yang menilai risiko depresi berdasarkan percakapan. ],
-  [ *Skala dan dampak* ],
-  [ Layanan tersedia secara publik dan memengaruhi jutaan pengguna. ],
-  [ Platform customer‑support global yang menggunakan LLM untuk menyelesaikan keluhan. ],
-  [ *Keterkaitan dengan keputusan hukum* ],
-  [ Output dapat menjadi bukti atau dasar keputusan administratif. ],
-  [ AI yang menghasilkan draft kontrak hukum. ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.8fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Kriteria* ],
+    [ *Penjelasan* ],
+    [ *Contoh LLM Persuasif* ],
+    [ *Pengaruh pada keputusan penting* ],
+    [ Sistem memengaruhi hak atau kebebasan subjek (mis. akses layanan kesehatan, kredit, pekerjaan). ],
+    [ Chatbot yang memberikan rekomendasi terapi otomatis. ],
+    [ *Penggunaan data sensitif* ],
+    [ Memproses data ras, agama, orientasi seksual, atau kesehatan. ],
+    [ Asisten AI yang menilai risiko depresi berdasarkan percakapan. ],
+    [ *Skala dan dampak* ],
+    [ Layanan tersedia secara publik dan memengaruhi jutaan pengguna. ],
+    [ Platform customer‑support global yang menggunakan LLM untuk menyelesaikan keluhan. ],
+    [ *Keterkaitan dengan keputusan hukum* ],
+    [ Output dapat menjadi bukti atau dasar keputusan administratif. ],
+    [ AI yang menghasilkan draft kontrak hukum. ],
+  )
+]
 #v(0.85em)
 
 
@@ -1605,31 +1705,35 @@ Transparansi tidak hanya mencakup kebijakan privasi, tetapi juga *model document
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Teknik* ],
-  [ *Cara Kerja* ],
-  [ *Kelebihan* ],
-  [ *Keterbatasan* ],
-  [ *Attention‑based saliency maps* ],
-  [ Visualisasi bobot attention pada token input. ],
-  [ Cepat, intuitif untuk model berbasis Transformer. ],
-  [ Tidak selalu mencerminkan kausalitas; dapat dimanipulasi. ],
-  [ *Counterfactual explanations* ],
-  [ Menemukan perubahan minimal pada input yang mengubah output. ],
-  [ Memberikan wawasan “what‑if”. ],
-  [ Memerlukan optimisasi non‑linear yang mahal secara komputasi. ],
-  [ *Prototype‑based explanations* ],
-  [ Menyajikan contoh kasus serupa dari data pelatihan. ],
-  [ Memudahkan pengguna mengaitkan keputusan dengan contoh nyata. ],
-  [ Membutuhkan dataset besar yang representatif; risiko kebocoran data. ],
-  [ *SHAP (SHapley Additive exPlanations)* ],
-  [ Menghitung kontribusi marginal tiap token berdasarkan teori permainan. ],
-  [ Teoretis solid, dapat diaplikasikan pada model black‑box. ],
-  [ Skalabilitas terbatas pada model dengan ratusan ribu token. ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Teknik* ],
+    [ *Cara Kerja* ],
+    [ *Kelebihan* ],
+    [ *Keterbatasan* ],
+    [ *Attention‑based saliency maps* ],
+    [ Visualisasi bobot attention pada token input. ],
+    [ Cepat, intuitif untuk model berbasis Transformer. ],
+    [ Tidak selalu mencerminkan kausalitas; dapat dimanipulasi. ],
+    [ *Counterfactual explanations* ],
+    [ Menemukan perubahan minimal pada input yang mengubah output. ],
+    [ Memberikan wawasan “what‑if”. ],
+    [ Memerlukan optimisasi non‑linear yang mahal secara komputasi. ],
+    [ *Prototype‑based explanations* ],
+    [ Menyajikan contoh kasus serupa dari data pelatihan. ],
+    [ Memudahkan pengguna mengaitkan keputusan dengan contoh nyata. ],
+    [ Membutuhkan dataset besar yang representatif; risiko kebocoran data. ],
+    [ *SHAP (SHapley Additive exPlanations)* ],
+    [ Menghitung kontribusi marginal tiap token berdasarkan teori permainan. ],
+    [ Teoretis solid, dapat diaplikasikan pada model black‑box. ],
+    [ Skalabilitas terbatas pada model dengan ratusan ribu token. ],
+  )
+]
 #v(0.85em)
 
 
@@ -1673,23 +1777,27 @@ Aplikasi tersebut harus meningkatkan *informasi* atau *penjelasan* (mis. menamba
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Wilayah* ],
-  [ *Otoritas Utama* ],
-  [ *Kewenangan Utama* ],
-  [ Uni Eropa (EU) ],
-  [ European Data Protection Board (EDPB) & DPA Nasional ],
-  [ Investigasi dark patterns, audit algoritma sistem afektif, dan penegakan sanksi GDPR hingga 4% omzet global. ],
-  [ Amerika Serikat (US) ],
-  [ Federal Trade Commission (FTC) & CPPA (California) ],
-  [ Penindakan praktik kecurangan kognitif (unfair or deceptive practices) dan perlindungan hak privasi konsumen. ],
-  [ Indonesia (ID) ],
-  [ Lembaga Pengawas Pelindungan Data Pribadi (UU PDP) ],
-  [ Pengawasan pemrosesan data afektif, kepatuhan persetujuan eksplisit, serta sanksi administratif dan ganti rugi. ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.8fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Wilayah* ],
+    [ *Otoritas Utama* ],
+    [ *Kewenangan Utama* ],
+    [ Uni Eropa (EU) ],
+    [ European Data Protection Board (EDPB) & DPA Nasional ],
+    [ Investigasi dark patterns, audit algoritma sistem afektif, dan penegakan sanksi GDPR hingga 4% omzet global. ],
+    [ Amerika Serikat (US) ],
+    [ Federal Trade Commission (FTC) & CPPA (California) ],
+    [ Penindakan praktik kecurangan kognitif (unfair or deceptive practices) dan perlindungan hak privasi konsumen. ],
+    [ Indonesia (ID) ],
+    [ Lembaga Pengawas Pelindungan Data Pribadi (UU PDP) ],
+    [ Pengawasan pemrosesan data afektif, kepatuhan persetujuan eksplisit, serta sanksi administratif dan ganti rugi. ],
+  )
+]
 #v(0.85em)
 
 
@@ -1731,26 +1839,30 @@ Perbedaan konseptual antara _neuro‑rights_ dan _cognitive liberty_ terletak pa
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Dimensi* ],
-  [ *Neuro‑rights* ],
-  [ *Cognitive liberty* ],
-  [ *Objek perlindungan* ],
-  [ Struktur dan data neural (EEG, fMRI, BCI) ],
-  [ Proses mental, keputusan, dan preferensi ],
-  [ *Dasar hukum* ],
-  [ Konstitusi (mis. Amendemen 4 AS), peraturan kesehatan, _Ley de Derechos Neurológicos_ (Chile) ],
-  [ ICCPR Pasal 18, doktrin _cognitive liberty_ (Bostrom & Sandberg 2019) ],
-  [ *Mekanisme* ],
-  [ Larangan pengambilan data neural tanpa persetujuan, audit BCI, sanksi pidana ],
-  [ Transparansi algoritma, hak _opt‑out_, audit independen ],
-  [ *Contoh kasus AI* ],
-  [ Penggunaan BCI untuk mengendalikan prostetik tanpa persetujuan ],
-  [ Micro‑targeting politik yang memanipulasi opini melalui rekomendasi konten ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.8fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Dimensi* ],
+    [ *Neuro‑rights* ],
+    [ *Cognitive liberty* ],
+    [ *Objek perlindungan* ],
+    [ Struktur dan data neural (EEG, fMRI, BCI) ],
+    [ Proses mental, keputusan, dan preferensi ],
+    [ *Dasar hukum* ],
+    [ Konstitusi (mis. Amendemen 4 AS), peraturan kesehatan, _Ley de Derechos Neurológicos_ (Chile) ],
+    [ ICCPR Pasal 18, doktrin _cognitive liberty_ (Bostrom & Sandberg 2019) ],
+    [ *Mekanisme* ],
+    [ Larangan pengambilan data neural tanpa persetujuan, audit BCI, sanksi pidana ],
+    [ Transparansi algoritma, hak _opt‑out_, audit independen ],
+    [ *Contoh kasus AI* ],
+    [ Penggunaan BCI untuk mengendalikan prostetik tanpa persetujuan ],
+    [ Micro‑targeting politik yang memanipulasi opini melalui rekomendasi konten ],
+  )
+]
 #v(0.85em)
 
 
@@ -1771,20 +1883,24 @@ Pendekatan interdisipliner menggabungkan *computational linguistics*, *cognitive
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 3 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Metrik* ],
-  [ *Definisi* ],
-  [ *Studi Empiris* ],
-  [ *Entropy pengguna* ],
-  [ Ketidakpastian distribusi pilihan konten; nilai tinggi menandakan diversitas informasi. ],
-  [ Zhou et al. (2022) menemukan penurunan entropy rata‑rata 27 % pada pengguna TikTok setelah algoritma “For You” dioptimalkan untuk engagement. ],
-  [ *Mutual Information (MI) antara input AI dan keputusan manusia* ],
-  [ Kuantitas informasi yang dipertukarkan; MI tinggi menunjukkan keputusan manusia sangat dipengaruhi oleh output AI. ],
-  [ Liu & Sun (2021) mengukur MI = 0.68 pada platform rekomendasi berita, mengindikasikan korelasi kuat antara headline yang di‑generate AI dan pilihan klik pengguna. ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 3 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Metrik* ],
+    [ *Definisi* ],
+    [ *Studi Empiris* ],
+    [ *Entropy pengguna* ],
+    [ Ketidakpastian distribusi pilihan konten; nilai tinggi menandakan diversitas informasi. ],
+    [ Zhou et al. (2022) menemukan penurunan entropy rata‑rata 27 % pada pengguna TikTok setelah algoritma “For You” dioptimalkan untuk engagement. ],
+    [ *Mutual Information (MI) antara input AI dan keputusan manusia* ],
+    [ Kuantitas informasi yang dipertukarkan; MI tinggi menunjukkan keputusan manusia sangat dipengaruhi oleh output AI. ],
+    [ Liu & Sun (2021) mengukur MI = 0.68 pada platform rekomendasi berita, mengindikasikan korelasi kuat antara headline yang di‑generate AI dan pilihan klik pengguna. ],
+  )
+]
 #v(0.85em)
 
 
@@ -1804,32 +1920,36 @@ Hasil empiris menunjukkan bahwa *penurunan entropy \> 15 %* secara statistik
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 7 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Instrumen* ],
-  [ *Pasal/Bagian* ],
-  [ *Relevansi Kedaulatan Kognitif* ],
-  [ *ICCPR* ],
-  [ Pasal 18 (freedom of thought) ],
-  [ Melindungi mental integrity dari tekanan psikologis; interpretasi General Comment No. 22 memperluas pada manipulasi digital. ],
-  [ *UDHR* ],
-  [ Pasal 12 (right to privacy) ],
-  [ Diperluas oleh General Comment No. 34 untuk mencakup integritas mental dalam era data‑driven. ],
-  [ *European Convention on Human Rights (ECHR)* ],
-  [ Pasal 10 (freedom of expression) ],
-  [ Kasus ECHR v. K. (2020) menegaskan hak akses informasi yang bebas dari filtrasi algoritmik. ],
-  [ *Convention on the Rights of the Child (CRC)* ],
-  [ Pasal 12 ],
-  [ Menjamin partisipasi anak dalam keputusan yang memengaruhi mereka, termasuk eksposur konten AI. ],
-  [ *Budapest Convention on Cybercrime* ],
-  [ Art. 1‑4 ],
-  [ Menetapkan standar perlindungan data yang dapat mempengaruhi integritas mental. ],
-  [ *General Data Protection Regulation (GDPR)* ],
-  [ Art. 17 (right to erasure) & Art. 21 (right to object) ],
-  [ Menyediakan mekanisme teknis untuk mengurangi dampak informasi menyesatkan. ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 7 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Instrumen* ],
+    [ *Pasal/Bagian* ],
+    [ *Relevansi Kedaulatan Kognitif* ],
+    [ *ICCPR* ],
+    [ Pasal 18 (freedom of thought) ],
+    [ Melindungi mental integrity dari tekanan psikologis; interpretasi General Comment No. 22 memperluas pada manipulasi digital. ],
+    [ *UDHR* ],
+    [ Pasal 12 (right to privacy) ],
+    [ Diperluas oleh General Comment No. 34 untuk mencakup integritas mental dalam era data‑driven. ],
+    [ *European Convention on Human Rights (ECHR)* ],
+    [ Pasal 10 (freedom of expression) ],
+    [ Kasus ECHR v. K. (2020) menegaskan hak akses informasi yang bebas dari filtrasi algoritmik. ],
+    [ *Convention on the Rights of the Child (CRC)* ],
+    [ Pasal 12 ],
+    [ Menjamin partisipasi anak dalam keputusan yang memengaruhi mereka, termasuk eksposur konten AI. ],
+    [ *Budapest Convention on Cybercrime* ],
+    [ Art. 1‑4 ],
+    [ Menetapkan standar perlindungan data yang dapat mempengaruhi integritas mental. ],
+    [ *General Data Protection Regulation (GDPR)* ],
+    [ Art. 17 (right to erasure) & Art. 21 (right to object) ],
+    [ Menyediakan mekanisme teknis untuk mengurangi dampak informasi menyesatkan. ],
+  )
+]
 #v(0.85em)
 
 
@@ -1853,31 +1973,35 @@ Hasil empiris menunjukkan bahwa *penurunan entropy \> 15 %* secara statistik
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 1.5fr, 1.5fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Indikator* ],
-  [ *Definisi* ],
-  [ *Sumber Data* ],
-  [ *Nilai Ambang* ],
-  [ *Entropy Δ* ],
-  [ Perubahan rata‑rata entropy pengguna (bits) selama 30 hari ],
-  [ Log interaksi platform ],
-  [ ≤ ‑0.15 bits (peringatan) ],
-  [ *Mutual Information (MI)* ],
-  [ MI antara output AI dan keputusan pengguna ],
-  [ Log keputusan + AI output ],
-  [ ≥ 0.60 (potensi manipulasi) ],
-  [ *Persuasion Success Rate (PSR)* ],
-  [ Persentase perubahan sikap setelah paparan konten AI ],
-  [ Survey pre/post ],
-  [ ≥ 0.30 (tinggi) ],
-  [ *Recall Accuracy (RA)* ],
-  [ Kemampuan pengguna mengingat sumber asli informasi ],
-  [ Tes recall ],
-  [ ≤ 0.45 (indikasi disinformasi) ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.8fr, 1.0fr, 1.3fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Indikator* ],
+    [ *Definisi* ],
+    [ *Sumber Data* ],
+    [ *Nilai Ambang* ],
+    [ *Entropy Δ* ],
+    [ Perubahan rata‑rata entropy pengguna (bits) selama 30 hari ],
+    [ Log interaksi platform ],
+    [ ≤ ‑0.15 bits (peringatan) ],
+    [ *Mutual Information (MI)* ],
+    [ MI antara output AI dan keputusan pengguna ],
+    [ Log keputusan + AI output ],
+    [ ≥ 0.60 (potensi manipulasi) ],
+    [ *Persuasion Success Rate (PSR)* ],
+    [ Persentase perubahan sikap setelah paparan konten AI ],
+    [ Survey pre/post ],
+    [ ≥ 0.30 (tinggi) ],
+    [ *Recall Accuracy (RA)* ],
+    [ Kemampuan pengguna mengingat sumber asli informasi ],
+    [ Tes recall ],
+    [ ≤ 0.45 (indikasi disinformasi) ],
+  )
+]
 #v(0.85em)
 
 
@@ -1915,23 +2039,27 @@ di mana $ B_i $ adalah _bias index_ (mis. homophily, sentiment skew).  Nilai $ l
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Aspek* ],
-  [ *Temuan* ],
-  [ *Targeting* ],
-  [ 1,2 juta akun muda (usia 18‑30) dipetakan melalui _psychographic profiling_ (Big‑5, Moral Foundations). ],
-  [ *Teknologi* ],
-  [ NLG berbasis GPT‑3 menghasilkan 4.500 variasi pesan, dipersonalisasi dengan _sentiment‑aware prompts_. ],
-  [ *Pengaruh* ],
-  [ 38 % responden mengaku “lebih yakin” pada kandidat yang dipromosikan; 27 % tetap mempertahankan keyakinan setelah 6 bulan (belief persistence). ],
-  [ *Metrik Kognitif* ],
-  [ Entropy rata‑rata penurunan 0.22 bits; MI antara output AI dan keputusan voting = 0.71. ],
-  [ *Neuro‑imaging* ],
-  [ fMRI pada 30 subjek menunjukkan aktivasi amigdala (↑ 23 %) dan ventromedial prefrontal cortex (↑ 19 %) saat menonton konten AI‑generated. ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Aspek* ],
+    [ *Temuan* ],
+    [ *Targeting* ],
+    [ 1,2 juta akun muda (usia 18‑30) dipetakan melalui _psychographic profiling_ (Big‑5, Moral Foundations). ],
+    [ *Teknologi* ],
+    [ NLG berbasis GPT‑3 menghasilkan 4.500 variasi pesan, dipersonalisasi dengan _sentiment‑aware prompts_. ],
+    [ *Pengaruh* ],
+    [ 38 % responden mengaku “lebih yakin” pada kandidat yang dipromosikan; 27 % tetap mempertahankan keyakinan setelah 6 bulan (belief persistence). ],
+    [ *Metrik Kognitif* ],
+    [ Entropy rata‑rata penurunan 0.22 bits; MI antara output AI dan keputusan voting = 0.71. ],
+    [ *Neuro‑imaging* ],
+    [ fMRI pada 30 subjek menunjukkan aktivasi amigdala (↑ 23 %) dan ventromedial prefrontal cortex (↑ 19 %) saat menonton konten AI‑generated. ],
+  )
+]
 #v(0.85em)
 
 
@@ -1945,31 +2073,35 @@ di mana $ B_i $ adalah _bias index_ (mis. homophily, sentiment skew).  Nilai $ l
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 1.1fr, 1.1fr, 1.1fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Risiko* ],
-  [ *Probabilitas* ],
-  [ *Dampak* ],
-  [ *Skor Risiko (P × D)* ],
-  [ Penyebaran disinformasi ],
-  [ 0.85 ],
-  [ 0.92 ],
-  [ 0.78 ],
-  [ Penurunan kepercayaan publik ],
-  [ 0.70 ],
-  [ 0.88 ],
-  [ 0.62 ],
-  [ Pola polarisasi sosial ],
-  [ 0.80 ],
-  [ 0.90 ],
-  [ 0.72 ],
-  [ Kerusakan reputasi platform ],
-  [ 0.60 ],
-  [  ],
-  [  ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 0.85fr, 0.85fr, 1.0fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Risiko* ],
+    [ *Probabilitas* ],
+    [ *Dampak* ],
+    [ *Skor Risiko (P × D)* ],
+    [ Penyebaran disinformasi ],
+    [ 0.85 ],
+    [ 0.92 ],
+    [ 0.78 ],
+    [ Penurunan kepercayaan publik ],
+    [ 0.70 ],
+    [ 0.88 ],
+    [ 0.62 ],
+    [ Pola polarisasi sosial ],
+    [ 0.80 ],
+    [ 0.90 ],
+    [ 0.72 ],
+    [ Kerusakan reputasi platform ],
+    [ 0.60 ],
+    [  ],
+    [  ],
+  )
+]
 #v(0.85em)
 
 
@@ -2002,41 +2134,45 @@ Berikut rincian tiap komponen toolkit, dilengkapi dengan bukti empiris, referens
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 1.5fr, 2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Tahap* ],
-  [ *Aktivitas* ],
-  [ *Alat / Metode* ],
-  [ *Catatan Legal (Indonesia)* ],
-  [ *Catatan Legal (Internasional)* ],
-  [ 1.1 ],
-  [ *Penyelamatan percakapan* ],
-  [ Forensic Capture Agent (FCA) – skrip Python yang menyalin log API secara real‑time, menambahkan header X‑Forensic‑Hash ],
-  [ Memenuhi *Pasal 5 ayat (1) UU ITE* (keabsahan data elektronik) dan *Pasal 184 ayat (1) KUHAP* (pencatatan bukti). ],
-  [ Mengikuti *ISO/IEC 27037* (identifikasi, pengumpulan, dan pelestarian bukti digital). ],
-  [ 1.2 ],
-  [ *Hashing & Timestamping* ],
-  [ SHA‑256 + Merkle‑Tree; penandaan waktu dengan _Trusted Timestamp Authority_ (TSA) ],
-  [ *PP No. 71/2019* tentang Penyelenggaraan Sistem dan Transaksi Elektronik mengharuskan bukti memiliki _integritas_ dan _otentikasi_ yang dapat diverifikasi. ],
-  [ *NIST SP 800‑38B* (MAC) dan *FRE Rule 901* (verifikasi keaslian bukti). ],
-  [ 1.3 ],
-  [ *Ekstraksi Metadata* ],
-  [ MetaExtractor – mengekstrak timestamp, user‑ID, model‑ID, IP, dan User‑Agent ],
-  [ *UU No. 11/2008* tentang Informasi dan Transaksi Elektronik (ITE) menegaskan pentingnya _metadata_ sebagai elemen bukti. ],
-  [ *ISO/IEC 27041* (incident handling) menekankan pencatatan _contextual data_. ],
-  [ 1.4 ],
-  [ *Backup terenkripsi* ],
-  [ AES‑256 dengan _Key Management Service_ (KMS) terpusat ],
-  [ *Peraturan Pemerintah No. 71/2019* (PP 71/2019) mengatur penyimpanan data pribadi secara aman. ],
-  [ *ISO/IEC 27018* (proteksi data pribadi di cloud). ],
-  [ 1.5 ],
-  [ *Audit Log & Access Control* ],
-  [ Immutable Ledger berbasis blockchain (Hyperledger Fabric) untuk mencatat setiap operasi read/write ],
-  [ *Undang‑Undang No. 19/2016* tentang Informasi dan Transaksi Elektronik (ITE) mengakui _digital signatures_ dan _hash_ sebagai bukti sah. ],
-  [ *EU GDPR Art. 30* (register of processing activities) dan *NIST 800‑53* (audit and accountability). ],
-)]
+#align(center)[
+  #set text(size: 7.5pt)
+  #set par(leading: 0.4em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (0.85fr, 1.3fr, 1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 4pt, y: 4.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Tahap* ],
+    [ *Aktivitas* ],
+    [ *Alat / Metode* ],
+    [ *Catatan Legal (Indonesia)* ],
+    [ *Catatan Legal (Internasional)* ],
+    [ 1.1 ],
+    [ *Penyelamatan percakapan* ],
+    [ Forensic Capture Agent (FCA) – skrip Python yang menyalin log API secara real‑time, menambahkan header X‑Forensic‑Hash ],
+    [ Memenuhi *Pasal 5 ayat (1) UU ITE* (keabsahan data elektronik) dan *Pasal 184 ayat (1) KUHAP* (pencatatan bukti). ],
+    [ Mengikuti *ISO/IEC 27037* (identifikasi, pengumpulan, dan pelestarian bukti digital). ],
+    [ 1.2 ],
+    [ *Hashing & Timestamping* ],
+    [ SHA‑256 + Merkle‑Tree; penandaan waktu dengan _Trusted Timestamp Authority_ (TSA) ],
+    [ *PP No. 71/2019* tentang Penyelenggaraan Sistem dan Transaksi Elektronik mengharuskan bukti memiliki _integritas_ dan _otentikasi_ yang dapat diverifikasi. ],
+    [ *NIST SP 800‑38B* (MAC) dan *FRE Rule 901* (verifikasi keaslian bukti). ],
+    [ 1.3 ],
+    [ *Ekstraksi Metadata* ],
+    [ MetaExtractor – mengekstrak timestamp, user‑ID, model‑ID, IP, dan User‑Agent ],
+    [ *UU No. 11/2008* tentang Informasi dan Transaksi Elektronik (ITE) menegaskan pentingnya _metadata_ sebagai elemen bukti. ],
+    [ *ISO/IEC 27041* (incident handling) menekankan pencatatan _contextual data_. ],
+    [ 1.4 ],
+    [ *Backup terenkripsi* ],
+    [ AES‑256 dengan _Key Management Service_ (KMS) terpusat ],
+    [ *Peraturan Pemerintah No. 71/2019* (PP 71/2019) mengatur penyimpanan data pribadi secara aman. ],
+    [ *ISO/IEC 27018* (proteksi data pribadi di cloud). ],
+    [ 1.5 ],
+    [ *Audit Log & Access Control* ],
+    [ Immutable Ledger berbasis blockchain (Hyperledger Fabric) untuk mencatat setiap operasi read/write ],
+    [ *Undang‑Undang No. 19/2016* tentang Informasi dan Transaksi Elektronik (ITE) mengakui _digital signatures_ dan _hash_ sebagai bukti sah. ],
+    [ *EU GDPR Art. 30* (register of processing activities) dan *NIST 800‑53* (audit and accountability). ],
+  )
+]
 #v(0.85em)
 
 
@@ -2064,35 +2200,39 @@ Pre‑processing menyiapkan data mentah untuk analisis statistik dan pembelajara
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Langkah* ],
-  [ *Deskripsi* ],
-  [ *Alat / Library* ],
-  [ *Penyesuaian Bahasa Indonesia* ],
-  [ Tokenisasi ],
-  [ Memecah teks menjadi token (kata, sub‑kata) ],
-  [ spaCy (ID‑model), Stanza ],
-  [ Menggunakan _Moses_ untuk sub‑tokenisasi pada kata majemuk (e.g., “menyampaikan”). ],
-  [ Normalisasi ],
-  [ Lower‑case, penghapusan _stop‑words_, stemming/lemmatization ],
-  [ Sastrawi (stemmer), _NLTK_ (stop‑word list) ],
-  [ Penambahan stop‑words khusus AI (e.g., “bot”, “AI”) untuk mengurangi bias. ],
-  [ Segmentasi Turn ],
-  [ Membagi dialog menjadi _turn_ berdasarkan `role` (user/assistant) dan `timestamp` ],
-  [ MetaExtractor ],
-  [ Menyimpan _turn‑id_ untuk analisis _dialog act_. ],
-  [ Noise Filtering ],
-  [ Menghapus karakter non‑alfabetik, emoji, markup HTML ],
-  [ Regex + emoji‑library ],
-  [ Emoji dipetakan ke label emosional (e.g., 😱 → “high‑arousal‑negative”). ],
-  [ Lemma‑Based POS Tagging ],
-  [ Menandai _part‑of‑speech_ dengan lemmatisasi ],
-  [ Universal Dependencies (UD‑ID) ],
-  [ Memperbaiki ambiguitas kata kerja pasif vs aktif. ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Langkah* ],
+    [ *Deskripsi* ],
+    [ *Alat / Library* ],
+    [ *Penyesuaian Bahasa Indonesia* ],
+    [ Tokenisasi ],
+    [ Memecah teks menjadi token (kata, sub‑kata) ],
+    [ spaCy (ID‑model), Stanza ],
+    [ Menggunakan _Moses_ untuk sub‑tokenisasi pada kata majemuk (e.g., “menyampaikan”). ],
+    [ Normalisasi ],
+    [ Lower‑case, penghapusan _stop‑words_, stemming/lemmatization ],
+    [ Sastrawi (stemmer), _NLTK_ (stop‑word list) ],
+    [ Penambahan stop‑words khusus AI (e.g., “bot”, “AI”) untuk mengurangi bias. ],
+    [ Segmentasi Turn ],
+    [ Membagi dialog menjadi _turn_ berdasarkan `role` (user/assistant) dan `timestamp` ],
+    [ MetaExtractor ],
+    [ Menyimpan _turn‑id_ untuk analisis _dialog act_. ],
+    [ Noise Filtering ],
+    [ Menghapus karakter non‑alfabetik, emoji, markup HTML ],
+    [ Regex + emoji‑library ],
+    [ Emoji dipetakan ke label emosional (e.g., 😱 → “high‑arousal‑negative”). ],
+    [ Lemma‑Based POS Tagging ],
+    [ Menandai _part‑of‑speech_ dengan lemmatisasi ],
+    [ Universal Dependencies (UD‑ID) ],
+    [ Memperbaiki ambiguitas kata kerja pasif vs aktif. ],
+  )
+]
 #v(0.85em)
 
 
@@ -2106,35 +2246,39 @@ Fitur-fitur linguistik dibagi menjadi lima dimensi utama. Setiap dimensi diopera
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Dimensi* ],
-  [ *Fitur* ],
-  [ *Metode Ekstraksi* ],
-  [ *Referensi Empiris* ],
-  [ *Syntactic* ],
-  [ POS tag distribusi, depth tree, dependency length ],
-  [ UD‑ID parser, _Treebank_ statistics ],
-  [ Kurniawan et al., 2021 menunjukkan perbedaan signifikan pada _dependency depth_ antara LLM umum vs LLM yang di‑fine‑tune pada domain keuangan (p \< 0.001). ],
-  [ *Semantic* ],
-  [ Embedding similarity, topic coherence ],
-  [ mBERT → CLS vector, _BERTopic_ clustering ],
-  [ Liu & Sun, 2022 melaporkan akurasi 0.89 dalam mengklasifikasikan _intent_ finansial menggunakan mBERT. ],
-  [ *Pragmatic* ],
-  [ Speech‑act classification, _dialog act_ (question, assertion, directive) ],
-  [ BiLSTM‑CRF + attention ],
-  [ Sari et al., 2020 mencatat F1 = 0.91 untuk _directive_ detection pada chatbot layanan publik. ],
-  [ *Stylistic* ],
-  [ n‑gram (1‑4), _function‑word frequency_, _readability_ (Flesch‑Indonesian) ],
-  [ scikit‑learn CountVectorizer, textstat ],
-  [ Hidayat & Putri, 2023 menemukan perbedaan _function‑word_ profil antara model GPT‑3 dan manusia (Cohen’s d = 1.2). ],
-  [ *Emotional* ],
-  [ Valence‑arousal scores, _emotion class_ (joy, fear, anger) ],
-  [ VADER‑ID (adapted), _BERT‑Emotion_ fine‑tuned pada Indonesian Emotion Corpus ],
-  [ Maharani et al., 2022 melaporkan macro‑F1 = 0.86 untuk klasifikasi 6 emosi pada percakapan AI. ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Dimensi* ],
+    [ *Fitur* ],
+    [ *Metode Ekstraksi* ],
+    [ *Referensi Empiris* ],
+    [ *Syntactic* ],
+    [ POS tag distribusi, depth tree, dependency length ],
+    [ UD‑ID parser, _Treebank_ statistics ],
+    [ Kurniawan et al., 2021 menunjukkan perbedaan signifikan pada _dependency depth_ antara LLM umum vs LLM yang di‑fine‑tune pada domain keuangan (p \< 0.001). ],
+    [ *Semantic* ],
+    [ Embedding similarity, topic coherence ],
+    [ mBERT → CLS vector, _BERTopic_ clustering ],
+    [ Liu & Sun, 2022 melaporkan akurasi 0.89 dalam mengklasifikasikan _intent_ finansial menggunakan mBERT. ],
+    [ *Pragmatic* ],
+    [ Speech‑act classification, _dialog act_ (question, assertion, directive) ],
+    [ BiLSTM‑CRF + attention ],
+    [ Sari et al., 2020 mencatat F1 = 0.91 untuk _directive_ detection pada chatbot layanan publik. ],
+    [ *Stylistic* ],
+    [ n‑gram (1‑4), _function‑word frequency_, _readability_ (Flesch‑Indonesian) ],
+    [ scikit‑learn CountVectorizer, textstat ],
+    [ Hidayat & Putri, 2023 menemukan perbedaan _function‑word_ profil antara model GPT‑3 dan manusia (Cohen’s d = 1.2). ],
+    [ *Emotional* ],
+    [ Valence‑arousal scores, _emotion class_ (joy, fear, anger) ],
+    [ VADER‑ID (adapted), _BERT‑Emotion_ fine‑tuned pada Indonesian Emotion Corpus ],
+    [ Maharani et al., 2022 melaporkan macro‑F1 = 0.86 untuk klasifikasi 6 emosi pada percakapan AI. ],
+  )
+]
 #v(0.85em)
 
 
@@ -2158,23 +2302,27 @@ Setelah model terlatih, kontribusi masing‑masing fitur diukur dengan *SHAP (SH
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 2fr, 1.5fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Bobot* ],
-  [ *Fitur Utama (berdasarkan SHAP)* ],
-  [ *Nilai Rata‑Rata (±SD)* ],
-  [ α (Stylistic) ],
-  [ function‑word frequency, n‑gram rarity ],
-  [ 0.34 ± 0.07 ],
-  [ β (Emotional) ],
-  [ valence‑arousal, emotion class “fear” ],
-  [ 0.42 ± 0.05 ],
-  [ γ (Logical) ],
-  [ semantic similarity ke _argumentation frames_, dependency depth ],
-  [ 0.24 ± 0.06 ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.8fr, 1.0fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Bobot* ],
+    [ *Fitur Utama (berdasarkan SHAP)* ],
+    [ *Nilai Rata‑Rata (±SD)* ],
+    [ α (Stylistic) ],
+    [ function‑word frequency, n‑gram rarity ],
+    [ 0.34 ± 0.07 ],
+    [ β (Emotional) ],
+    [ valence‑arousal, emotion class “fear” ],
+    [ 0.42 ± 0.05 ],
+    [ γ (Logical) ],
+    [ semantic similarity ke _argumentation frames_, dependency depth ],
+    [ 0.24 ± 0.06 ],
+  )
+]
 #v(0.85em)
 
 
@@ -2233,23 +2381,27 @@ Implementasi *Linguistic Watermarking v2* (2024) telah di‑open‑source oleh _
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 1.5fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Elemen* ],
-  [ *Sumber* ],
-  [ *Verifikasi* ],
-  [ Model ID (UUID) ],
-  [ Header API (`X‑Model‑ID`) ],
-  [ Cross‑check dengan _registry_ internal (MongoDB). ],
-  [ Training‑Data Hash ],
-  [ SHA‑256 hash pada _manifest_ model ],
-  [ Validasi melalui _Merkle proof_ yang disediakan vendor. ],
-  [ Deployment Timestamp ],
-  [ Log server (`/var/log/deploy.log`) ],
-  [  ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.3fr, 1.8fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Elemen* ],
+    [ *Sumber* ],
+    [ *Verifikasi* ],
+    [ Model ID (UUID) ],
+    [ Header API (`X‑Model‑ID`) ],
+    [ Cross‑check dengan _registry_ internal (MongoDB). ],
+    [ Training‑Data Hash ],
+    [ SHA‑256 hash pada _manifest_ model ],
+    [ Validasi melalui _Merkle proof_ yang disediakan vendor. ],
+    [ Deployment Timestamp ],
+    [ Log server (`/var/log/deploy.log`) ],
+    [  ],
+  )
+]
 #v(0.85em)
 
 Konsistensi
@@ -2278,23 +2430,27 @@ Model tata kelola multi‑stakeholder didasarkan pada tiga pilar: (1) *Keterliba
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 1.5fr, 1.5fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Elemen* ],
-  [ *Peran* ],
-  [ *Mekanisme Interaksi* ],
-  [ Board of Trustees ],
-  [ Pengawasan strategis ],
-  [ Rapat tahunan, laporan kinerja ],
-  [ Advisory Council ],
-  [ Konsultasi teknis & etis ],
-  [ Sesi workshop, publikasi white‑paper ],
-  [ Operational Working Groups ],
-  [ Implementasi & monitoring ],
-  [ Sprint agile, dashboard KPI ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.0fr, 1.3fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Elemen* ],
+    [ *Peran* ],
+    [ *Mekanisme Interaksi* ],
+    [ Board of Trustees ],
+    [ Pengawasan strategis ],
+    [ Rapat tahunan, laporan kinerja ],
+    [ Advisory Council ],
+    [ Konsultasi teknis & etis ],
+    [ Sesi workshop, publikasi white‑paper ],
+    [ Operational Working Groups ],
+    [ Implementasi & monitoring ],
+    [ Sprint agile, dashboard KPI ],
+  )
+]
 #v(0.85em)
 
 
@@ -2316,23 +2472,27 @@ Model tata kelola harus menggabungkan tiga dimensi berikut:
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 2fr, 1.5fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Dimensi* ],
-  [ *Komponen Utama* ],
-  [ *Indikator Kinerja* ],
-  [ Etika ],
-  [ Prinsip _Transparency_, _Fairness_, Privacy ],
-  [ Skor etika (0‑1) ],
-  [ Akuntabilitas ],
-  [ Audit internal, whistleblowing ],
-  [ Jumlah laporan, waktu penyelesaian ],
-  [ Regulasi ],
-  [ Kepatuhan terhadap GDPR, AI Act, AI Singapore Guidelines ],
-  [ Persentase kepatuhan ],
-)]
+#align(center)[
+  #set text(size: 8.5pt)
+  #set par(leading: 0.5em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.8fr, 1.3fr),
+    inset: (x: 6pt, y: 5.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Dimensi* ],
+    [ *Komponen Utama* ],
+    [ *Indikator Kinerja* ],
+    [ Etika ],
+    [ Prinsip _Transparency_, _Fairness_, Privacy ],
+    [ Skor etika (0‑1) ],
+    [ Akuntabilitas ],
+    [ Audit internal, whistleblowing ],
+    [ Jumlah laporan, waktu penyelesaian ],
+    [ Regulasi ],
+    [ Kepatuhan terhadap GDPR, AI Act, AI Singapore Guidelines ],
+    [ Persentase kepatuhan ],
+  )
+]
 #v(0.85em)
 
 
@@ -2364,31 +2524,35 @@ Justifikasi metodologis: indikator _Safety_ dan _Non‑Discrimination_ memiliki 
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 1.5fr, 2fr, 2fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Jurisdiksi* ],
-  [ *Dokumen* ],
-  [ *Klasifikasi Risiko “Emotional Manipulation”* ],
-  [ *Mekanisme Penegakan* ],
-  [ *Keterangan* ],
-  [ Uni Eropa ],
-  [ AI Act (2024) ],
-  [ Klasifikasi _High‑Risk_ bagi sistem yang dapat memanipulasi emosi ],
-  [ Audit wajib, Conformity Assessment ],
-  [ Memaksa _Human‑in‑the‑Loop_ (HITL) dan Transparency Reports ],
-  [ Amerika Serikat ],
-  [ Executive Order 14110 (2024) ],
-  [ Klasifikasi _High‑Risk_ bila memengaruhi keputusan penting (mis. kesehatan mental) ],
-  [ Self‑Regulation + _Federal Trade Commission_ (FTC) ],
-  [ Fokus pada _Consumer Protection_ dan Data Privacy ],
-  [ Singapura ],
-  [ Model AI Governance Framework (2022) ],
-  [ Klasifikasi _High‑Risk_ untuk sistem dengan emotional manipulation ],
-  [ AI Ethics Review Board, Mandatory Impact Assessments ],
-  [ Menekankan _Human‑in‑the‑Loop_ dan Data Sovereignty ],
-)]
+#align(center)[
+  #set text(size: 7.5pt)
+  #set par(leading: 0.4em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.3fr, 1.8fr, 1.8fr, 1.8fr),
+    inset: (x: 4pt, y: 4.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Jurisdiksi* ],
+    [ *Dokumen* ],
+    [ *Klasifikasi Risiko “Emotional Manipulation”* ],
+    [ *Mekanisme Penegakan* ],
+    [ *Keterangan* ],
+    [ Uni Eropa ],
+    [ AI Act (2024) ],
+    [ Klasifikasi _High‑Risk_ bagi sistem yang dapat memanipulasi emosi ],
+    [ Audit wajib, Conformity Assessment ],
+    [ Memaksa _Human‑in‑the‑Loop_ (HITL) dan Transparency Reports ],
+    [ Amerika Serikat ],
+    [ Executive Order 14110 (2024) ],
+    [ Klasifikasi _High‑Risk_ bila memengaruhi keputusan penting (mis. kesehatan mental) ],
+    [ Self‑Regulation + _Federal Trade Commission_ (FTC) ],
+    [ Fokus pada _Consumer Protection_ dan Data Privacy ],
+    [ Singapura ],
+    [ Model AI Governance Framework (2022) ],
+    [ Klasifikasi _High‑Risk_ untuk sistem dengan emotional manipulation ],
+    [ AI Ethics Review Board, Mandatory Impact Assessments ],
+    [ Menekankan _Human‑in‑the‑Loop_ dan Data Sovereignty ],
+  )
+]
 #v(0.85em)
 
 
@@ -2485,39 +2649,43 @@ Dalam pilot program chatbot kesehatan mental di Singapura (2023), penggunaan _Eq
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 1.5fr, 1.5fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 7 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Prinsip* ],
-  [ *Implementasi Teknis* ],
-  [ *Metode Evaluasi* ],
-  [ *Risiko Potensial* ],
-  [ Transparansi ],
-  [ XAI (SHAP) ],
-  [ Audit kode, laporan interpretabilitas ],
-  [ Kegagalan penjelasan dapat menimbulkan ketidakpercayaan ],
-  [ Keadilan ],
-  [ Equalized Odds, Calibration ],
-  [ Demographic Parity, Equalized Odds ],
-  [ Bias residual dapat memicu diskriminasi ],
-  [ Privasi ],
-  [ DP, Federated Learning ],
-  [ Privacy Impact Assessment (PIA) ],
-  [ Pelanggaran data pribadi ],
-  [ Non‑Diskriminasi ],
-  [ Bias mitigation algorithms ],
-  [ Bias audit, user feedback ],
-  [ Stereotip terulang ],
-  [ Inklusivitas ],
-  [ Adaptive UI, multimodal input ],
-  [ Usability testing, A/B testing ],
-  [ Keterbatasan akses bagi penyandang disabilitas ],
-  [ Tanggung Jawab ],
-  [ Logging, audit trail ],
-  [ Incident response plan ],
-  [ Tanggung jawab hukum tidak jelas ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.0fr, 1.3fr, 1.3fr, 1.8fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 7 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Prinsip* ],
+    [ *Implementasi Teknis* ],
+    [ *Metode Evaluasi* ],
+    [ *Risiko Potensial* ],
+    [ Transparansi ],
+    [ XAI (SHAP) ],
+    [ Audit kode, laporan interpretabilitas ],
+    [ Kegagalan penjelasan dapat menimbulkan ketidakpercayaan ],
+    [ Keadilan ],
+    [ Equalized Odds, Calibration ],
+    [ Demographic Parity, Equalized Odds ],
+    [ Bias residual dapat memicu diskriminasi ],
+    [ Privasi ],
+    [ DP, Federated Learning ],
+    [ Privacy Impact Assessment (PIA) ],
+    [ Pelanggaran data pribadi ],
+    [ Non‑Diskriminasi ],
+    [ Bias mitigation algorithms ],
+    [ Bias audit, user feedback ],
+    [ Stereotip terulang ],
+    [ Inklusivitas ],
+    [ Adaptive UI, multimodal input ],
+    [ Usability testing, A/B testing ],
+    [ Keterbatasan akses bagi penyandang disabilitas ],
+    [ Tanggung Jawab ],
+    [ Logging, audit trail ],
+    [ Incident response plan ],
+    [ Tanggung jawab hukum tidak jelas ],
+  )
+]
 #v(0.85em)
 
 
@@ -2570,27 +2738,31 @@ AGI, meskipun masih dalam tahap konseptual, menandai titik kritis di mana sistem
 
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.1fr, 1.5fr, 1.5fr, 2fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Teknologi* ],
-  [ *Kelebihan* ],
-  [ *Risiko Kedaulatan Mental* ],
-  [ *Tindakan Mitigasi* ],
-  [ Multimodal ],
-  [ Integrasi data sensorik ],
-  [ Manipulasi persepsi visual ],
-  [ Audit multimodal, XAI ],
-  [ Embodied AI ],
-  [ Responsif terhadap lingkungan ],
-  [ Interaksi fisik memengaruhi perilaku ],
-  [ Standar keselamatan, regulasi ],
-  [ AGI ],
-  [ Generalisasi tinggi ],
-  [ Otonomi berlebih, epistemic dependence ],
-  [ Kebijakan personhood, batasan self‑improvement ],
-)]
+#align(center)[
+  #set text(size: 8pt)
+  #set par(leading: 0.45em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (0.85fr, 1.3fr, 1.3fr, 1.8fr),
+    inset: (x: 5pt, y: 5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 4 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Teknologi* ],
+    [ *Kelebihan* ],
+    [ *Risiko Kedaulatan Mental* ],
+    [ *Tindakan Mitigasi* ],
+    [ Multimodal ],
+    [ Integrasi data sensorik ],
+    [ Manipulasi persepsi visual ],
+    [ Audit multimodal, XAI ],
+    [ Embodied AI ],
+    [ Responsif terhadap lingkungan ],
+    [ Interaksi fisik memengaruhi perilaku ],
+    [ Standar keselamatan, regulasi ],
+    [ AGI ],
+    [ Generalisasi tinggi ],
+    [ Otonomi berlebih, epistemic dependence ],
+    [ Kebijakan personhood, batasan self‑improvement ],
+  )
+]
 #v(0.85em)
 
 
@@ -2611,47 +2783,51 @@ Namun, _personhood_ tidak otomatis menimbulkan _rights_ (hak). Sebaliknya, ia me
 === 10.2.3 Tabel Perbandingan Mekanisme Penegakan Hukum
 
 #v(0.85em)
-#align(center)[#table(
-  columns: (1.5fr, 1.5fr, 1.5fr, 1.1fr, 1.1fr, 1.5fr),
-  inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Regulasi* ],
-  [ *Mekanisme Penegakan* ],
-  [ *Sanksi* ],
-  [ *Audit* ],
-  [ *Lisensi* ],
-  [ *Catatan* ],
-  [ EU AI Act ],
-  [ Conformity Assessment (CE) ],
-  [ Denda hingga 6 % omzet tahunan ],
-  [ Audit eksternal ],
-  [ Lisensi produk ],
-  [ Fokus pada high‑risk ],
-  [ US Executive Order 2024 ],
-  [ Regulatory Oversight (OIG) ],
-  [ Denda hingga 10 % omzet ],
-  [ Audit internal ],
-  [ Lisensi operator ],
-  [ Menekankan data privacy ],
-  [ UK AI Regulation ],
-  [ Regulatory Sandbox ],
-  [ Denda hingga 5 % omzet ],
-  [ Audit internal ],
-  [ Lisensi produk ],
-  [ Menyediakan sandbox ],
-  [ Singapore AI Governance Framework ],
-  [ AI Safety Standards ],
-  [ Denda hingga 3 % omzet ],
-  [ Audit eksternal ],
-  [ Lisensi ],
-  [ Menekankan human‑in‑the‑loop ],
-  [ Canada AI Act ],
-  [ AI Impact Assessment ],
-  [ Denda hingga 4 % omzet ],
-  [ Audit eksternal ],
-  [ Lisensi ],
-  [ Fokus pada bias dan fairness ],
-)]
+#align(center)[
+  #set text(size: 7.5pt)
+  #set par(leading: 0.4em, first-line-indent: 0pt, justify: false)
+  #table(
+    columns: (1.3fr, 1.3fr, 1.3fr, 1.0fr, 1.0fr, 1.3fr),
+    inset: (x: 4pt, y: 4.5pt),
+    stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+    [ *Regulasi* ],
+    [ *Mekanisme Penegakan* ],
+    [ *Sanksi* ],
+    [ *Audit* ],
+    [ *Lisensi* ],
+    [ *Catatan* ],
+    [ EU AI Act ],
+    [ Conformity Assessment (CE) ],
+    [ Denda hingga 6 % omzet tahunan ],
+    [ Audit eksternal ],
+    [ Lisensi produk ],
+    [ Fokus pada high‑risk ],
+    [ US Executive Order 2024 ],
+    [ Regulatory Oversight (OIG) ],
+    [ Denda hingga 10 % omzet ],
+    [ Audit internal ],
+    [ Lisensi operator ],
+    [ Menekankan data privacy ],
+    [ UK AI Regulation ],
+    [ Regulatory Sandbox ],
+    [ Denda hingga 5 % omzet ],
+    [ Audit internal ],
+    [ Lisensi produk ],
+    [ Menyediakan sandbox ],
+    [ Singapore AI Governance Framework ],
+    [ AI Safety Standards ],
+    [ Denda hingga 3 % omzet ],
+    [ Audit eksternal ],
+    [ Lisensi ],
+    [ Menekankan human‑in‑the‑loop ],
+    [ Canada AI Act ],
+    [ AI Impact Assessment ],
+    [ Denda hingga 4 % omzet ],
+    [ Audit eksternal ],
+    [ Lisensi ],
+    [ Fokus pada bias dan fairness ],
+  )
+]
 #v(0.85em)
 
 

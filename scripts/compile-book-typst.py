@@ -182,10 +182,13 @@ def render_typst_table(table_text):
 
     rows = []
     for line in lines:
-        if re.match(r'^\|[\s\-:|]+\|$', line):
+        line_clean = line.strip()
+        if re.match(r'^\|[\s\-:|]+\|$', line_clean):
             continue  # Separator line like |---|---|
-        if line.startswith('|') and line.endswith('|'):
-            cells = [c.strip() for c in line[1:-1].split('|')]
+        if line_clean.startswith('|'):
+            if not line_clean.endswith('|'):
+                line_clean += ' |'
+            cells = [c.strip() for c in line_clean[1:-1].split('|')]
             rows.append(cells)
 
     if not rows or len(rows) < 1:
@@ -195,36 +198,63 @@ def render_typst_table(table_text):
     header = rows[0]
     data = rows[1:]
 
+    # Dynamic typography & inset based on column count to prevent overlapping text
+    if num_cols >= 5:
+        font_size = "7.5pt"
+        inset_x = "4pt"
+        inset_y = "4.5pt"
+        leading = "0.4em"
+    elif num_cols >= 4:
+        font_size = "8pt"
+        inset_x = "5pt"
+        inset_y = "5pt"
+        leading = "0.45em"
+    else:
+        font_size = "8.5pt"
+        inset_x = "6pt"
+        inset_y = "5.5pt"
+        leading = "0.5em"
+
     col_specs = []
     for c in range(num_cols):
         max_len = max((len(r[c]) for r in rows if c < len(r)), default=10)
         if max_len > 40:
-            col_specs.append("2fr")
-        elif max_len > 20:
-            col_specs.append("1.5fr")
+            col_specs.append("1.8fr")
+        elif max_len > 25:
+            col_specs.append("1.3fr")
+        elif max_len > 12:
+            col_specs.append("1.0fr")
         else:
-            col_specs.append("1.1fr")
+            col_specs.append("0.85fr")
     col_str = ", ".join(col_specs)
 
-    # Standar Percetakan Buku Akademik Tiga Garis (Booktabs: NO vertical lines, clean padding)
-    out = [f"\n#v(0.85em)\n#align(center)[#table("]
-    out.append(f"  columns: ({col_str}),")
-    out.append(f"  inset: (x: 8pt, y: 6pt),")
-    out.append(f"  stroke: (x, y) => if y == 0 {{ (top: 1.2pt + black, bottom: 0.8pt + black) }} else if y == {len(rows)} {{ (bottom: 1.2pt + black) }} else {{ (bottom: 0.25pt + luma(215)) }},")
+    # Standar Percetakan Buku Akademik Tiga Garis (Booktabs: NO vertical lines, clean padding, dedicated typography)
+    out = [
+        f"\n#v(0.85em)",
+        f"#align(center)[",
+        f"  #set text(size: {font_size})",
+        f"  #set par(leading: {leading}, first-line-indent: 0pt, justify: false)",
+        f"  #table(",
+        f"    columns: ({col_str}),",
+        f"    inset: (x: {inset_x}, y: {inset_y}),",
+        f"    stroke: (x, y) => if y == 0 {{ (top: 1.2pt + black, bottom: 0.8pt + black) }} else if y == {len(rows)} {{ (bottom: 1.2pt + black) }} else {{ (bottom: 0.25pt + luma(215)) }},"
+    ]
 
     # Header Row (Clean, no duplicate asterisks)
     for cell in header:
         clean_c = clean_inline_for_typst(cell).replace('*', '')
-        out.append(f"  [ *{clean_c}* ],")
+        out.append(f"    [ *{clean_c}* ],")
 
     # Data Rows
     for r in data:
         for c in range(num_cols):
             val = r[c] if c < len(r) else ""
             clean_c = clean_inline_for_typst(val)
-            out.append(f"  [ {clean_c} ],")
+            out.append(f"    [ {clean_c} ],")
 
-    out.append(")]\n#v(0.85em)\n")
+    out.append("  )")
+    out.append("]")
+    out.append("#v(0.85em)\n")
     return "\n".join(out)
 
 def clean_chapter_markdown_to_typst(md_content):
