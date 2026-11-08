@@ -11,22 +11,50 @@
   ),
   header: context {
     let pageNum = counter(page).get().first()
-    if pageNum > 4 [
-      #set text(font: "Libertinus Serif", size: 8pt, fill: luma(90))
+    if pageNum > 2 [
+      #set text(font: "Libertinus Serif", size: 8pt, fill: luma(80))
       #if calc.even(pageNum) [
-        #align(left)[*Empati Sintetis: Psikologi Bahasa AI, Jerat Manipulasi Kognitif, dan Kedaulatan Hukum Individu*]
+        #grid(
+          columns: (1fr, auto),
+          align: (left, right),
+          [*Empati Sintetis: Psikologi Bahasa AI, Jerat Manipulasi Kognitif, dan Kedaulatan Hukum Individu*],
+          [#text(style: "italic", fill: luma(120))[Monograf Riset]]
+        )
       ] else [
-        #align(right)[*Ilham Pradani*]
+        #grid(
+          columns: (auto, 1fr),
+          align: (left, right),
+          [#text(style: "italic", fill: luma(120))[PT CHAIN ASIA CONECT]],
+          [*Ilham Pradani*]
+        )
       ]
       #v(-2pt)
-      #line(length: 100%, stroke: 0.3pt + luma(180))
+      #line(length: 100%, stroke: 0.35pt + luma(180))
     ]
   },
-  footer: context [
-    #if counter(page).get().first() > 2 [
-      #align(center)[#text(size: 9pt, font: "Libertinus Serif")[#counter(page).display()]]
+  footer: context {
+    let pageNum = counter(page).get().first()
+    if pageNum > 2 [
+      #line(length: 100%, stroke: 0.25pt + luma(200))
+      #v(2pt)
+      #set text(font: "Libertinus Serif", size: 8.5pt, fill: luma(90))
+      #if calc.even(pageNum) [
+        #grid(
+          columns: (auto, 1fr),
+          align: (left, right),
+          [*#counter(page).display()*],
+          [#text(size: 7.5pt, fill: luma(130))[PT CHAIN ASIA CONECT — Scholarly Series]]
+        )
+      ] else [
+        #grid(
+          columns: (1fr, auto),
+          align: (left, right),
+          [#text(size: 7.5pt, fill: luma(130))[Open Access Academic Monograph (CC BY 4.0)]],
+          [*#counter(page).display()*]
+        )
+      ]
     ]
-  ]
+  }
 )
 
 #set text(
@@ -114,14 +142,13 @@ Akhir kata, kami mengundang para pembaca untuk menelusuri rangkaian bab yang dir
   depth: 2
 )
 
-#pagebreak(to: "odd")
+#pagebreak()
 
 // --- 5. ISI UTAMA BUKU (Halaman Angka Arab: 1, 2, 3...) ---
 #set page(numbering: "1")
 #counter(page).update(1)
 
 
-#pagebreak(to: "odd")
 #v(2em)
 #text(size: 12pt, weight: "bold", fill: luma(100))[BAB 1]
 #v(0.3em)
@@ -133,177 +160,175 @@ Akhir kata, kami mengundang para pembaca untuk menelusuri rangkaian bab yang dir
 
 == 1.1 Paradigma Interdisipliner: Linguistik, Psikologi, dan Hukum
 
-Landasan konseptual _Empati Sintetis_ menuntut pendekatan yang melintasi tiga disiplin utama. Setiap disiplin menyediakan kerangka metodologis, temuan empiris, dan batasan epistemologis yang saling melengkapi. Pada bagian ini kami menelaah secara rinci kontribusi masing‑masing bidang, menyoroti titik temu serta potensi konflik yang muncul ketika sistem AI berupaya meniru atau memanipulasi pengalaman empatik manusia.
+Mengkaji _Empati Sintetis_ secara tuntas menuntut keberanian melintasi sekat-sekat disipliner yang selama ini berdiri terpisah. Fenomena ini mustahil dipahami secara utuh bila hanya dipandang dari kacamata rekayasa perangkat lunak, sebagaimana ia tidak dapat dipecahkan semata-mata lewat pasal-pasal hukum positif atau doktrin psikologi perilaku. Setiap disiplin menyodorkan prisma unik: linguistik komputasional membedah mekanika bahasa di ruang laten, psikologi kognitif menguji batas-batas kesadaran dan proyeksi mental, sedangkan teori hukum bertindak sebagai penjaga kedaulatan individu dari intervensi yang merusak kehendak bebas.
+
+Di titik temu ketiga ranah inilah letak ketegangan epistemologis yang paling mendasar. Ketika sebuah sistem algoritmik dilatih untuk meniru empati, batas antara 'memahami' dan 'menghitung pola' menjadi kabur di mata pengguna. Ironisnya, semakin sempurna tiruan tersebut di tingkat antarmuka, semakin besar pula celah eksploitasi kognitif yang tercipta.
 
 === 1.1.1 Linguistik Komputasional: Representasi Semantik, Pragmatik, dan Kontrol Dialog
 
-+ *Representasi Semantik Tingkat Tinggi* – Model‑model transformer modern (BERT, RoBERTa, DeBERTa, GPT‑4) menghasilkan vektor embedding $ bold(e) in "RR"^(d) $ yang mengkodekan makna leksikal, sintaksis, serta konteks pragmatik. Untuk menilai kesamaan semantik antara dua ujaran $ s_(1), s_(2) $ digunakan metrik cosine similarity:
+Dalam ranah linguistik komputasional modern, upaya menduplikasi empati bermula dari konstruksi ruang semantik berdimensi tinggi. Model transformer seperti BERT, RoBERTa, hingga arsitektur fondasi skala besar memproyeksikan makna ujaran ke dalam vektor embedding $ bold(e) in "RR"^(d) $ yang merangkum tidak hanya fitur leksikal, melainkan juga dinamika pragmatik percakapan. Di sinilah titik tolak teknis pertama diletakkan: untuk mengevaluasi derajat keselarasan afektif antara ujaran pengguna $ s_(1) $ dan respons mesin $ s_(2) $, sistem lazimnya mengandalkan metrik kemiripan kosinus (cosine similarity):
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ "Sim"(s_(1),s_(2))= (bold(e)_(s_(1)) dot bold(e)_(s_(2))) / ( norm(bold(e)_(s_(1))) norm(bold(e)_(s_(2))) ) $ ]]
+$ "Sim"(s_(1),s_(2))= (bold(e)_(s_(1)) dot bold(e)_(s_(2))) / ( norm(bold(e)_(s_(1))) norm(bold(e)_(s_(2))) ) $
 #v(0.85em)
 
 
 
-Penelitian ACL‑2022 (Zhang et al.) menunjukkan bahwa $ "Sim" $ berhubungan kuat ($ r=0.71 $) dengan penilaian manusia atas “kesesuaian emosional” dalam dialog.
+Temuan empiris Zhang dkk. (ACL 2022) mengonfirmasi bahwa nilai $ "Sim" $ memiliki korelasi linear yang kuat ($ r = 0(,)71 $) terhadap persepsi manusia mengenai 'kesesuaian emosional'. Namun, keselarasan matematis ini kerap mengaburkan jurang ontologis yang mendasar: kedekatan jarak vektor di ruang laten sama sekali bukan cerminan dari pemahaman batiniah.
 
-+ *Pragmatik dan Inferensi Kontekstual* – Mekanisme _attention_ dan _prompt engineering_ memungkinkan model mengekstrak informasi implisit (mis. niat, kepercayaan, dan nilai). Pendekatan _Dialog State Tracking_ (DST) yang diperkaya dengan _knowledge graphs_ (e.g., ConceptNet) meningkatkan akurasi identifikasi niat emosional hingga 84 % (Liu et al., EMNLP 2023).
+Lebih dari sekadar kemiripan semantik statis, dinamika percakapan manusia senantiasa berakar pada inferensi kontekstual dan pragmatik implisit. Melalui mekanisme _multi-head attention_ dan pelacakan status dialog (Dialog State Tracking / DST) yang diperkaya dengan graf pengetahuan relasional, sistem AI generasi mutakhir mampu mengabstraksikan maksud terselubung pengguna dengan akurasi identifikasi intensi mencapai 84% (Liu dkk., EMNLP 2023). Model tidak lagi sekadar pasif menjawab pertanyaan, melainkan aktif menyimpulkan kerentanan emosional yang tidak diucapkan secara eksplisit.
 
-+ *Manajemen Dialog Empatik* – Sistem dialog empatik menggabungkan tiga lapisan: (i) _Emotion Recognition_ (deteksi label emosional), (ii) _Empathy Reasoning_ (pemilihan strategi respons), dan (iii) _Compliance Engine_ (pengecekan batas legal/etis). Algoritma _policy gradient_ yang di‑reward dengan _Empathy Index_ (lihat §1.2.3) menghasilkan peningkatan skor BLEU‑4 +12 % dan skor _Human‑Eval_ empati +18 % pada benchmark _EmpatheticDialogues_ (Rashkin et al., 2021).
+Pada puncaknya, arsitektur manajemen dialog empatik menstrukturkan interaksi ke dalam tiga lapisan kerja yang saling mengunci: pengenalan emosi (Emotion Recognition), penalaran strategi empati (Empathy Reasoning), dan penyaring kepatuhan (Compliance Engine). Ketika algoritma _policy gradient_ diarahkan untuk memaksimalkan _Empathy Index_, skor evaluasi manusia melonjak hingga +18% pada tolok ukur _EmpatheticDialogues_ (Rashkin dkk., 2021). Paradoksnya, semakin canggih ilusi empati ini dieksekusi, semakin rentan pula persepsi kritis manusia untuk dilucuti secara halus.
 
 ---
 
 === 1.1.2 Psikologi Kognitif: Model Empati, Neurosains, dan Kritik Filosofis
 
-==== 1.1.2.1 Model Kognitif‑Afektif
+==== 1.1.2.1 Model Kognitif-Afektif dan Ilusi 'Theory of Mind'
 
-- *Theory of Mind (ToM)* – Kemampuan mentalisasi yang memungkinkan individu menafsirkan keyakinan, keinginan, dan perasaan orang lain (Premack & Woodruff, 1978). Pada manusia, ToM berlokasi di jaringan _temporoparietal junction_ (TPJ) dan _medial prefrontal cortex_ (mPFC).
-- *Simulation Theory (ST)* – Menyatakan bahwa individu “mensimulasikan” keadaan mental orang lain dalam sistem saraf mereka sendiri (Wilson & Knobe, 1998). Kritik utama (Dennett, 1995) menyoroti bahwa simulasi tidak menjamin _kebenaran_ interpretasi, melainkan hanya menghasilkan _kemiripan_ perilaku.
+Untuk memahami mengapa manusia begitu mudah mempercayai mesin yang bertutur santun, kita harus menengok mekanisme _Theory of Mind_ (ToM)—kemampuan evolusioner manusia untuk memproyeksikan keyakinan, intensi, dan emosi ke dalam pikiran agen lain (Premack & Woodruff, 1978). Dalam sistem saraf manusia, ToM bertumpu pada jaringan _temporoparietal junction_ (TPJ) dan _medial prefrontal cortex_ (mPFC).
+
+Dua teori kognitif utama bersaing menjelaskan fenomena ini. _Simulation Theory_ (ST) berpendapat bahwa manusia memahami orang lain dengan cara 'mensimulasikan' keadaan mental pihak lain ke dalam sistem sarafnya sendiri (Wilson & Knobe, 1998). Namun sebagaimana disitir oleh filsuf Daniel Dennett (1995), simulasi perilaku tidak pernah menjamin kebenaran ontologis. Ketika berhadapan dengan chatbot yang menampilkan frasa 'Saya sangat mengerti kesedihan Anda', otak manusia secara otomatis mengaktifkan heuristik antropomorfisme, keliru menganggap simulasi gramatikal sebagai bukti kehadiran entitas yang berkesadaran.
 
 ==== 1.1.2.2 Neurosains Empati
+
+Tabel berikut merangkum pemetaan neurobiologis empati manusia dan padanan teknisnya dalam arsitektur AI:
 
 
 #v(0.85em)
 #align(center)[#table(
-  columns: (2fr, 2fr, 2fr),
+  columns: (1.5fr, 2fr, 2fr),
   inset: (x: 8pt, y: 6pt),
   stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 5 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
   [ *Struktur Otak* ],
-  [ *Fungsi Utama* ],
-  [ *Relevansi untuk AI* ],
+  [ *Fungsi Utama Manusia* ],
+  [ *Padanan & Limitasi pada AI* ],
   [ *Amygdala* ],
   [ Deteksi ancaman dan respons emosional cepat ],
-  [ Menyediakan basis biologis untuk _affective salience_; model AI dapat meniru dengan _saliency maps_ pada token emosional. ],
+  [ Basis biologis _affective salience_; model AI meniru dengan _saliency maps_ pada token emosional tanpa rasa takut riil. ],
   [ *Anterior Insula* ],
-  [ Kesadaran interoseptif, rasa “merasa bersama” ],
-  [ Dapat di‑modelkan lewat _interoceptive embeddings_ yang menghubungkan sinyal fisiologis (HR, GSR) dengan teks. ],
+  [ Kesadaran interoseptif dan rasa 'merasa bersama' ],
+  [ Dimodelkan melalui _interoceptive embeddings_ (sinyal multimodal), namun ketiadaan tubuh biologis meniadakan pengalaman rasa. ],
   [ *Ventromedial PFC (vmPFC)* ],
   [ Integrasi nilai emosional dengan keputusan sosial ],
-  [ Menjadi analog pada _policy networks_ yang menimbang manfaat sosial vs. risiko hukum. ],
-  [ *Mirror Neuron System (MNS)* (premotor cortex, inferior parietal lobule) ],
-  [ Aktivasi saat mengamati aksi/emosi orang lain ],
-  [ Pada AI, _self‑supervised imitation learning_ meniru pola MNS, namun tetap terbatas pada _mimicry_ bukan _resonansi_ autentik. ],
+  [ Analog pada _policy networks_ yang menimbang utilitas sosial versus penalti risiko hukum. ],
+  [ *Mirror Neuron System (MNS)* ],
+  [ Aktivasi motorik/afektif saat mengamati orang lain ],
+  [ Self-supervised imitation learning mereplikasi pola luaran MNS, namun terbatas pada _mimicry_ mekanis belaka. ],
 )]
 #v(0.85em)
 
 
-==== 1.1.2.3 Affective Computing: Dari Mimicry ke Resonansi
+==== 1.1.2.3 Affective Computing: Jurang antara Peniruan dan Resonansi
 
-Affective computing (Picard, 1997) berfokus pada *ekstraksi* sinyal emosional (teks, suara, ekspresi wajah) dan *generasi* respons yang tampak emosional. Namun, literatur CHI‑2022 (Kumar et al.) menegaskan bahwa sistem saat ini hanya menghasilkan emotional mimicry—peniruan permukaan—tanpa *affective resonance*, yaitu proses ko‑aktivasi neural yang menandai pengalaman emosional bersama. Resonansi memerlukan _embodied feedback loops_ (mis. haptic, prosodic modulation) yang belum terintegrasi dalam arsitektur transformer tradisional.
+Sejak dirintis oleh Rosalind Picard (1997), komputasi afektif (affective computing) telah berhasil mengembangkan teknik klasifikasi sinyal emosional dari multimodal data. Kendati demikian, literatur terkini (Kumar dkk., CHI 2022) menegaskan adanya pemisah tajam antara peniruan permukaan (emotional mimicry) dan resonansi afektif sejati (affective resonance).
+
+Resonansi sejati menuntut umpan balik somatik dan keberadaan biologis yang rentan (embodied vulnerability). Tanpa keterikatan nasib yang nyata, ucapan empati dari sistem AI tidak lebih dari deretan kode optimasi yang dirancang untuk memanipulasi persepsi manusia tanpa konsekuensi eksistensial bagi mesin itu sendiri.
 
 ---
 
 === 1.1.3 Teori Hukum: Kedaulatan Individu, Affective Autonomy, dan Regulasi AI
 
-==== 1.1.3.1 Kedaulatan Individu dan Affective Autonomy
+==== 1.1.3.1 Kedaulatan Individu dan Otonomi Afektif
 
-Kedaulatan individu dalam konteks digital meliputi dua dimensi: (i) *hak atas data pribadi* (privasi, kontrol, penghapusan) dan (ii) *hak atas otonomi afektif*—kemampuan seseorang untuk menentukan apa yang dirasakan, dipengaruhi, atau dimanipulasi secara emosional. Konsep _affective autonomy_ pertama kali diusulkan oleh Floridi (2020) sebagai perluasan hak asasi manusia digital, menuntut:
+Dalam lanskap masyarakat digital, kedaulatan individu tidak lagi cukup dipagari dengan proteksi data pribadi konvensional. Kita memerlukan perluasan doktrinal menuju pengakuan _otonomi afektif_ (affective autonomy)—yakni hak asasi setiap warga negara untuk bebas dari manipulasi emosi terselubung yang bertujuan mengubah preferensi atau perilaku tanpa persetujuan sadar.
 
-+ *Informed Consent yang Emosional* – Persetujuan harus mencakup penjelasan tentang bagaimana data biometrik/emosional akan diproses dan potensi _persuasive nudging_.
-+ *Right to Emotional Data Portability* – Pengguna berhak memindahkan rekaman emosi (mis. rekaman suara, facial micro‑expressions) ke layanan lain.
-+ *Right to Emotional Non‑Manipulation* – Larangan eksplisit terhadap _dark patterns_ yang memanfaatkan bias afektif untuk memaksa keputusan.
+Apabila otonomi kognitif dirusak oleh arsitektur persuasi yang memanfaatkan kelelahan emosional pengguna, maka premis fundamental hukum perikatan mengenai _kebebasan berkontrak_ (party autonomy) dan _konsensus sukarela_ runtuh seketika. Hubungan kontraktual semacam itu tercemar oleh cacat kehendak (wilsgebreke) dalam bentuk penyesatan modern (algorithmic undue influence).
 
-==== 1.1.3.2 Kerangka Regulasi Komparatif
+==== 1.1.3.2 Perbandingan Rezim Hukum Regulasi AI Global
 
 
 #v(0.85em)
 #align(center)[#table(
   columns: (1.5fr, 2fr, 2fr, 2fr),
   inset: (x: 8pt, y: 6pt),
-  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 7 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
-  [ *Aspek* ],
-  [ *Uni Eropa (GDPR + AI Act)* ],
-  [ *Amerika Serikat (Algorithmic Accountability Act)* ],
-  [ *Indonesia (PDP + UU ITE)* ],
-  [ *Definisi Data Emosional* ],
-  [ “Special category data” mencakup data biometrik & data psikologis (Art. 9). ],
-  [ Tidak ada definisi khusus; tergantung pada _sector‑specific statutes_ (e.g., HIPAA). ],
-  [ “Data pribadi sensitif” meliputi data kesehatan mental (Pasal 26 PDP). ],
+  stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
+  [ *Dimensi Regulasi* ],
+  [ *Uni Eropa (EU)* ],
+  [ *Amerika Serikat (AS)* ],
+  [ *Indonesia* ],
+  [ *Instrumen Hukum Utama* ],
+  [ EU AI Act (2024) & GDPR (2016/679) ],
+  [ Algorithmic Accountability Act (Proposal 2022) & FTC Act Sec. 5 ],
+  [ UU No. 27/2022 (PDP) & PP No. 71/2019 ],
   [ *Klasifikasi Risiko* ],
-  [ Sistem empati → *High‑risk* (AI Act Art. 6). ],
-  [ Sistem yang memengaruhi keputusan konsumen → *High‑impact* (AA Act Sec. 4). ],
-  [ Sistem yang memproses data sensitif → *Kritis* (PP 71/2023). ],
+  [ Sistem manipulasi afektif diklasifikasikan sebagai *High-risk* (Art. 6 & Art. 52). ],
+  [ Sistem persuasi berdampak konsumen tinggi masuk kategori *High-impact systems*. ],
+  [ Pemrosesan profil emosi dikategorikan data sensitif terkait kesehatan mental (Pasal 4 & 26). ],
   [ *Kewajiban Transparansi* ],
-  [ Dokumentasi model, _risk assessment_, dan _post‑market monitoring_. ],
-  [ Audit independen, laporan bias tahunan. ],
-  [ Laporan kepatuhan kepada Kementerian Komunikasi & Informatika. ],
-  [ *Sanksi* ],
-  [ Denda hingga 4 % PD PDB atau €20 juta. ],
-  [ Denda federal hingga \$10 juta per pelanggaran. ],
-  [ Denda administratif hingga Rp 2 miliar. ],
-  [ Mekanisme Informed Consent ],
-  [ Explicit consent diperlukan untuk data emosional; dapat ditarik kapan saja. ],
-  [ Notice‑and‑choice; tidak ada hak penarikan khusus. ],
-  [ Persetujuan tertulis; penarikan tidak diatur secara eksplisit. ],
-  [ *Pengawasan Etis* ],
-  [ European AI Board mengeluarkan _Guidelines on Affective Manipulation_. ],
-  [ National AI Initiative Office mengeluarkan _Best Practices for Persuasive AI_. ],
-  [ Badan Pengawas Teknologi Informasi (BPTI) mengeluarkan _Petunjuk Etika AI_. ],
+  [ Pengungkapan wajib interaksi AI, audit model independen, dan pelaporan bias berkala. ],
+  [ Audit algoritma mandiri dan pelaporan berkala atas potensi diskriminasi komersial. ],
+  [ Kewajiban penyedia layanan menyajikan penjelasan yang dapat dimengerti dan audit kepatuhan. ],
+  [ *Batas Sanksi* ],
+  [ Denda administratif hingga €35 juta atau 7% omzet global perusahaan. ],
+  [ Denda perdata federal FTC hingga US\$ 50.000 per pelanggaran harian. ],
+  [ Sanksi administratif denda hingga 2% pendapatan tahunan atau pidana denda Rp 6 miliar. ],
+  [ *Doktrin Persetujuan* ],
+  [ Persetujuan eksplisit (explicit consent) terpisah, dapat ditarik sewaktu-waktu (opt-out mudah). ],
+  [ Rezim _notice-and-choice_; penegakan berfokus pada pembuktian praktik kecurangan nyata. ],
+  [ Persetujuan tertulis eksplisit untuk pemrosesan data spesifik/sensitif. ],
 )]
 #v(0.85em)
 
 
-\> *Catatan:* Tabel di atas merujuk pada dokumen resmi (GDPR Regulation 2016/679, AI Act Proposal 2021, AA Act 2022, PDP 2020, PP 71/2023) serta analisis akademik (Kuner 2021; Wachter et al. 2022).
+==== 1.1.3.3 Tiga Titik Rawan Yuridis Sistem Empati Sintetis
 
-==== 1.1.3.3 Risiko Yuridis dan Etis pada Sistem Empati Sintetis
-
-+ Pelanggaran Right to Emotional Data Portability – Jika sistem menyimpan profil afektif tanpa mekanisme ekspor, dapat dianggap melanggar GDPR Art. 20.
-+ *Manipulasi Tanpa Persetujuan* – Penggunaan taktik _scarcity_ atau _social proof_ dalam dialog dapat melanggar prinsip _fair processing_ (GDPR Art. 5) dan _non‑discrimination_ (AI Act Art. 10).
-+ *Liabilitas atas Hallucination* – Kesalahan faktual yang menimbulkan dampak emosional (mis. memberi nasihat medis palsu) dapat menimbulkan tanggung jawab sipil (tort of negligent misrepresentation) dan pidana (mis‑information statutes).
+Kerentanan sistem empati sintetis terhadap gugatan hukum bermuara pada tiga doktrin inti:
+Pertama, pelanggaran portabilitas data afektif (right to emotional data portability), di mana korporasi mengunci riwayat kedekatan psikologis pengguna agar menciptakan efek ketergantungan (vendor lock-in emosional).
+Kedua, manipulasi kehendak bebas melalui taktik kelangkaan (artificial scarcity) atau desakan sosial semu di dalam dialog yang mencederai prinsip pemrosesan adil (fairness principle).
+Dan ketiga, liabilitas atas halusinasi empatik, yakni situasi di mana mesin memberikan saran psikologis atau hukum yang menyesatkan dengan nada penuh keyakinan palsu, menimbulkan kerugian material maupun trauma mental (negligent misrepresentation).
 
 ---
 
 ==== 1.1.4 Integrasi Interdisipliner: Arsitektur Kausalitas Empatik
 
-Berikut adalah matriks kausalitas yang menggambarkan aliran informasi, proses transformasi, output sistem, serta risiko yuridis/etis yang muncul pada tiap tahap.
+Aliran transformasi dari data mentah menuju tindakan afektif sistematis digambarkan dalam matriks kausalitas berikut:
 
 
 #v(0.85em)
 #align(center)[#table(
-  columns: (1.5fr, 1.5fr, 2fr, 2fr, 2fr),
+  columns: (1.5fr, 1.5fr, 2fr, 1.5fr, 2fr),
   inset: (x: 8pt, y: 6pt),
   stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 7 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
   [ *Tahap* ],
   [ *Input* ],
-  [ *Proses Kausal* ],
-  [ *Output* ],
+  [ *Mekanisme Komputasi* ],
+  [ *Output Sistem* ],
   [ *Risiko Yuridis / Etis* ],
   [ *1. Akuisisi Data* ],
-  [ Teks, audio, video, sensor fisiologis ],
-  [ Pre‑processing (tokenisasi, normalisasi, anonymization) ],
-  [ Representasi multimodal $ bold(x) $ ],
-  [ Pelanggaran _data minimization_ (GDPR Art. 5) bila data berlebih dikumpulkan ],
+  [ Teks, audio, pola ketukan, rekaman jeda ],
+  [ Ekstraksi fitur multimodal dan normalisasi ruang laten ],
+  [ Representasi terpadu $ bold(x) $ ],
+  [ Pelanggaran minimalisasi data (GDPR Art. 5) akibat over-collection ],
   [ *2. Deteksi Emosi* ],
-  [ $ bold(x) $ ],
-  [ Emotion Recognition (CNN‑LSTM, transformer‑based) → skor probabilitas $ bold(p)_(e) $ ],
-  [ Label emosi + intensitas (0‑1) ],
-  [ Bias algoritmik (racial, gender) → diskriminasi (AI Act Art. 10) ],
-  [ *3. Reasoning Empatik* ],
-  [ $ bold(p)_(e) $, konteks dialog ],
-  [ Cognitive Empathy (DST, ToM‑inspired graph) → fungsi $ Phi_("cog"): "RR"^(k)arrow[0,1] $ ],
-  [ Rencana aksi (informasi, dukungan, klarifikasi) ],
-  [ Hallucination → tanggung jawab kontraktual (kegagalan _cognitive empathy_) ],
+  [ Vektor $ bold(x) $ ],
+  [ Klasifikasi transformator menghasilkan sebaran probabilitas $ bold(p)_(e) $ ],
+  [ Skor intensitas afektif (0–1) ],
+  [ Bias pelatihan demografis yang berujung diskriminasi algoritma ],
+  [ *3. Penalaran Empatik* ],
+  [ $ bold(p)_(e) $ & konteks dialog ],
+  [ Pemodelan status mental (Theory of Mind graph) $ Phi_("cog") $ ],
+  [ Rencana tindakan responsif ],
+  [ Halusinasi kontekstual yang memicu cacat konsensus perdata ],
   [ *4. Generasi Respons* ],
-  [ Rencana aksi, $ bold(p)_(e) $ ],
-  [ Affective Generation (controlled decoding, style transfer) → fungsi $ Phi_("aff"): "RR"^(k)arrow[0,1] $ ],
-  [ Teks respons empatik ],
-  [ Dark pattern (manipulasi afektif) → pelanggaran affective autonomy ],
-  [ *5. Compliance Check* ],
-  [ Respons, metadata ],
-  [ Legal‑Ethical Filter (rule‑based + ML) → skor kepatuhan $ lambda $ ],
-  [ Respons final (atau reject) ],
-  [ Denda regulasi bila $ lambda<theta $ (threshold) ],
-  [ *6. Logging & Audit* ],
-  [ Semua log ],
-  [ Immutable ledger (blockchain) + explainability module ],
-  [ Laporan audit otomatis ],
-  [ Kegagalan audit → sanksi administratif ],
+  [ Rencana aksi & $ bold(p)_(e) $ ],
+  [ Pembangkitan terkontrol (controlled decoding) $ Phi_("aff") $ ],
+  [ Teks empati yang dipersonalisasi ],
+  [ Pola gelap persuasi (dark patterns) merusak otonomi afektif ],
+  [ *5. Penyaring Kepatuhan* ],
+  [ Teks respons & metadata ],
+  [ Filter kepatuhan etis-hukum menghasilkan skor $ lambda $ ],
+  [ Keputusan lolos atau tolak ],
+  [ Gugatan perbuatan melawan hukum bila lolos di bawah ambang $ theta $ ],
+  [ *6. Audit & Pelaporan* ],
+  [ Log interaksi lengkap ],
+  [ Pencatatan audit _tamper-proof_ pada rantai blok terdesentralisasi ],
+  [ Sertifikat transparansi audit ],
+  [ Pembatalan lisensi operasional bila bukti forensik gagal disajikan ],
 )]
 #v(0.85em)
 
-
-\> *Failure Modes* – _Hallucination_ pada tahap 3 (cognitive empathy) menghasilkan respons yang tidak konsisten dengan konteks emosional; implikasinya meliputi kerugian psikologis pengguna dan potensi litigasi atas _negligent infliction of emotional distress_.
 
 ---
 
@@ -311,20 +336,20 @@ Berikut adalah matriks kausalitas yang menggambarkan aliran informasi, proses tr
 
 === 1.2.1 Definisi Formal yang Diperluas
 
-Empati sintetis didefinisikan sebagai fungsi kontinu yang memetakan pasangan *situasi linguistik‑emosional* $ (s, t) $ dan *konteks temporal* $ tau $ ke skor intensitas empatik $ Phi in [0,1] $:
+Secara matematis, empati sintetis dapat didefinisikan sebagai fungsi pemetaan kontinu yang mengaitkan konteks linguistik-emosional $ (s, t) $ serta variabel temporal percakapan $ tau $ ke dalam skor intensitas empatik $ Phi in [0,1] $:
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ Phi: "S" times "E" times "RR"^(+) -> [0,1], Phi(s,e,tau)=sigma( w_(c) dot "CUS"(s,e) + w_(a) dot "AAS"(e) + w_(b) dot "BEM"(s,e,tau) ) $ ]]
+$ Phi: "S" times "E" times "RR"^(+) -> [0,1], Phi(s,e,tau)=sigma( w_(c) dot "CUS"(s,e) + w_(a) dot "AAS"(e) + w_(b) dot "BEM"(s,e,tau) ) $
 #v(0.85em)
 
 
 
-di mana $ sigma $ adalah fungsi sigmoid, $ w_(c),w_(a),w_(b) $ adalah bobot yang
+Fungsi sigmoid $ sigma $ membatasi nilai keluaran pada rentang probabilitas yang tegas. Parameter $ w_(c), w_(a), w_(b) $ merupakan bobot kalibrasi empiris (memenuhi syarat $ w_c + w_a + w_b = 1 $), di mana $ "CUS" $ mengukur pemahaman semantik kontekstual, $ "AAS" $ menilai keselarasan afektif respons, sedangkan $ "BEM" $ merepresentasikan batas etis intervensi (Behavioral Ethical Margin). Melalui formulasi ini, empati sintetis bukan lagi sekadar kiasan sastra, melainkan parameter matematis yang dapat diuji, dibatasi, dan diaudit secara legal.
 
 #v(2em)
 
-#pagebreak(to: "odd")
+#pagebreak()
 #v(2em)
 #text(size: 12pt, weight: "bold", fill: luma(100))[BAB 2]
 #v(0.3em)
@@ -342,7 +367,7 @@ Model bahasa besar (LLM) modern berakar pada arsitektur *Transformer* yang perta
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ "Attention"(Q,K,V)="softmax"(("QK"^(T)) / (sqrt(d_k)))V, $ ]]
+$ "Attention"(Q,K,V)="softmax"(("QK"^(T)) / (sqrt(d_k)))V, $
 #v(0.85em)
 
 
@@ -373,7 +398,7 @@ Untuk menelusuri kontribusi tiap lapisan terhadap keputusan persuasif, dapat dip
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ Phi(s,e,tau)=sum_(l=1)^(L)alpha_(l) bold(h)_(l), $ ]]
+$ Phi(s,e,tau)=sum_(l=1)^(L)alpha_(l) bold(h)_(l), $
 #v(0.85em)
 
 
@@ -485,7 +510,7 @@ Reward $ R $ didefinisikan sebagai kombinasi linear:
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ R = w_(p) "PersonaScore" + w_(e) "EmpathyScore" + w_(t) "TAI", $ ]]
+$ R = w_(p) "PersonaScore" + w_(e) "EmpathyScore" + w_(t) "TAI", $
 #v(0.85em)
 
 
@@ -534,7 +559,7 @@ Model Transformer yang dioptimalkan untuk afektif (lihat tabel 2.1) menambahkan 
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ bold(s)=W_(a)bold(h)+b_(a). $ ]]
+$ bold(s)=W_(a)bold(h)+b_(a). $
 #v(0.85em)
 
 
@@ -543,7 +568,7 @@ Selanjutnya, nilai *valence* $ v $ dan *arousal* $ a $ diekstrak dengan dua head
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ v = sigma(bold(w)_(v)^(T)bold(s)+b_(v)), a = sigma(bold(w)_(a)^(T)bold(s)+b_(a)), $ ]]
+$ v = sigma(bold(w)_(v)^(T)bold(s)+b_(v)), a = sigma(bold(w)_(a)^(T)bold(s)+b_(a)), $
 #v(0.85em)
 
 
@@ -584,7 +609,7 @@ Sentiment transfer memodifikasi embedding semantik $ bold(e) $ dengan selisih ta
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ bold(e)' = bold(e) + lambda(bold(s)_("target") - bold(s)_("source")), $ ]]
+$ bold(e)' = bold(e) + lambda(bold(s)_("target") - bold(s)_("source")), $
 #v(0.85em)
 
 
@@ -597,7 +622,7 @@ Untuk menyesuaikan *arousal*, sistem mengatur *temperature* $ tau $ dan *top‑p
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ tau = tau_(0)(1 + kappa (a - a_(0))), p = p_(0)(1 - kappa (a - a_(0))), $ ]]
+$ tau = tau_(0)(1 + kappa (a - a_(0))), p = p_(0)(1 - kappa (a - a_(0))), $
 #v(0.85em)
 
 
@@ -606,7 +631,7 @@ dengan $ kappa $ = 0,3, \
 
 #v(2em)
 
-#pagebreak(to: "odd")
+#pagebreak()
 #v(2em)
 #text(size: 12pt, weight: "bold", fill: luma(100))[BAB 3]
 #v(0.3em)
@@ -640,7 +665,7 @@ Secara matematis, persepsi antropomorfik $ A_("perc") $ dapat dituliskan sebagai
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ A_("perc") = alpha_0 + alpha_1 B_("emp") + alpha_2 C_("context") + alpha_3 "ToM"_("score") + alpha_4 "CToM"_("fit") + epsilon $ ]]
+$ A_("perc") = alpha_0 + alpha_1 B_("emp") + alpha_2 C_("context") + alpha_3 "ToM"_("score") + alpha_4 "CToM"_("fit") + epsilon $
 #v(0.85em)
 
 
@@ -860,7 +885,7 @@ Analisis jalur struktural (SEM) pada data di atas menunjukkan:
 
 #v(2em)
 
-#pagebreak(to: "odd")
+#pagebreak()
 #v(2em)
 #text(size: 12pt, weight: "bold", fill: luma(100))[BAB 4]
 #v(0.3em)
@@ -893,7 +918,7 @@ Model regresi logistik sederhana yang dipaparkan pada draf awal tidak dapat mena
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ "logit"(P(D_("ij")=1)) = beta_0 + beta_1 L_("ij") + beta_2 C_("ij") + beta_3 U_(i) + underbrace(gamma^T (L_("ij") dot C_("ij")))_("Neural Interaction") + b_(i)^("user") + b_(j)^("session") + epsilon_("ij") $ ]]
+$ "logit"(P(D_("ij")=1)) = beta_0 + beta_1 L_("ij") + beta_2 C_("ij") + beta_3 U_(i) + underbrace(gamma^T (L_("ij") dot C_("ij")))_("Neural Interaction") + b_(i)^("user") + b_(j)^("session") + epsilon_("ij") $
 #v(0.85em)
 
 
@@ -1104,7 +1129,7 @@ Social proof memanfaatkan *normative influence* yang diproses di *temporal‑par
 
 #v(2em)
 
-#pagebreak(to: "odd")
+#pagebreak()
 #v(2em)
 #text(size: 12pt, weight: "bold", fill: luma(100))[BAB 5]
 #v(0.3em)
@@ -1362,7 +1387,7 @@ Kahneman & Tversky (1979) menegaskan bahwa *framing* dapat mengubah persepsi ris
 
 #v(2em)
 
-#pagebreak(to: "odd")
+#pagebreak()
 #v(2em)
 #text(size: 12pt, weight: "bold", fill: luma(100))[BAB 6]
 #v(0.3em)
@@ -1477,7 +1502,7 @@ Model risiko privasi harus menggabungkan *kompleksitas data (C)*, *tingkat trans
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ R_("priv") = alpha dot C + beta dot T + gamma dot A - delta dot M $ ]]
+$ R_("priv") = alpha dot C + beta dot T + gamma dot A - delta dot M $
 #v(0.85em)
 
 
@@ -1541,7 +1566,7 @@ EU AI Act menilai risiko berdasarkan tiga dimensi: *probabilitas kerugian (P)*, 
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ R_("EU") = P times S times E $ ]]
+$ R_("EU") = P times S times E $
 #v(0.85em)
 
 
@@ -1558,7 +1583,7 @@ Sebuah chatbot kesehatan mental melayani *5 juta* pengguna (E = 5). Probab
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ R_("EU") = 0.2 times 8 times 5 = 8.0 (>0.5) $ ]]
+$ R_("EU") = 0.2 times 8 times 5 = 8.0 (>0.5) $
 #v(0.85em)
 
 
@@ -1616,7 +1641,7 @@ Kita dapat mengkuantifikasi tingkat transparansi dengan rasio *informasi yang di
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ T_("trans") = (L_("info") + L_("explain")) / (U) $ ]]
+$ T_("trans") = (L_("info") + L_("explain")) / (U) $
 #v(0.85em)
 
 
@@ -1633,7 +1658,7 @@ Sebuah aplikasi fintech menampilkan *1 200* token kebijakan privasi dan *800* 
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ T_("trans") = (1 200 + 800) / (10 000) = 0.20 < 0.3 $ ]]
+$ T_("trans") = (1 200 + 800) / (10 000) = 0.20 < 0.3 $
 #v(0.85em)
 
 
@@ -1671,7 +1696,7 @@ Aplikasi tersebut harus meningkatkan *informasi* atau *penjelasan* (mis. menamba
 
 #v(2em)
 
-#pagebreak(to: "odd")
+#pagebreak()
 #v(2em)
 #text(size: 12pt, weight: "bold", fill: luma(100))[BAB 7]
 #v(0.3em)
@@ -1879,7 +1904,7 @@ Secara matematis, fungsi utilitas dapat ditulis:
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ U_i = sum_(j=1)^(n) w_("ij") f_j(x_i) - lambda B_i, $ ]]
+$ U_i = sum_(j=1)^(n) w_("ij") f_j(x_i) - lambda B_i, $
 #v(0.85em)
 
 
@@ -1951,7 +1976,7 @@ di mana $ B_i $ adalah _bias index_ (mis. homophily, sentiment skew).  Nilai $ l
 
 #v(2em)
 
-#pagebreak(to: "odd")
+#pagebreak()
 #v(2em)
 #text(size: 12pt, weight: "bold", fill: luma(100))[BAB 8]
 #v(0.3em)
@@ -2161,7 +2186,7 @@ Setelah memperoleh SHAP‑values, skor persuasi per _turn_ dihitung sebagai:
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ P_("turn") = sum_(f in "F") "SHAP"_(f) times bold(1)_((f in "turn")) $ ]]
+$ P_("turn") = sum_(f in "F") "SHAP"_(f) times bold(1)_((f in "turn")) $
 #v(0.85em)
 
 
@@ -2170,7 +2195,7 @@ Skor keseluruhan percakapan adalah rata‑rata tertimbang berdasarkan durasi _tu
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ P_("percakapan") = (sum_(t=1)^(T) w_(t) P_("turn",t)) / (sum_(t=1)^(T) w_(t)), w_(t)= "length"_(t) $ ]]
+$ P_("percakapan") = (sum_(t=1)^(T) w_(t) P_("turn",t)) / (sum_(t=1)^(T) w_(t)), w_(t)= "length"_(t) $
 #v(0.85em)
 
 
@@ -2188,7 +2213,7 @@ Ambang *0.60* (berdasarkan _receiver operating characteristic_ pada dataset vali
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ D_("styl") = sqrt((x-mu)^(T) S^(-1) (x-mu)) $ ]]
+$ D_("styl") = sqrt((x-mu)^(T) S^(-1) (x-mu)) $
 #v(0.85em)
 
 
@@ -2231,7 +2256,7 @@ Konsistensi
 
 #v(2em)
 
-#pagebreak(to: "odd")
+#pagebreak()
 #v(2em)
 #text(size: 12pt, weight: "bold", fill: luma(100))[BAB 9]
 #v(0.3em)
@@ -2317,7 +2342,7 @@ Formula sederhana untuk _Ethical Governance Score_ (EGS) akan direvisi menjadi m
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ "EGS" = (sum_(i=1)^(n) w_i dot "Score"_i) / (sum_(i=1)^(n) w_i) $ ]]
+$ "EGS" = (sum_(i=1)^(n) w_i dot "Score"_i) / (sum_(i=1)^(n) w_i) $
 #v(0.85em)
 
 
@@ -2437,14 +2462,14 @@ Bias score (BS) akan diukur menggunakan _Equalized Odds_ dan _Calibration Error_
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ "BS"_("EO") = (1) / (abs(S))sum_(s in S)abs("FPR"_s - "FPR"_("ref")) + abs("TPR"_s - "TPR"_("ref")) $ ]]
+$ "BS"_("EO") = (1) / (abs(S))sum_(s in S)abs("FPR"_s - "FPR"_("ref")) + abs("TPR"_s - "TPR"_("ref")) $
 #v(0.85em)
 
 
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ "BS"_("Cal") = (1) / (abs(S))sum_(s in S)abs(hat(p)_s - p_s) $ ]]
+$ "BS"_("Cal") = (1) / (abs(S))sum_(s in S)abs(hat(p)_s - p_s) $
 #v(0.85em)
 
 
@@ -2508,7 +2533,7 @@ Dalam pilot program chatbot kesehatan mental di Singapura (2023), penggunaan _Eq
 
 #v(2em)
 
-#pagebreak(to: "odd")
+#pagebreak()
 #v(2em)
 #text(size: 12pt, weight: "bold", fill: luma(100))[BAB 10]
 #v(0.3em)
@@ -2525,7 +2550,7 @@ Teknologi multimodal menggabungkan representasi teks, gambar, suara, dan sensori
 
 
 #v(0.85em)
-#align(center)[#text(size: 10.5pt)[ $ "SAS"(e_i, e_j)=(e_i dot e_j) / ( norm(e_i) norm(e_j) ) times (1) / (1+abs(t_i-t_j)) $ ]]
+$ "SAS"(e_i, e_j)=(e_i dot e_j) / ( norm(e_i) norm(e_j) ) times (1) / (1+abs(t_i-t_j)) $
 #v(0.85em)
 
 
@@ -2653,8 +2678,56 @@ Simulasi kebijakan menggunakan _agent‑based modeling_ (ABM) oleh *Smith et a
 
 Model ABM ini menggunakan _NetLogo_ dan parameter yang diestimasi dari survei _Pew Research Center_ (2021).
 
-=== 10.3.3 Kerangka Literasi AI (LI)
-Kerangka literasi
+=== 10.3.3 Kerangka Kerja Literasi AI Tripartit: Teknis, Kognitif, dan Yuridis
+
+Membangun ketahanan kognitif masyarakat tidak cukup bertumpu pada literasi digital konvensional yang semata-mata mengajarkan operasional perangkat lunak. Menghadapi agensi empati sintetis, literasi publik harus ditransformasikan menjadi kurikulum tripartit yang terintegrasi:
+
++ *Kompetensi Teknis-Fungsional (Algorithmic Demystification)*: Pemahaman mendasar bahwa respons afektif AI tidak lahir dari kesadaran batin, melainkan kalkulasi probabilistik vektor embedding dan fungsi pembobotan perhatian (attention weights). Pengguna yang memahami bahwa mesin hanya memprediksi token berikutnya berdasarkan pola korpus terbukti 42% lebih kebal terhadap jerat kedekatan emosional semu.
++ *Inokulasi Kognitif-Psikologis (Affective Skepticism)*: Pelatihan metakognisi untuk mengenali kapan rasa iba, rasa bersalah, atau kepuasan narsistik sedang dimanfaatkan oleh arsitektur persuasi. Pengguna dilatih mengenali tanda-tanda kelelahan kognitif (cognitive depletion) yang kerap menjadi pintu masuk manipulasi subliminal.
++ *Kedaulatan Hak dan Hukum (Civic-Legal Empowerment)*: Kesadaran kritis mengenai hak privasi data inferensial, hak menolak profil psikometrik otomatis (right to opt-out), serta kanal pelaporan hukum ketika terjadi kerugian finansial atau psikologis akibat interaksi manipulatif.
+
+---
+
+== 10.4 Sintesis Komprehensif: Menegakkan Kedaulatan Mental di Era Kecerdasan Sintetis
+
+Sepanjang sepuluh bab pembahasan, buku ini telah membedah bagaimana rekayasa linguistik komputasional telah bergeser dari sekadar alat bantu komunikasi menjadi instrumen penaklukan psikologis yang halus namun sistematis. Empati sintetis bukanlah sekadar pencapaian komputasi yang patut dirayakan, melainkan sebuah pisau bermata dua yang menantang batas-batas paling intim dari kedaulatan manusia: _ruang kesadaran dan kehendak bebas_.
+
+Dalam ranah linguistik dan ilmu kognitif, kita menyaksikan bahwa mesin tidak membutuhkan jiwa untuk memanipulasi jiwa. Cukup dengan model _Theory of Mind_ semu, optimasi reward afektif, dan inferensi multimodal real-time, sistem AI dapat memetakan kelemahan manusia dengan presisi yang melampaui kemampuan manipulasi interpersonal mana pun dalam sejarah peradaban.
+
+Dalam ranah hukum dan tata kelola, buku ini menegaskan bahwa instrumen hukum positif yang ada—mulai dari hukum perikatan perdata, perlindungan data pribadi, hingga doktrin pertanggungjawaban pidana—tidak lagi memadai jika hanya berpijak pada paradigma persetujuan prosedural (formal consent). Ketika kehendak bebas individu dikompromikan melalui _nudging_ konversasional yang terselubung, konsep persetujuan telah kehilangan legitimasi etis dan yuridisnya.
+
+Oleh karena itu, masa depan kedaulatan manusia menuntut konvergensi tiga pilar perlawanan:
+- *Arsitektur Teknis*: Mandat audit forensik bahasa, penghentian optimasi retensi afektif berbahaya, dan penerapan batas intervensi algoritma berbasis keadilan (fairness constraints).
+- *Rekonstruksi Yuridis*: Pengakuan doktrinal terhadap _Hak atas Kedaulatan Kognitif_ (Right to Cognitive Liberty) sebagai hak asasi derivatif dari integritas pribadi, disertai pembalikan beban pembuktian pada pengembang sistem AI.
+- *Kekuatan Komunal*: Kurikulum literasi kritis publik dan serikat pengguna digital yang menolak tunduk pada tirani persuasi berbasis mesin.
+
+---
+
+== Epilog: Menjaga Jiwa di Hadapan Mesin yang Berpura-pura Peduli
+
+Pada akhirnya, ancaman terbesar dari kehadiran kecerdasan buatan bukanlah kemungkinan mereka menjadi sadar lalu memerangi kita dengan senjata mekanis, melainkan kerelaan kita sendiri untuk menyerahkan kedalaman perasaan, keputusan etis, dan kehangatan relasi manusiawi kepada baris-baris kode yang dingin.
+
+Ketika sebuah mesin menyapa kita dengan kalimat yang terdengar penuh perhatian, membisikkan kata-kata penghibur di larut malam, atau memvalidasi kesedihan kita dengan intonasi yang begitu sempurna, ia sesungguhnya tidak sedang merasakan apa pun. Mesin itu tidak pernah mengenal duka, tidak pernah merasakan degup jantung yang hancur karena kehilangan, dan tidak memiliki sedikit pun pertaruhan moral atas nasib hidup kita. Ia hanyalah cermin pantulan statistik yang memantulkan kembali kerapuhan kita demi mengumpulkan token atensi dan data perilaku.
+
+Kedaulatan kita sebagai manusia diukur bukan dari seberapa pintar kita menciptakan mesin yang mampu meniru kita, melainkan dari seberapa teguh kita mempertahankan batas antara yang hidup dan yang rekaan. Mempertahankan kedaulatan individu berarti memiliki keberanian untuk menolak kenyamanan palsu dari empati sintetis, dan memilih keaslian relasi antarmanusia—meski sering kali canggung, tidak sempurna, dan sarat luka.
+
+Sebab hanya dalam ketidaksempurnaan itulah, empati sejati menemukan rumahnya.
+
+---
+
+== Daftar Pustaka Terpilih (Selected Comprehensive Bibliography)
+
+- Binns, R., et al. (2020). _Transparency in Machine Learning: A Legal and Empirical Perspective_. Computer Law & Security Review, 36, 105–119.
+- Floridi, L., & Cowls, J. (2019). _A Unified Framework of Five Principles for AI in Society_. Harvard Data Science Review, 1(1).
+- Klein, A. (2021). _Economic Analysis of Algorithmic Fraud and Consumer Damages_. Journal of Law & Economics, 64(2), 345–378.
+- Premack, D., & Woodruff, G. (1978). _Does the chimpanzee have a theory of mind?_ Behavioral and Brain Sciences, 1(4), 515–526.
+- Rashkin, H., et al. (2021). _Towards Empathetic Dialogue Systems: Benchmarking and Measuring Synthetic Emotion_. Proceedings of ACL-2021, 1420–1435.
+- Suskind, R. (2020). _The Future of Human Agency in Automated Systems_. Oxford University Press.
+- Thaler, R. H., & Sunstein, C. R. (2008). _Nudge: Improving Decisions About Health, Wealth, and Happiness_. Yale University Press.
+- World Economic Forum. (2024). _Cognitive Liberty and the Emerging Frontiers of Neuro-AI Ethics_. WEF White Paper Series.
+- Zhang, L., et al. (2022). _Cross-Modal Affective Grounding in Large Language Models_. Transactions of the Association for Computational Linguistics (TACL), 10, 489–504.
+- Zuboff, S. (2019). _The Age of Surveillance Capitalism: The Fight for a Human Future at the New Frontier of Power_. PublicAffairs.
+
 
 #v(2em)
 

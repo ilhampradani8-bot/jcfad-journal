@@ -240,7 +240,7 @@ def clean_chapter_markdown_to_typst(md_content):
         cleaned = clean_to_typst_math(raw_eq)
         idx = len(math_blocks)
         # Native Typst centered display math without card/box/border
-        math_blocks.append(f"\n#v(0.85em)\n#align(center)[#text(size: 10.5pt)[ $ {cleaned} $ ]]\n#v(0.85em)\n")
+        math_blocks.append(f"\n#v(0.85em)\n$ {cleaned} $\n#v(0.85em)\n")
         return f"\n__TYPST_MATH_BLOCK_{idx}__\n"
 
     # Multiline display math pattern
@@ -421,11 +421,11 @@ def compile_book(slug='empati-sintetis-buku-cetak'):
     print(f"📖 Mengompilasi {len(chapters)} bab naskah berstandar percetakan...")
 
     typ_parts = []
-    for ch in chapters:
+    for i, ch in enumerate(chapters):
         cleaned = clean_chapter_markdown_to_typst(ch['contentMarkdown'])
+        pb = "#pagebreak()\n" if i > 0 else ""
         typ_parts.append(f"""
-#pagebreak(to: "odd")
-#v(2em)
+{pb}#v(2em)
 #text(size: 12pt, weight: "bold", fill: luma(100))[BAB {ch['chapterNumber']}]
 #v(0.3em)
 = {clean_inline_for_typst(ch['chapterTitle'])}
@@ -451,22 +451,50 @@ def compile_book(slug='empati-sintetis-buku-cetak'):
   ),
   header: context {{
     let pageNum = counter(page).get().first()
-    if pageNum > 4 [
-      #set text(font: "Libertinus Serif", size: 8pt, fill: luma(90))
+    if pageNum > 2 [
+      #set text(font: "Libertinus Serif", size: 8pt, fill: luma(80))
       #if calc.even(pageNum) [
-        #align(left)[*{blueprint['title']}*]
+        #grid(
+          columns: (1fr, auto),
+          align: (left, right),
+          [*{blueprint['title']}*],
+          [#text(style: "italic", fill: luma(120))[Monograf Riset]]
+        )
       ] else [
-        #align(right)[*Ilham Pradani*]
+        #grid(
+          columns: (auto, 1fr),
+          align: (left, right),
+          [#text(style: "italic", fill: luma(120))[PT CHAIN ASIA CONECT]],
+          [*Ilham Pradani*]
+        )
       ]
       #v(-2pt)
-      #line(length: 100%, stroke: 0.3pt + luma(180))
+      #line(length: 100%, stroke: 0.35pt + luma(180))
     ]
   }},
-  footer: context [
-    #if counter(page).get().first() > 2 [
-      #align(center)[#text(size: 9pt, font: "Libertinus Serif")[#counter(page).display()]]
+  footer: context {{
+    let pageNum = counter(page).get().first()
+    if pageNum > 2 [
+      #line(length: 100%, stroke: 0.25pt + luma(200))
+      #v(2pt)
+      #set text(font: "Libertinus Serif", size: 8.5pt, fill: luma(90))
+      #if calc.even(pageNum) [
+        #grid(
+          columns: (auto, 1fr),
+          align: (left, right),
+          [*#counter(page).display()*],
+          [#text(size: 7.5pt, fill: luma(130))[PT CHAIN ASIA CONECT — Scholarly Series]]
+        )
+      ] else [
+        #grid(
+          columns: (1fr, auto),
+          align: (left, right),
+          [#text(size: 7.5pt, fill: luma(130))[Open Access Academic Monograph (CC BY 4.0)]],
+          [*#counter(page).display()*]
+        )
+      ]
     ]
-  ]
+  }}
 )
 
 #set text(
@@ -548,7 +576,7 @@ def compile_book(slug='empati-sintetis-buku-cetak'):
   depth: 2
 )
 
-#pagebreak(to: "odd")
+#pagebreak()
 
 // --- 5. ISI UTAMA BUKU (Halaman Angka Arab: 1, 2, 3...) ---
 #set page(numbering: "1")
