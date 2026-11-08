@@ -422,10 +422,27 @@ def review_book_pdf(pdf_path, blueprint, chapters):
     pdf_doc = pymupdf.open(pdf_path)
     orphan_parens = []
     malformed_numbers = []
+    multiline_headers = []
+    multiline_footers = []
 
     for page_idx in range(len(pdf_doc)):
         p = pdf_doc[page_idx]
         words = p.get_text('words')  # (x0, y0, x1, y1, word, block, line, word_no)
+        
+        # Pre-flight inspection: Header & Footer must be exactly 1 single line (never wrap to 2 lines)
+        if page_idx >= 2:
+            h_words = [w for w in words if w[1] < 45]
+            if h_words:
+                y_span = max(w[1] for w in h_words) - min(w[1] for w in h_words)
+                if y_span > 6:
+                    multiline_headers.append((page_idx + 1, y_span, " ".join(w[4] for w in h_words)))
+
+            f_words = [w for w in words if w[1] > 650]
+            if f_words:
+                y_span = max(w[1] for w in f_words) - min(w[1] for w in f_words)
+                if y_span > 6:
+                    multiline_footers.append((page_idx + 1, y_span, " ".join(w[4] for w in f_words)))
+
         for idx, w in enumerate(words):
             # Check for orphan close paren sitting at left margin (x0 < 90) at start of a line
             if w[4].startswith(')') and w[0] < 90:
@@ -438,6 +455,17 @@ def review_book_pdf(pdf_path, blueprint, chapters):
             # Check for malformed comma/paren artifacts in numbers
             if re.search(r'\d+\(,\s*\)\d+', w[4]) or '(, )' in w[4] or '(,)' in w[4]:
                 malformed_numbers.append((page_idx + 1, w[4]))
+
+    if len(multiline_headers) == 0:
+        checks.append(("Geometri Header (Single-Line Verification)", "PASS", "0 Header Tertekuk (100% 1 Baris Elegan)"))
+    else:
+        detail_samples = "; ".join([f"Hal {pg}" for pg, _, _ in multiline_headers[:3]])
+        checks.append(("Geometri Header (Single-Line Verification)", "FAIL", f"{len(multiline_headers)} halaman memiliki header 2 baris ({detail_samples})"))
+
+    if len(multiline_footers) == 0:
+        checks.append(("Geometri Footer (Single-Line Verification)", "PASS", "0 Footer Tertekuk (100% 1 Baris Rapi)"))
+    else:
+        checks.append(("Geometri Footer (Single-Line Verification)", "FAIL", f"{len(multiline_footers)} halaman memiliki footer multi-baris"))
 
     if len(orphan_parens) == 0:
         checks.append(("Tipografi Layout (Zero Orphan Parens)", "PASS", "0 Tanda Kurung Patah/Gantung (Teks Mengalir Utuh)"))
@@ -510,6 +538,7 @@ def compile_book(slug='empati-sintetis-buku-cetak'):
 """)
 
     preface_clean = clean_chapter_markdown_to_typst(blueprint.get('preface', ''))
+    short_title = blueprint.get('shortTitle', blueprint['title'].split(':')[0].strip())
 
     typst_code = f"""// ==============================================================================
 // TYPST ACADEMIC MONOGRAPH / PRINT-READY BOOK TEMPLATE (ISO-B5)
@@ -530,15 +559,15 @@ def compile_book(slug='empati-sintetis-buku-cetak'):
         #grid(
           columns: (1fr, auto),
           align: (left, right),
-          [*{blueprint['title']}*],
-          [#text(style: "italic", fill: luma(120))[Monograf Riset]]
+          [#text(style: "italic")[{short_title}]],
+          [#text(size: 7.5pt, fill: luma(120))[PT CHAIN ASIA CONECT]]
         )
       ] else [
         #grid(
           columns: (auto, 1fr),
           align: (left, right),
-          [#text(style: "italic", fill: luma(120))[PT CHAIN ASIA CONECT]],
-          [*Ilham Pradani*]
+          [#text(size: 7.5pt, fill: luma(120))[Monograf Ilmiah]],
+          [#text(style: "italic")[*Ilham Pradani*]]
         )
       ]
       #v(-2pt)

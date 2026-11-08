@@ -52,9 +52,9 @@ Setiap sesi AI baru **WAJIB** mematuhi 8 prinsip desain percetakan berikut tanpa
 4. **Zero Blank Pages (Anti Halaman Kosong)**:
    - Dilarang keras menggunakan `#pagebreak(to: "odd")` ganda di dalam naskah.
    - Wajib menggunakan `#pagebreak()` bersih agar pembaca digital tidak menemukan halaman kosong yang membingungkan.
-5. **Running Header & Footer Wajib Ada di Setiap Halaman**:
+5. **Running Header & Footer Wajib (Single-Line Rule)**:
    - Mulai halaman Romawi (Prakata) hingga akhir buku:
-     - **Header**: Garis hairline `0.35pt`, Halaman Genap menampilkan Judul Monograf, Halaman Ganjil menampilkan Nama Penulis (*Ilham Pradani*).
+     - **Header**: Garis hairline `0.35pt`. Wajib **tepat 1 baris bersih** (menggunakan *Short Running Title*, DILARANG tertekuk 2 baris). Halaman Genap menampilkan Judul Pendek Monograf (*Empati Sintetis*), Halaman Ganjil menampilkan Nama Penulis (*Ilham Pradani*).
      - **Footer**: Garis hairline tipis `0.25pt`, **nomor halaman tebal di margin luar**, dan metadata penerbit (*PT CHAIN ASIA CONECT — Scholarly Series*) di margin dalam.
    - DILARANG menaruh logo warna-warni di header halaman isi (standar monograf internasional Chicago & Cambridge hanya mengizinkan segel penerbit di Cover dan Title Page).
 6. **Integritas Bab Akhir (Anti-Terpotong)**:
@@ -64,7 +64,7 @@ Setiap sesi AI baru **WAJIB** mematuhi 8 prinsip desain percetakan berikut tanpa
    - Buku ini adalah **Edisi Monograf Ilmiah Murni** (*Scholarly Monograph*): rumus, tabel data, fMRI, nilai p-value, dan rujukan hukum TETAP UTUH dan tidak boleh disederhanakan menjadi fiksi picisan.
    - Hindari pola template AI berulang (`1. **X** – Y`). Tulisan wajib mengalir dengan panjang paragraf asimetris, kaya transisi alami, analogi membumi, dan gaya skeptis-kritis khas pengguna.
 8. **Automated Geometric PDF Review Engine**:
-   - Setiap kompilasi PDF wajib diverifikasi otomatis oleh modul `review_book_pdf` menggunakan **PyMuPDF geometric inspection** (memverifikasi zero orphan parens & zero malformed decimals) dan harus lulus dengan skor 100%.
+   - Setiap kompilasi PDF wajib diverifikasi otomatis oleh modul `review_book_pdf` menggunakan **PyMuPDF geometric inspection** (memverifikasi zero orphan parens, zero malformed decimals, serta single-line header/footer geometry) dan harus lulus dengan skor 100%.
    - Skor audit dan badge Turnitin **HANYA ditampilkan di etalase web (`/book`)**, sedangkan berkas buku PDF interior tetap steril, sakral, dan murni akademis tanpa badge.
 
 ---

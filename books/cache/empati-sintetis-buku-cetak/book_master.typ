@@ -17,15 +17,15 @@
         #grid(
           columns: (1fr, auto),
           align: (left, right),
-          [*Empati Sintetis: Psikologi Bahasa AI, Jerat Manipulasi Kognitif, dan Kedaulatan Hukum Individu*],
-          [#text(style: "italic", fill: luma(120))[Monograf Riset]]
+          [#text(style: "italic")[Empati Sintetis]],
+          [#text(size: 7.5pt, fill: luma(120))[PT CHAIN ASIA CONECT]]
         )
       ] else [
         #grid(
           columns: (auto, 1fr),
           align: (left, right),
-          [#text(style: "italic", fill: luma(120))[PT CHAIN ASIA CONECT]],
-          [*Ilham Pradani*]
+          [#text(size: 7.5pt, fill: luma(120))[Monograf Ilmiah]],
+          [#text(style: "italic")[*Ilham Pradani*]]
         )
       ]
       #v(-2pt)
