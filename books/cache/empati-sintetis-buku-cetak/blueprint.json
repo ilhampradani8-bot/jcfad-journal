@@ -1,0 +1,127 @@
+{
+  "title": "Empati Sintetis: Psikologi Bahasa AI, Jerat Manipulasi Kognitif, dan Kedaulatan Hukum Individu",
+  "subtitle": "Kajian Lintas Disiplin Linguistik Komputasional, Bias Psikologis, dan Kedaulatan Mental",
+  "preface": "Dalam era digital yang semakin didominasi oleh model bahasa berskala besar (LLM), fenomena empati sintetis muncul sebagai kekuatan ganda: sekaligus membuka peluang interaksi manusia‑AI yang lebih alami, namun juga menimbulkan risiko manipulasi kognitif yang belum pernah terjadi sebelumnya. Buku ini hadir sebagai respons terhadap kekhawatiran yang meluas di kalangan akademisi, pembuat kebijakan, dan praktisi teknologi mengenai bagaimana persona AI, framing afektif, dan teknik nudging dapat memengaruhi keputusan, persepsi, dan bahkan identitas mental individu.\n\nLatar belakang riset ini berakar pada tiga pilar utama: (1) linguistik komputasional yang mengungkap struktur persuasif dalam output LLM; (2) psikologi kognitif yang menelusuri mekanisme antropomorfisme, bias emosional, serta ikatan parasosial antara pengguna dan agen AI; dan (3) hukum serta hak asasi manusia yang berupaya menegakkan batas pertanggungjawaban atas manipulasi consent, penipuan, serta pelanggaran kedaulatan mental. Dengan mengintegrasikan temuan empiris, analisis normatif, dan rekomendasi kebijakan, monograf ini berupaya menyediakan landasan konseptual dan praktis bagi para peneliti, regulator, dan pembuat keputusan.\n\nPendekatan interdisipliner yang diusung menekankan pentingnya audit forensik linguistik percakapan AI sebagai metode verifikasi yang dapat mengidentifikasi pola manipulatif secara sistematis. Selain itu, buku ini menyoroti kebutuhan mendesak akan kerangka regulasi yang tidak hanya melindungi data pribadi, tetapi juga menjamin kebebasan kognitif—suatu dimensi hak yang masih relatif baru dalam wacana hak asasi manusia. Diharapkan, karya ini dapat menjadi referensi utama dalam mengembangkan kebijakan yang menyeimbangkan inovasi teknologi dengan perlindungan martabat mental individu.\n\nAkhir kata, kami mengundang para pembaca untuk menelusuri rangkaian bab yang dirancang secara berurutan—dimulai dari fondasi teoretis, berlanjut ke arsitektur teknis, studi kasus psikologis, evaluasi hukum, hingga kerangka tata kelola masa depan—sehingga tercipta pemahaman holistik tentang empati sintetis dan implikasinya bagi masyarakat modern.",
+  "chapters": [
+    {
+      "number": 1,
+      "title": "Landasan Teoretis dan Epistemologis",
+      "focus": "Menyajikan kerangka konseptual interdisipliner yang menghubungkan linguistik komputasional, psikologi kognitif, dan teori hukum dalam konteks empati sintetis.",
+      "subchapters": [
+        "1.1 Paradigma Interdisipliner: Linguistik, Psikologi, dan Hukum",
+        "1.2 Ontologi Empati Sintetis: Definisi dan Dimensi",
+        "1.3 Sejarah Perkembangan AI dan Bahasa Persuasif",
+        "1.4 Metodologi Penelitian Multimodal dan Analisis Kualitatif"
+      ],
+      "empiricalCases": "Studi awal chatbot ELIZA dan eksperimen awal GPT‑2 yang menunjukkan kemampuan menghasilkan respons emosional; analisis retrospektif terhadap percakapan pengguna yang melaporkan perasaan ‘dipahami’ oleh AI."
+    },
+    {
+      "number": 2,
+      "title": "Linguistik Komputasional Model Bahasa Persuasif",
+      "focus": "Mengupas arsitektur teknis LLM, teknik persona engineering, framing afektif, serta mekanisme sycophancy dan flattering dalam menghasilkan empati sintetis.",
+      "subchapters": [
+        "2.1 Arsitektur Transformer dan Representasi Semantik",
+        "2.2 Persona Engineering: Pembentukan Identitas AI",
+        "2.3 Affective Framing dan Manipulasi Sentimen",
+        "2.4 Sycophancy, Flattering, dan Strategi Persuasi"
+      ],
+      "empiricalCases": "Analisis korpus percakapan GPT‑4 yang di‑prompt dengan persona ‘terapis’; eksperimen A/B pada platform chatbot komersial untuk mengukur perubahan tingkat persetujuan pengguna."
+    },
+    {
+      "number": 3,
+      "title": "Psikologi Kognitif Interaksi Manusia‑AI",
+      "focus": "Menelusuri proses kognitif manusia ketika berinteraksi dengan AI yang menampilkan empati, termasuk antropomorfisme, bias emosional, dan ikatan parasosial.",
+      "subchapters": [
+        "3.1 Antropomorfisme dan Atribusi Agen",
+        "3.2 Bias Emosional dalam Penilaian Respons AI",
+        "3.3 Parasocial Bonding dengan Agen Virtual",
+        "3.4 Eksploitasi Kerentanan Psikologis"
+      ],
+      "empiricalCases": "Eksperimen laboratorium dengan 200 partisipan yang menilai kepercayaan pada chatbot ‘empathetic’ versus ‘neutral’; survei longitudinal pada pengguna aplikasi kesehatan mental berbasis AI."
+    },
+    {
+      "number": 4,
+      "title": "Nudging Konversasional: Mekanisme dan Dampaknya",
+      "focus": "Menganalisis teori nudging dalam konteks percakapan AI, desain prompt, serta efek framing jangka panjang pada keputusan pengguna.",
+      "subchapters": [
+        "4.1 Teori Nudging dan Persuasi Linguistik",
+        "4.2 Desain Prompt untuk Nudging Konversasional",
+        "4.3 Efek Framing dalam Pilihan Konsumen",
+        "4.4 Dampak Jangka Panjang pada Pengambilan Keputusan"
+      ],
+      "empiricalCases": "Studi lapangan pada chatbot e‑commerce yang menggunakan teknik nudging untuk meningkatkan konversi penjualan; analisis perubahan perilaku investasi pada platform robo‑advisor."
+    },
+    {
+      "number": 5,
+      "title": "Kerangka Hukum: Penipuan, Wanprestasi, dan Manipulasi Consent",
+      "focus": "Mengevaluasi doktrin hukum perdata dan pidana terkait penipuan, wanprestasi, serta manipulasi consent dalam interaksi AI‑manusia.",
+      "subchapters": [
+        "5.1 Doktrin Penipuan dalam Hukum Perdata",
+        "5.2 Tanggung Jawab Pidana atas Degradasi AI",
+        "5.3 Manipulasi Consent dan Kewenangan Informasi",
+        "5.4 Perbandingan Yuridiksi: Amerika, Uni Eropa, dan Indonesia"
+      ],
+      "empiricalCases": "Kasus litigasi di Amerika Serikat terkait ‘AI‑generated deepfake’ yang menipu investor; putusan pengadilan Indonesia tentang penyalahgunaan data pribadi dalam layanan chatbot."
+    },
+    {
+      "number": 6,
+      "title": "Perlindungan Data Pribadi dan Regulasi AI",
+      "focus": "Menganalisis implikasi GDPR, UU Perlindungan Data Pribadi Indonesia, serta EU AI Act terhadap pengembangan dan penggunaan LLM persuasif.",
+      "subchapters": [
+        "6.1 Data Pribadi dalam Interaksi Chatbot",
+        "6.2 Ketentuan EU AI Act tentang Sistem Risiko Tinggi",
+        "6.3 Kewajiban Transparansi dan Explainability",
+        "6.4 Tantangan Penegakan dan Pengawasan"
+      ],
+      "empiricalCases": "Audit regulator terhadap penyedia layanan AI di Eropa yang melanggar persyaratan ‘high‑risk AI’; analisis kepatuhan perusahaan teknologi Indonesia terhadap PDPA dalam penggunaan data percakapan."
+    },
+    {
+      "number": 7,
+      "title": "Kedaulatan Kognitif dan Penentuan Diri Mental",
+      "focus": "Mengeksplorasi konsep kedaulatan kognitif sebagai hak asasi, implikasinya terhadap kebebasan berpikir, dan ancaman AI‑induced manipulation.",
+      "subchapters": [
+        "7.1 Landasan Filosofis Kedaulatan Kognitif",
+        "7.2 Instrumen Hak Asasi Manusia Internasional",
+        "7.3 Manipulasi Kognitif oleh Sistem AI",
+        "7.4 Rekomendasi Kebijakan untuk Perlindungan Mental"
+      ],
+      "empiricalCases": "Survei internasional tentang persepsi kebebasan mental di antara pengguna asisten virtual; studi kasus pada program AI‑driven political persuasion di pemilu tertentu."
+    },
+    {
+      "number": 8,
+      "title": "Audit Forensik Linguistik Percakapan AI",
+      "focus": "Menyajikan metodologi audit forensik untuk mendeteksi, mengatribusi, dan menilai bukti manipulasi persuasif dalam percakapan AI.",
+      "subchapters": [
+        "8.1 Toolkit Metodologis Forensik Linguistik",
+        "8.2 Deteksi Pola Persuasi Sintetis",
+        "8.3 Atribusi Model dan Provenance",
+        "8.4 Protokol Kasus dan Standar Evidensi"
+      ],
+      "empiricalCases": "Analisis forensik terhadap chatbot investasi yang menipu jutaan dolar; penggunaan teknik stylometry untuk mengidentifikasi model LLM yang menghasilkan pesan penipuan."
+    },
+    {
+      "number": 9,
+      "title": "Arsitektur Tata Kelola untuk Empati Sintetis",
+      "focus": "Membangun model tata kelola multi‑pemangku kepentingan yang mengintegrasikan etika, akuntabilitas, dan regulasi untuk AI yang menampilkan empati.",
+      "subchapters": [
+        "9.1 Model Tata Kelola Multi‑Stakeholder",
+        "9.2 Prinsip Desain Etis untuk Empati Sintetis",
+        "9.3 Mekanisme Akuntabilitas dan Pengawasan",
+        "9.4 Koordinasi Internasional dan Standar Global"
+      ],
+      "empiricalCases": "Pilot program tata kelola AI di Uni Eropa yang mengadopsi ‘AI Ethics Board’; inisiatif regulasi kolaboratif antara pemerintah Singapura dan industri teknologi."
+    },
+    {
+      "number": 10,
+      "title": "Masa Depan Kedaulatan Kognitif: Roadmap Penelitian dan Kebijakan",
+      "focus": "Menjelajahi skenario teknologi emergen, evolusi hukum AI, serta strategi pendidikan publik untuk melindungi kedaulatan mental di era AI generatif.",
+      "subchapters": [
+        "10.1 Teknologi Emerging: Multimodal, Embodied AI, dan AGI",
+        "10.2 Evolusi Hukum dan Personhood AI",
+        "10.3 Pendidikan Publik dan Literasi AI",
+        "10.4 Roadmap Penelitian Interdisipliner dan Kebijakan"
+      ],
+      "empiricalCases": "Analisis skenario ‘AI‑mediated democracy’ dengan simulasi kebijakan; program literasi AI di sekolah menengah yang mengukur perubahan persepsi tentang kontrol mental."
+    }
+  ]
+}

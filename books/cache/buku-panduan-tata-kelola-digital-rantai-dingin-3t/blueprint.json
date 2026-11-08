@@ -1,0 +1,31 @@
+{
+  "title": "Buku Panduan Tata Kelola Digital Rantai Dingin 3T",
+  "subtitle": "Integrasi Hukum Kontrak Perdata, IoT Digital‑Twin, dan Pembiayaan Faktur UMKM Krui",
+  "preface": "Pembangunan wilayah 3T (Tertinggal, Terpencil, Terdepan) di Pesisir Barat, khususnya Krui, menghadapi tantangan ganda: kebutuhan mendesak akan infrastruktur rantai dingin yang handal untuk menjaga kualitas produk perikanan, serta keterbatasan akses pembiayaan bagi UMKM mikro yang menjadi tulang punggung ekonomi lokal. Pada saat yang sama, percepatan transformasi digital nasional membuka peluang untuk mengintegrasikan teknologi IoT dan konsep Digital‑Twin ke dalam sistem logistik, sehingga memungkinkan pemantauan real‑time, prediksi kegagalan, dan optimasi biaya operasional.\n\nNamun, integrasi teknologi canggih tidak dapat dilepaskan dari landasan hukum yang kuat. Hukum kontrak perdata, khususnya Kitab Undang‑Undang Hukum Perdata (KUHPerdata), menjadi kerangka utama yang mengatur hak dan kewajiban para pelaku rantai pasok, termasuk klausul tentang kualitas, pengiriman, dan penyelesaian sengketa. Tanpa kepastian hukum, inovasi digital berisiko terhambat oleh ketidakjelasan tanggung jawab dan risiko finansial.\n\nBuku ini dirancang sebagai panduan komprehensif yang menyatukan tiga dimensi kritis: (1) landasan teoretis dan regulatif, (2) arsitektur teknis berbasis IoT dan Digital‑Twin, serta (3) mekanisme pembiayaan faktur yang dapat mempercepat aliran modal ke UMKM Krui. Melalui pendekatan interdisipliner, pembaca akan memperoleh pemahaman mendalam tentang bagaimana kebijakan, teknologi, dan keuangan dapat berkolaborasi untuk menciptakan ekosistem rantai dingin yang berkelanjutan, transparan, dan inklusif.\n\nHarapan kami, buku ini tidak hanya menjadi referensi akademik, melainkan juga alat praktis bagi pembuat kebijakan, regulator, pelaku industri, dan akademisi yang berkomitmen mengakselerasi transformasi digital di wilayah 3T, sekaligus meningkatkan kesejahteraan masyarakat melalui peningkatan daya saing produk perikanan lokal.",
+  "chapters": [
+    {
+      "number": 1,
+      "title": "Landasan Teoretis, Hukum, dan Arsitektur Digital Rantai Dingin",
+      "focus": "Menyajikan kerangka konseptual yang menghubungkan teori pembangunan wilayah 3T, regulasi kontrak perdata, serta teknologi IoT‑Digital‑Twin sebagai fondasi tata kelola rantai dingin di Krui.",
+      "subchapters": [
+        "1.1 Konteks Pembangunan 3T dan Kebutuhan Rantai Dingin di Pesisir Barat",
+        "1.2 Kerangka Hukum Kontrak Perdata dalam Rantai Dingin: Analisis KUHPerdata dan Praktik Lokal",
+        "1.3 IoT, Sensor, dan Digital‑Twin: Prinsip Teknis serta Model Data untuk Monitoring Temperatur dan Kualitas",
+        "1.4 Model Pembiayaan Faktur UMKM Krui: Struktur, Risiko, dan Mekanisme Jaminan"
+      ],
+      "empiricalCases": "Studi kasus lapangan pada tiga UMKM perikanan di Krui yang mengimplementasikan sensor suhu berbasis LoRaWAN, kontrak pasokan berbasis klausul kualitas KUHPerdata, serta skema factoring faktur dengan lembaga keuangan mikro."
+    },
+    {
+      "number": 2,
+      "title": "Implementasi, Audit, dan Rekomendasi Kebijakan Masa Depan",
+      "focus": "Mengevaluasi pelaksanaan integrasi teknologi, keuangan, dan hukum; mengidentifikasi tantangan audit kepatuhan serta merumuskan kebijakan strategis untuk replikasi skala nasional.",
+      "subchapters": [
+        "2.1 Desain Sistem Integrasi TI‑Keuangan: Platform Middleware, API, dan Smart Contract",
+        "2.2 Audit Kepatuhan Data, Keamanan Siber, dan Verifikasi Kontrak Digital",
+        "2.3 Evaluasi Dampak Ekonomi, Sosial, dan Lingkungan: Analisis Cost‑Benefit dan Indeks Kesiapan Digital",
+        "2.4 Roadmap Kebijakan, Standarisasi, dan Skala Replikasi di Wilayah 3T Lainnya"
+      ],
+      "empiricalCases": "Pilot project kolaboratif antara TNBBS, Dinas Perikanan Krui, dan sebuah fintech lokal yang menguji platform integrasi end‑to‑end selama 12 bulan, mencakup pelacakan digital twin kapal penangkap, faktur digital, dan audit kepatuhan regulatif."
+    }
+  ]
+}
