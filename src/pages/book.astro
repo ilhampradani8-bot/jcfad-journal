@@ -23,6 +23,9 @@ try {
 }
 
 const bookPdfUrl = "/books/empati-sintetis.pdf";
+const bookDoi = "10.5281/zenodo.24049169";
+const bookDoiUrl = "https://doi.org/10.5281/zenodo.24049169";
+const zenodoRecordUrl = "https://zenodo.org/records/24049169";
 const bookTitle = blueprint.title;
 const bookSubtitle = blueprint.subtitle;
 const authorName = "Ilham Pradani";
@@ -86,6 +89,8 @@ const bookSchema = {
   "@type": "Book",
   "name": bookTitle,
   "headline": bookSubtitle,
+  "identifier": bookDoiUrl,
+  "sameAs": [bookDoiUrl, zenodoRecordUrl],
   "author": {
     "@type": "Person",
     "name": authorName,
@@ -152,8 +157,15 @@ const bookSchema = {
           </div>
 
           <div class="meta-item">
+            <span class="meta-label">DOI Resmi DataCite (CERN)</span>
+            <a href={bookDoiUrl} target="_blank" rel="noopener noreferrer" class="meta-val text-blue font-mono">
+              {bookDoi} ↗
+            </a>
+          </div>
+
+          <div class="meta-item">
             <span class="meta-label">Aksesibilitas</span>
-            <span class="meta-val text-green">Open Access Full PDF (Gratis)</span>
+            <span class="meta-val text-green">Open Access Full Monograph (CC BY 4.0)</span>
           </div>
         </div>
 
@@ -168,7 +180,15 @@ const bookSchema = {
             Unduh PDF Buku (59 Halaman)
           </a>
 
-          <a href={bookPdfUrl} target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+          <a href={bookDoiUrl} target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            Buka DOI Zenodo CERN
+          </a>
+
+          <a href={bookPdfUrl} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
               <polyline points="15 3 21 3 21 9"></polyline>

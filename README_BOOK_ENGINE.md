@@ -15,6 +15,8 @@ Pada repositori ini telah berhasil dibangun, diuji, dan dideploy mesin pembuat b
 - **Penulis**: Ilham Pradani (ORCID: `0009-0008-1310-6169`)
 - **Format**: Monograf Ilmiah Penuh (10 Bab Lengkap + Sintesis Komprehensif + Epilog + Daftar Pustaka Terpilih).
 - **Ketebalan**: **59 Halaman Bersih ISO-B5** (Padat, 0 Halaman Kosong).
+- **DataCite DOI Resmi (CERN Zenodo)**: [`10.5281/zenodo.24049169`](https://doi.org/10.5281/zenodo.24049169)
+- **Zenodo Official Record**: [`https://zenodo.org/records/24049169`](https://zenodo.org/records/24049169)
 - **Tabel & Rumus**: 43 Tabel Data (*Booktabs Three-Line Rules*) & 24 Display Math Bersih (*Frameless*).
 - **Hasil Audit Orisinalitas & Stilometrika**:
   - **Turnitin / iThenticate 5-Gram Similarity**: **0.00%** (LULUS MUTLAK, ambang batas Turnitin <= 15%).
