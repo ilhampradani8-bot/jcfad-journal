@@ -424,6 +424,7 @@ def review_book_pdf(pdf_path, blueprint, chapters):
     malformed_numbers = []
     multiline_headers = []
     multiline_footers = []
+    missing_page_numbers = []
 
     for page_idx in range(len(pdf_doc)):
         p = pdf_doc[page_idx]
@@ -442,6 +443,13 @@ def review_book_pdf(pdf_path, blueprint, chapters):
                 y_span = max(w[1] for w in f_words) - min(w[1] for w in f_words)
                 if y_span > 6:
                     multiline_footers.append((page_idx + 1, y_span, " ".join(w[4] for w in f_words)))
+                
+                # Check for presence of page number / folio in footer
+                has_num = any(w[4].isdigit() or w[4].lower() in ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'] for w in f_words)
+                if not has_num:
+                    missing_page_numbers.append(page_idx + 1)
+            else:
+                missing_page_numbers.append(page_idx + 1)
 
         for idx, w in enumerate(words):
             # Check for orphan close paren sitting at left margin (x0 < 90) at start of a line
@@ -466,6 +474,12 @@ def review_book_pdf(pdf_path, blueprint, chapters):
         checks.append(("Geometri Footer (Single-Line Verification)", "PASS", "0 Footer Tertekuk (100% 1 Baris Rapi)"))
     else:
         checks.append(("Geometri Footer (Single-Line Verification)", "FAIL", f"{len(multiline_footers)} halaman memiliki footer multi-baris"))
+
+    if len(missing_page_numbers) == 0:
+        checks.append(("Kelengkapan Nomor Halaman (Zero Missing Folios)", "PASS", "100% Halaman Memiliki Nomor Halaman di Footer"))
+    else:
+        detail_missing = ", ".join([f"Hal {pg}" for pg in missing_page_numbers[:5]])
+        checks.append(("Kelengkapan Nomor Halaman (Zero Missing Folios)", "FAIL", f"Nomor halaman hilang pada: {detail_missing}"))
 
     if len(orphan_parens) == 0:
         checks.append(("Tipografi Layout (Zero Orphan Parens)", "PASS", "0 Tanda Kurung Patah/Gantung (Teks Mengalir Utuh)"))
@@ -551,52 +565,8 @@ def compile_book(slug='empati-sintetis-buku-cetak'):
     top: 2.2cm,
     bottom: 2.2cm
   ),
-  header: context {{
-    let pageNum = counter(page).get().first()
-    if pageNum > 2 [
-      #set text(font: "Libertinus Serif", size: 8pt, fill: luma(80))
-      #if calc.even(pageNum) [
-        #grid(
-          columns: (1fr, auto),
-          align: (left, right),
-          [#text(style: "italic")[{short_title}]],
-          [#text(size: 7.5pt, fill: luma(120))[PT CHAIN ASIA CONECT]]
-        )
-      ] else [
-        #grid(
-          columns: (auto, 1fr),
-          align: (left, right),
-          [#text(size: 7.5pt, fill: luma(120))[Monograf Ilmiah]],
-          [#text(style: "italic")[*Ilham Pradani*]]
-        )
-      ]
-      #v(-2pt)
-      #line(length: 100%, stroke: 0.35pt + luma(180))
-    ]
-  }},
-  footer: context {{
-    let pageNum = counter(page).get().first()
-    if pageNum > 2 [
-      #line(length: 100%, stroke: 0.25pt + luma(200))
-      #v(2pt)
-      #set text(font: "Libertinus Serif", size: 8.5pt, fill: luma(90))
-      #if calc.even(pageNum) [
-        #grid(
-          columns: (auto, 1fr),
-          align: (left, right),
-          [*#counter(page).display()*],
-          [#text(size: 7.5pt, fill: luma(130))[PT CHAIN ASIA CONECT — Scholarly Series]]
-        )
-      ] else [
-        #grid(
-          columns: (1fr, auto),
-          align: (left, right),
-          [#text(size: 7.5pt, fill: luma(130))[Open Access Academic Monograph (CC BY 4.0)]],
-          [*#counter(page).display()*]
-        )
-      ]
-    ]
-  }}
+  header: none,
+  footer: none
 )
 
 #set text(
@@ -656,7 +626,50 @@ def compile_book(slug='empati-sintetis-buku-cetak'):
 #pagebreak()
 
 // --- 3. PRAKATA & KATA PENGANTAR (Halaman Romawi) ---
-#set page(numbering: "i")
+#set page(
+  numbering: "i",
+  header: context [
+    #let pageNum = counter(page).get().first()
+    #set text(font: "Libertinus Serif", size: 8pt, fill: luma(80))
+    #if calc.even(pageNum) [
+      #grid(
+        columns: (1fr, auto),
+        align: (left, right),
+        [#text(style: "italic")[{short_title}]],
+        [#text(size: 7.5pt, fill: luma(120))[PT CHAIN ASIA CONECT]]
+      )
+    ] else [
+      #grid(
+        columns: (auto, 1fr),
+        align: (left, right),
+        [#text(size: 7.5pt, fill: luma(120))[Monograf Ilmiah]],
+        [#text(style: "italic")[*Ilham Pradani*]]
+      )
+    ]
+    #v(-2pt)
+    #line(length: 100%, stroke: 0.35pt + luma(180))
+  ],
+  footer: context [
+    #line(length: 100%, stroke: 0.25pt + luma(200))
+    #v(2pt)
+    #set text(font: "Libertinus Serif", size: 8.5pt, fill: luma(90))
+    #if calc.even(counter(page).get().first()) [
+      #grid(
+        columns: (auto, 1fr),
+        align: (left, right),
+        [*#counter(page).display()*],
+        [#text(size: 7.5pt, fill: luma(130))[PT CHAIN ASIA CONECT — Scholarly Series]]
+      )
+    ] else [
+      #grid(
+        columns: (1fr, auto),
+        align: (left, right),
+        [#text(size: 7.5pt, fill: luma(130))[Open Access Academic Monograph (CC BY 4.0)]],
+        [*#counter(page).display()*]
+      )
+    ]
+  ]
+)
 #counter(page).update(3)
 
 == Prakata Penulis
@@ -681,7 +694,52 @@ def compile_book(slug='empati-sintetis-buku-cetak'):
 #pagebreak()
 
 // --- 5. ISI UTAMA BUKU (Halaman Angka Arab: 1, 2, 3...) ---
-#set page(numbering: "1")
+#set page(
+  numbering: "1",
+  header: context [
+    #let pageNum = counter(page).get().first()
+    #if pageNum > 1 [
+      #set text(font: "Libertinus Serif", size: 8pt, fill: luma(80))
+      #if calc.even(pageNum) [
+        #grid(
+          columns: (1fr, auto),
+          align: (left, right),
+          [#text(style: "italic")[{short_title}]],
+          [#text(size: 7.5pt, fill: luma(120))[PT CHAIN ASIA CONECT]]
+        )
+      ] else [
+        #grid(
+          columns: (auto, 1fr),
+          align: (left, right),
+          [#text(size: 7.5pt, fill: luma(120))[Monograf Ilmiah]],
+          [#text(style: "italic")[*Ilham Pradani*]]
+        )
+      ]
+      #v(-2pt)
+      #line(length: 100%, stroke: 0.35pt + luma(180))
+    ]
+  ],
+  footer: context [
+    #line(length: 100%, stroke: 0.25pt + luma(200))
+    #v(2pt)
+    #set text(font: "Libertinus Serif", size: 8.5pt, fill: luma(90))
+    #if calc.even(counter(page).get().first()) [
+      #grid(
+        columns: (auto, 1fr),
+        align: (left, right),
+        [*#counter(page).display()*],
+        [#text(size: 7.5pt, fill: luma(130))[PT CHAIN ASIA CONECT — Scholarly Series]]
+      )
+    ] else [
+      #grid(
+        columns: (1fr, auto),
+        align: (left, right),
+        [#text(size: 7.5pt, fill: luma(130))[Open Access Academic Monograph (CC BY 4.0)]],
+        [*#counter(page).display()*]
+      )
+    ]
+  ]
+)
 #counter(page).update(1)
 
 {''.join(typ_parts)}

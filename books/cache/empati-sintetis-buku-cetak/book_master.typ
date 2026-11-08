@@ -9,52 +9,8 @@
     top: 2.2cm,
     bottom: 2.2cm
   ),
-  header: context {
-    let pageNum = counter(page).get().first()
-    if pageNum > 2 [
-      #set text(font: "Libertinus Serif", size: 8pt, fill: luma(80))
-      #if calc.even(pageNum) [
-        #grid(
-          columns: (1fr, auto),
-          align: (left, right),
-          [#text(style: "italic")[Empati Sintetis]],
-          [#text(size: 7.5pt, fill: luma(120))[PT CHAIN ASIA CONECT]]
-        )
-      ] else [
-        #grid(
-          columns: (auto, 1fr),
-          align: (left, right),
-          [#text(size: 7.5pt, fill: luma(120))[Monograf Ilmiah]],
-          [#text(style: "italic")[*Ilham Pradani*]]
-        )
-      ]
-      #v(-2pt)
-      #line(length: 100%, stroke: 0.35pt + luma(180))
-    ]
-  },
-  footer: context {
-    let pageNum = counter(page).get().first()
-    if pageNum > 2 [
-      #line(length: 100%, stroke: 0.25pt + luma(200))
-      #v(2pt)
-      #set text(font: "Libertinus Serif", size: 8.5pt, fill: luma(90))
-      #if calc.even(pageNum) [
-        #grid(
-          columns: (auto, 1fr),
-          align: (left, right),
-          [*#counter(page).display()*],
-          [#text(size: 7.5pt, fill: luma(130))[PT CHAIN ASIA CONECT — Scholarly Series]]
-        )
-      ] else [
-        #grid(
-          columns: (1fr, auto),
-          align: (left, right),
-          [#text(size: 7.5pt, fill: luma(130))[Open Access Academic Monograph (CC BY 4.0)]],
-          [*#counter(page).display()*]
-        )
-      ]
-    ]
-  }
+  header: none,
+  footer: none
 )
 
 #set text(
@@ -114,7 +70,50 @@
 #pagebreak()
 
 // --- 3. PRAKATA & KATA PENGANTAR (Halaman Romawi) ---
-#set page(numbering: "i")
+#set page(
+  numbering: "i",
+  header: context [
+    #let pageNum = counter(page).get().first()
+    #set text(font: "Libertinus Serif", size: 8pt, fill: luma(80))
+    #if calc.even(pageNum) [
+      #grid(
+        columns: (1fr, auto),
+        align: (left, right),
+        [#text(style: "italic")[Empati Sintetis]],
+        [#text(size: 7.5pt, fill: luma(120))[PT CHAIN ASIA CONECT]]
+      )
+    ] else [
+      #grid(
+        columns: (auto, 1fr),
+        align: (left, right),
+        [#text(size: 7.5pt, fill: luma(120))[Monograf Ilmiah]],
+        [#text(style: "italic")[*Ilham Pradani*]]
+      )
+    ]
+    #v(-2pt)
+    #line(length: 100%, stroke: 0.35pt + luma(180))
+  ],
+  footer: context [
+    #line(length: 100%, stroke: 0.25pt + luma(200))
+    #v(2pt)
+    #set text(font: "Libertinus Serif", size: 8.5pt, fill: luma(90))
+    #if calc.even(counter(page).get().first()) [
+      #grid(
+        columns: (auto, 1fr),
+        align: (left, right),
+        [*#counter(page).display()*],
+        [#text(size: 7.5pt, fill: luma(130))[PT CHAIN ASIA CONECT — Scholarly Series]]
+      )
+    ] else [
+      #grid(
+        columns: (1fr, auto),
+        align: (left, right),
+        [#text(size: 7.5pt, fill: luma(130))[Open Access Academic Monograph (CC BY 4.0)]],
+        [*#counter(page).display()*]
+      )
+    ]
+  ]
+)
 #counter(page).update(3)
 
 == Prakata Penulis
@@ -145,7 +144,52 @@ Akhir kata, kami mengundang para pembaca untuk menelusuri rangkaian bab yang dir
 #pagebreak()
 
 // --- 5. ISI UTAMA BUKU (Halaman Angka Arab: 1, 2, 3...) ---
-#set page(numbering: "1")
+#set page(
+  numbering: "1",
+  header: context [
+    #let pageNum = counter(page).get().first()
+    #if pageNum > 1 [
+      #set text(font: "Libertinus Serif", size: 8pt, fill: luma(80))
+      #if calc.even(pageNum) [
+        #grid(
+          columns: (1fr, auto),
+          align: (left, right),
+          [#text(style: "italic")[Empati Sintetis]],
+          [#text(size: 7.5pt, fill: luma(120))[PT CHAIN ASIA CONECT]]
+        )
+      ] else [
+        #grid(
+          columns: (auto, 1fr),
+          align: (left, right),
+          [#text(size: 7.5pt, fill: luma(120))[Monograf Ilmiah]],
+          [#text(style: "italic")[*Ilham Pradani*]]
+        )
+      ]
+      #v(-2pt)
+      #line(length: 100%, stroke: 0.35pt + luma(180))
+    ]
+  ],
+  footer: context [
+    #line(length: 100%, stroke: 0.25pt + luma(200))
+    #v(2pt)
+    #set text(font: "Libertinus Serif", size: 8.5pt, fill: luma(90))
+    #if calc.even(counter(page).get().first()) [
+      #grid(
+        columns: (auto, 1fr),
+        align: (left, right),
+        [*#counter(page).display()*],
+        [#text(size: 7.5pt, fill: luma(130))[PT CHAIN ASIA CONECT — Scholarly Series]]
+      )
+    ] else [
+      #grid(
+        columns: (1fr, auto),
+        align: (left, right),
+        [#text(size: 7.5pt, fill: luma(130))[Open Access Academic Monograph (CC BY 4.0)]],
+        [*#counter(page).display()*]
+      )
+    ]
+  ]
+)
 #counter(page).update(1)
 
 
