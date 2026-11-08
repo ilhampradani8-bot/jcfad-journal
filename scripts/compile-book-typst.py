@@ -100,11 +100,16 @@ def clean_to_typst_math(raw):
     known_words = ['PersonaScore', 'EmpathyScore', 'TAI', 'ToM', 'CToM', 'CUS', 'AAS', 'BEM', 'score', 'fit', 'priv', 'trans', 'info', 'explain', 'turn', 'percakapan', 'styl', 'EGS', 'EO', 'Cal', 'ref', 'target', 'source', 'user', 'session']
     for kw in known_words:
         s = re.sub(rf'\b{kw}\b', f'"{kw}"', s)
+
+    # Convert LaTeX decimal commas like 0{,}71 or {,} to standard 0.71
+    s = re.sub(r'(\d+)\s*\{,\}\s*(\d+)', r'\1.\2', s)
+    s = s.replace('{,}', '.')
         
     # Clean curly braces to parens
     s = s.replace('{', '(').replace('}', ')')
     s = re.sub(r'\\\\', ' ', s)
     s = s.replace('\\', '')
+    s = s.replace('(,)', '.')
     
     # Clean redundant double quotes ""word"" -> "word"
     s = re.sub(r'""+([^"]+)""+', r'"\1"', s)
@@ -121,12 +126,17 @@ def clean_inline_for_typst(text):
     t = re.sub(r'</?[a-zA-Z0-9]+[^>]*>', '', t)
     
     # 1. Stash inline math \(...\) safely
+    # CRITICAL TYPST RULE: Inline math MUST NOT have spaces adjacent to $ delimiters ($expr$, not $ expr $)
+    # Spaces inside $ ... $ convert the formula into a centered DISPLAY EQUATION, breaking paragraphs!
     math_inlines = []
     def stash_inline_paren_math(m):
         math_content = m.group(1).strip()
-        cleaned = clean_to_typst_math(math_content)
+        cleaned = clean_to_typst_math(math_content).strip()
         idx = len(math_inlines)
-        math_inlines.append(f"$ {cleaned} $")
+        if cleaned:
+            math_inlines.append(f"${cleaned}$")
+        else:
+            math_inlines.append("")
         return f"__SAFE_INLINE_MATH_{idx}__"
     t = re.sub(r'\\\((.*?)\\\)', stash_inline_paren_math, t)
 
@@ -406,6 +416,39 @@ def review_book_pdf(pdf_path, blueprint, chapters):
         checks.append(("Integritas Hak Cipta & ORCID", "PASS", "Ilham Pradani (ORCID: 0009-0008-1310-6169) Verified"))
     else:
         checks.append(("Integritas Hak Cipta & ORCID", "WARN", "Sebagian metadata penulis tidak terdeteksi"))
+
+    # 7. PyMuPDF Typography & Visual Layout Audit (Pre-flight Geometric Inspection)
+    import pymupdf
+    pdf_doc = pymupdf.open(pdf_path)
+    orphan_parens = []
+    malformed_numbers = []
+
+    for page_idx in range(len(pdf_doc)):
+        p = pdf_doc[page_idx]
+        words = p.get_text('words')  # (x0, y0, x1, y1, word, block, line, word_no)
+        for idx, w in enumerate(words):
+            # Check for orphan close paren sitting at left margin (x0 < 90) at start of a line
+            if w[4].startswith(')') and w[0] < 90:
+                orphan_parens.append((page_idx + 1, f"Left-margin: {w[4]}"))
+            # Check for orphan open paren at line end where next word wraps to left margin
+            if w[4].endswith('(') and idx + 1 < len(words):
+                next_w = words[idx + 1]
+                if next_w[1] > w[1] + 6 and next_w[0] < 100:
+                    orphan_parens.append((page_idx + 1, f"Line-end: {w[4]} -> {next_w[4]}"))
+            # Check for malformed comma/paren artifacts in numbers
+            if re.search(r'\d+\(,\s*\)\d+', w[4]) or '(, )' in w[4] or '(,)' in w[4]:
+                malformed_numbers.append((page_idx + 1, w[4]))
+
+    if len(orphan_parens) == 0:
+        checks.append(("Tipografi Layout (Zero Orphan Parens)", "PASS", "0 Tanda Kurung Patah/Gantung (Teks Mengalir Utuh)"))
+    else:
+        detail_samples = "; ".join([f"Hal {pg}: {snippet}" for pg, snippet in orphan_parens[:3]])
+        checks.append(("Tipografi Layout (Zero Orphan Parens)", "FAIL", f"{len(orphan_parens)} kurung patah terdeteksi ({detail_samples})"))
+
+    if len(malformed_numbers) == 0:
+        checks.append(("Integritas Angka & Desimal", "PASS", "0 Anomali Koma Desimal LaTeX/Typst"))
+    else:
+        checks.append(("Integritas Angka & Desimal", "FAIL", f"{len(malformed_numbers)} anomali desimal terdeteksi"))
 
     pass_count = sum(1 for _, status, _ in checks if status == "PASS")
     score = (pass_count / len(checks)) * 100

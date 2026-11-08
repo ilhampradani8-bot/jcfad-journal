@@ -14,7 +14,7 @@ Pada repositori ini telah berhasil dibangun, diuji, dan dideploy mesin pembuat b
 - **Judul**: *Empati Sintetis: Psikologi Bahasa AI, Jerat Manipulasi Kognitif, dan Kedaulatan Hukum Individu*
 - **Penulis**: Ilham Pradani (ORCID: `0009-0008-1310-6169`)
 - **Format**: Monograf Ilmiah Penuh (10 Bab Lengkap + Sintesis Komprehensif + Epilog + Daftar Pustaka Terpilih).
-- **Ketebalan**: **64 Halaman Bersih ISO-B5** (Padat, 0 Halaman Kosong).
+- **Ketebalan**: **59 Halaman Bersih ISO-B5** (Padat, 0 Halaman Kosong).
 - **Tabel & Rumus**: 43 Tabel Data (*Booktabs Three-Line Rules*) & 24 Display Math Bersih (*Frameless*).
 - **Skor Audit Mutu**: **100.0% (LULUS SEMPURNA / SIAP TERBIT & CETAK)**.
 - **URL Publik & PDF Reader**: [`https://journal.chainasiaconnect.co.id/book`](https://journal.chainasiaconnect.co.id/book)

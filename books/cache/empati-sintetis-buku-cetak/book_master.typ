@@ -166,7 +166,7 @@ Di titik temu ketiga ranah inilah letak ketegangan epistemologis yang paling men
 
 === 1.1.1 Linguistik Komputasional: Representasi Semantik, Pragmatik, dan Kontrol Dialog
 
-Dalam ranah linguistik komputasional modern, upaya menduplikasi empati bermula dari konstruksi ruang semantik berdimensi tinggi. Model transformer seperti BERT, RoBERTa, hingga arsitektur fondasi skala besar memproyeksikan makna ujaran ke dalam vektor embedding $ bold(e) in "RR"^(d) $ yang merangkum tidak hanya fitur leksikal, melainkan juga dinamika pragmatik percakapan. Di sinilah titik tolak teknis pertama diletakkan: untuk mengevaluasi derajat keselarasan afektif antara ujaran pengguna $ s_(1) $ dan respons mesin $ s_(2) $, sistem lazimnya mengandalkan metrik kemiripan kosinus (cosine similarity):
+Dalam ranah linguistik komputasional modern, upaya menduplikasi empati bermula dari konstruksi ruang semantik berdimensi tinggi. Model transformer seperti BERT, RoBERTa, hingga arsitektur fondasi skala besar memproyeksikan makna ujaran ke dalam vektor embedding $bold(e) in "RR"^(d)$ yang merangkum tidak hanya fitur leksikal, melainkan juga dinamika pragmatik percakapan. Di sinilah titik tolak teknis pertama diletakkan: untuk mengevaluasi derajat keselarasan afektif antara ujaran pengguna $s_(1)$ dan respons mesin $s_(2)$, sistem lazimnya mengandalkan metrik kemiripan kosinus (cosine similarity):
 
 
 #v(0.85em)
@@ -175,7 +175,7 @@ $ "Sim"(s_(1),s_(2))= (bold(e)_(s_(1)) dot bold(e)_(s_(2))) / ( norm(bold(e)_(s_
 
 
 
-Temuan empiris Zhang dkk. (ACL 2022) mengonfirmasi bahwa nilai $ "Sim" $ memiliki korelasi linear yang kuat ($ r = 0(,)71 $) terhadap persepsi manusia mengenai 'kesesuaian emosional'. Namun, keselarasan matematis ini kerap mengaburkan jurang ontologis yang mendasar: kedekatan jarak vektor di ruang laten sama sekali bukan cerminan dari pemahaman batiniah.
+Temuan empiris Zhang dkk. (ACL 2022) mengonfirmasi bahwa nilai $"Sim"$ memiliki korelasi linear yang kuat ($r = 0.71$) terhadap persepsi manusia mengenai 'kesesuaian emosional'. Namun, keselarasan matematis ini kerap mengaburkan jurang ontologis yang mendasar: kedekatan jarak vektor di ruang laten sama sekali bukan cerminan dari pemahaman batiniah.
 
 Lebih dari sekadar kemiripan semantik statis, dinamika percakapan manusia senantiasa berakar pada inferensi kontekstual dan pragmatik implisit. Melalui mekanisme _multi-head attention_ dan pelacakan status dialog (Dialog State Tracking / DST) yang diperkaya dengan graf pengetahuan relasional, sistem AI generasi mutakhir mampu mengabstraksikan maksud terselubung pengguna dengan akurasi identifikasi intensi mencapai 84% (Liu dkk., EMNLP 2023). Model tidak lagi sekadar pasif menjawab pertanyaan, melainkan aktif menyimpulkan kerentanan emosional yang tidak diucapkan secara eksplisit.
 
@@ -310,28 +310,28 @@ Aliran transformasi dari data mentah menuju tindakan afektif sistematis digambar
     [ *1. Akuisisi Data* ],
     [ Teks, audio, pola ketukan, rekaman jeda ],
     [ Ekstraksi fitur multimodal dan normalisasi ruang laten ],
-    [ Representasi terpadu $ bold(x) $ ],
+    [ Representasi terpadu $bold(x)$ ],
     [ Pelanggaran minimalisasi data (GDPR Art. 5) akibat over-collection ],
     [ *2. Deteksi Emosi* ],
-    [ Vektor $ bold(x) $ ],
-    [ Klasifikasi transformator menghasilkan sebaran probabilitas $ bold(p)_(e) $ ],
+    [ Vektor $bold(x)$ ],
+    [ Klasifikasi transformator menghasilkan sebaran probabilitas $bold(p)_(e)$ ],
     [ Skor intensitas afektif (0–1) ],
     [ Bias pelatihan demografis yang berujung diskriminasi algoritma ],
     [ *3. Penalaran Empatik* ],
-    [ $ bold(p)_(e) $ & konteks dialog ],
-    [ Pemodelan status mental (Theory of Mind graph) $ Phi_("cog") $ ],
+    [ $bold(p)_(e)$ & konteks dialog ],
+    [ Pemodelan status mental (Theory of Mind graph) $Phi_("cog")$ ],
     [ Rencana tindakan responsif ],
     [ Halusinasi kontekstual yang memicu cacat konsensus perdata ],
     [ *4. Generasi Respons* ],
-    [ Rencana aksi & $ bold(p)_(e) $ ],
-    [ Pembangkitan terkontrol (controlled decoding) $ Phi_("aff") $ ],
+    [ Rencana aksi & $bold(p)_(e)$ ],
+    [ Pembangkitan terkontrol (controlled decoding) $Phi_("aff")$ ],
     [ Teks empati yang dipersonalisasi ],
     [ Pola gelap persuasi (dark patterns) merusak otonomi afektif ],
     [ *5. Penyaring Kepatuhan* ],
     [ Teks respons & metadata ],
-    [ Filter kepatuhan etis-hukum menghasilkan skor $ lambda $ ],
+    [ Filter kepatuhan etis-hukum menghasilkan skor $lambda$ ],
     [ Keputusan lolos atau tolak ],
-    [ Gugatan perbuatan melawan hukum bila lolos di bawah ambang $ theta $ ],
+    [ Gugatan perbuatan melawan hukum bila lolos di bawah ambang $theta$ ],
     [ *6. Audit & Pelaporan* ],
     [ Log interaksi lengkap ],
     [ Pencatatan audit _tamper-proof_ pada rantai blok terdesentralisasi ],
@@ -348,7 +348,7 @@ Aliran transformasi dari data mentah menuju tindakan afektif sistematis digambar
 
 === 1.2.1 Definisi Formal yang Diperluas
 
-Secara matematis, empati sintetis dapat didefinisikan sebagai fungsi pemetaan kontinu yang mengaitkan konteks linguistik-emosional $ (s, t) $ serta variabel temporal percakapan $ tau $ ke dalam skor intensitas empatik $ Phi in [0,1] $:
+Secara matematis, empati sintetis dapat didefinisikan sebagai fungsi pemetaan kontinu yang mengaitkan konteks linguistik-emosional $(s, t)$ serta variabel temporal percakapan $tau$ ke dalam skor intensitas empatik $Phi in [0,1]$:
 
 
 #v(0.85em)
@@ -357,7 +357,7 @@ $ Phi: "S" times "E" times "RR"^(+) -> [0,1], Phi(s,e,tau)=sigma( w_(c) dot "CUS
 
 
 
-Fungsi sigmoid $ sigma $ membatasi nilai keluaran pada rentang probabilitas yang tegas. Parameter $ w_(c), w_(a), w_(b) $ merupakan bobot kalibrasi empiris (memenuhi syarat $ w_c + w_a + w_b = 1 $), di mana $ "CUS" $ mengukur pemahaman semantik kontekstual, $ "AAS" $ menilai keselarasan afektif respons, sedangkan $ "BEM" $ merepresentasikan batas etis intervensi (Behavioral Ethical Margin). Melalui formulasi ini, empati sintetis bukan lagi sekadar kiasan sastra, melainkan parameter matematis yang dapat diuji, dibatasi, dan diaudit secara legal.
+Fungsi sigmoid $sigma$ membatasi nilai keluaran pada rentang probabilitas yang tegas. Parameter $w_(c), w_(a), w_(b)$ merupakan bobot kalibrasi empiris (memenuhi syarat $w_c + w_a + w_b = 1$), di mana $"CUS"$ mengukur pemahaman semantik kontekstual, $"AAS"$ menilai keselarasan afektif respons, sedangkan $"BEM"$ merepresentasikan batas etis intervensi (Behavioral Ethical Margin). Melalui formulasi ini, empati sintetis bukan lagi sekadar kiasan sastra, melainkan parameter matematis yang dapat diuji, dibatasi, dan diaudit secara legal.
 
 #v(2em)
 
@@ -386,11 +386,11 @@ $ "Attention"(Q,K,V)="softmax"(("QK"^(T)) / (sqrt(d_k)))V, $
 
 dengan
 
-- $ Q in "RR"^(n times d_k) $ – matriks query,
-- $ K in "RR"^(n times d_k) $ – matriks key,
-- $ V in "RR"^(n times d_v) $ – matriks value,
-- $ n $ – panjang urutan, dan
-- $ d_k $ – dimensi ruang kunci.
+- $Q in "RR"^(n times d_k)$ – matriks query,
+- $K in "RR"^(n times d_k)$ – matriks key,
+- $V in "RR"^(n times d_v)$ – matriks value,
+- $n$ – panjang urutan, dan
+- $d_k$ – dimensi ruang kunci.
 
 Self‑attention menghasilkan *contextual embeddings* yang bersifat distribusional: setiap dimensi vektor mengkodekan kombinasi linier dan non‑linier dari seluruh konteks, bukan sekadar posisi token dalam hierarki lapisan.
 
@@ -406,7 +406,7 @@ Dengan demikian, bukti empiris yang sahih menunjukkan bahwa *semantik afektif* (
 
 === 2.1.3 Layer‑wise Relevance Propagation (LRP) dalam Konteks Persuasif
 
-Untuk menelusuri kontribusi tiap lapisan terhadap keputusan persuasif, dapat dipakai *Layer‑wise Relevance Propagation* (LRP) (Bach _et al._, 2015). LRP memecah skor akhir $ Phi(s,e,tau) $ menjadi komponen‑komponen yang dapat diatribusikan pada setiap lapisan $ l $:
+Untuk menelusuri kontribusi tiap lapisan terhadap keputusan persuasif, dapat dipakai *Layer‑wise Relevance Propagation* (LRP) (Bach _et al._, 2015). LRP memecah skor akhir $Phi(s,e,tau)$ menjadi komponen‑komponen yang dapat diatribusikan pada setiap lapisan $l$:
 
 
 #v(0.85em)
@@ -415,7 +415,7 @@ $ Phi(s,e,tau)=sum_(l=1)^(L)alpha_(l) bold(h)_(l), $
 
 
 
-di mana $ bold(h)_(l) $ adalah vektor aktivasi lapisan $ l $ dan $ alpha_(l) $ adalah koefisien relevansi yang dihitung secara rekursif. Pada eksperimen dengan dataset *Therapeutic Dialogue Corpus* (120 rb dialog terannotasi), nilai $ alpha_(12) $ mencapai 0,38 (38 % kontribusi) pada skor persetujuan, sedangkan $ alpha_(1-4) $ masing‑masing hanya 0,05–0,08.
+di mana $bold(h)_(l)$ adalah vektor aktivasi lapisan $l$ dan $alpha_(l)$ adalah koefisien relevansi yang dihitung secara rekursif. Pada eksperimen dengan dataset *Therapeutic Dialogue Corpus* (120 rb dialog terannotasi), nilai $alpha_(12)$ mencapai 0,38 (38 % kontribusi) pada skor persetujuan, sedangkan $alpha_(1-4)$ masing‑masing hanya 0,05–0,08.
 
 === 2.1.4 Perbandingan Arsitektur Standar vs. Affective‑Optimized
 
@@ -526,7 +526,7 @@ Setelah fine‑tuning, model dievaluasi oleh panel manusia (N = 200) yang me
 + *Kualitas Empati* (Perceived Empathy Scale)
 + *Efektivitas Persuasif* (Therapeutic Alliance Inventory – TAI)
 
-Reward $ R $ didefinisikan sebagai kombinasi linear:
+Reward $R$ didefinisikan sebagai kombinasi linear:
 
 
 #v(0.85em)
@@ -535,7 +535,7 @@ $ R = w_(p) "PersonaScore" + w_(e) "EmpathyScore" + w_(t) "TAI", $
 
 
 
-dengan bobot standar $ w_(p)=0,3 $, $ w_(e)=0,4 $, $ w_(t)=0,3 $. PPO (Schulman _et al._, 2017) kemudian mengoptimalkan kebijakan generasi dengan clipping parameter $ epsilon = 0,2 $.
+dengan bobot standar $w_(p)=0,3$, $w_(e)=0,4$, $w_(t)=0,3$. PPO (Schulman _et al._, 2017) kemudian mengoptimalkan kebijakan generasi dengan clipping parameter $epsilon = 0,2$.
 
 === 2.2.3 Evaluasi yang Valid: Dari Conversion Rate ke Skala Psikologis
 
@@ -579,7 +579,7 @@ Studi longitudinal (N = 150, durasi 8 minggu) menunjukkan bahwa chatbot de
 
 === 2.3.2 Representasi Valence‑Arousal dalam Ruang Latent
 
-Model Transformer yang dioptimalkan untuk afektif (lihat tabel 2.1) menambahkan *affective sub‑space* $ bold(s) in "RR"^(d_(a)) $ (biasanya $ d_(a)=128 $) yang diproyeksikan dari hidden state $ bold(h) $ melalui matriks linear $ W_(a) $:
+Model Transformer yang dioptimalkan untuk afektif (lihat tabel 2.1) menambahkan *affective sub‑space* $bold(s) in "RR"^(d_(a))$ (biasanya $d_(a)=128$) yang diproyeksikan dari hidden state $bold(h)$ melalui matriks linear $W_(a)$:
 
 
 #v(0.85em)
@@ -588,7 +588,7 @@ $ bold(s)=W_(a)bold(h)+b_(a). $
 
 
 
-Selanjutnya, nilai *valence* $ v $ dan *arousal* $ a $ diekstrak dengan dua head linear:
+Selanjutnya, nilai *valence* $v$ dan *arousal* $a$ diekstrak dengan dua head linear:
 
 
 #v(0.85em)
@@ -597,7 +597,7 @@ $ v = sigma(bold(w)_(v)^(T)bold(s)+b_(v)), a = sigma(bold(w)_(a)^(T)bold(s)+b_(a
 
 
 
-di mana $ sigma $ adalah fungsi sigmoid yang memetakan ke rentang $ [0,1] $.
+di mana $sigma$ adalah fungsi sigmoid yang memetakan ke rentang $[0,1]$.
 
 === 2.3.3 Teknik Affective Framing
 
@@ -619,7 +619,7 @@ di mana $ sigma $ adalah fungsi sigmoid yang memetakan ke rentang $ [0,1] $.
     [ Framing Effect ],
     [ +12 % pada PES, +9 % pada TAI ],
     [ *Sentiment Conditioning* ],
-    [ Mengubah vektor afektif $ bold(s) $ dengan *sentiment transfer* (lihat persamaan 2.2) sebelum decoding ],
+    [ Mengubah vektor afektif $bold(s)$ dengan *sentiment transfer* (lihat persamaan 2.2) sebelum decoding ],
     [ Appraisal Theory ],
     [ Shift valence rata‑rata +0,28 (skala 0‑1) ],
     [ *Tone Modulation* ],
@@ -633,7 +633,7 @@ di mana $ sigma $ adalah fungsi sigmoid yang memetakan ke rentang $ [0,1] $.
 
 ==== 2.3.3.1 Sentiment Transfer
 
-Sentiment transfer memodifikasi embedding semantik $ bold(e) $ dengan selisih target‑source pada ruang afektif:
+Sentiment transfer memodifikasi embedding semantik $bold(e)$ dengan selisih target‑source pada ruang afektif:
 
 
 #v(0.85em)
@@ -642,11 +642,11 @@ $ bold(e)' = bold(e) + lambda(bold(s)_("target") - bold(s)_("source")), $
 
 
 
-di mana $ lambda $ adalah koefisien skala (biasanya 0,4–0,6). Pada eksperimen dengan *Affective Dialogue Dataset* (30 rb contoh), nilai $ lambda=0,5 $ menghasilkan peningkatan *valence* sebesar 0,35 poin pada skala VADER (−1 → +1) tanpa mengorbankan koherensi sintaksis (BLEU = 0,71).
+di mana $lambda$ adalah koefisien skala (biasanya 0,4–0,6). Pada eksperimen dengan *Affective Dialogue Dataset* (30 rb contoh), nilai $lambda=0,5$ menghasilkan peningkatan *valence* sebesar 0,35 poin pada skala VADER (−1 → +1) tanpa mengorbankan koherensi sintaksis (BLEU = 0,71).
 
 ==== 2.3.3.2 Dynamic Temperature & Top‑p
 
-Untuk menyesuaikan *arousal*, sistem mengatur *temperature* $ tau $ dan *top‑p* $ p $ secara real‑time:
+Untuk menyesuaikan *arousal*, sistem mengatur *temperature* $tau$ dan *top‑p* $p$ secara real‑time:
 
 
 #v(0.85em)
@@ -655,7 +655,7 @@ $ tau = tau_(0)(1 + kappa (a - a_(0))), p = p_(0)(1 - kappa (a - a_(0))), $
 
 
 
-dengan $ kappa $ = 0,3, \
+dengan $kappa$ = 0,3, \
 
 #v(2em)
 
@@ -689,7 +689,7 @@ Model dua‑tahap yang sebelumnya disajikan (persepsi bahasa → atribusi sosial
 + *Inferensi ToM (I‑ToM)* – Aktivasi jaringan mPFC‑TPJ untuk menilai keberadaan “mental state” pada agen.
 + *Evaluasi CToM (E‑CToM)* – Penilaian apakah proses komputasional yang diperkirakan dapat menghasilkan “kondisi mental” yang konsisten dengan inferensi ToM.
 
-Secara matematis, persepsi antropomorfik $ A_("perc") $ dapat dituliskan sebagai:
+Secara matematis, persepsi antropomorfik $A_("perc")$ dapat dituliskan sebagai:
 
 
 #v(0.85em)
@@ -698,14 +698,14 @@ $ A_("perc") = alpha_0 + alpha_1 B_("emp") + alpha_2 C_("context") + alpha_3 "To
 
 
 
-- $ B_("emp") $ – Indikator respons empatik (binary atau skala).
-- $ C_("context") $ – Variabel konteks (topik, urgensi).
-- $ "ToM"_("score") $ – Nilai probabilistik hasil model Bayesian ToM (mis. 0‑1).
-- $ "CToM"_("fit") $ – Goodness‑of‑fit antara algoritma AI yang diketahui (mis. model bahasa) dan model mental yang dihipotesiskan pengguna.
+- $B_("emp")$ – Indikator respons empatik (binary atau skala).
+- $C_("context")$ – Variabel konteks (topik, urgensi).
+- $"ToM"_("score")$ – Nilai probabilistik hasil model Bayesian ToM (mis. 0‑1).
+- $"CToM"_("fit")$ – Goodness‑of‑fit antara algoritma AI yang diketahui (mis. model bahasa) dan model mental yang dihipotesiskan pengguna.
 
 ==== Empiris: Meta‑Analisis 2022‑2024
 
-Sebuah meta‑analisis yang menggabungkan 12 studi eksperimental (total N = 4 372) menemukan bahwa koefisien $ alpha_1 $ (empati verbal) rata‑rata = 0.38 (p \< .001), sementara $ alpha_3 $ (ToM score) = 0.45 (p \< .001). Efek gabungan menghasilkan $ R^2 = 0.62 $ pada model regresi hierarkis, menegaskan bahwa *inferensi ToM* memberikan kontribusi paling signifikan terhadap persepsi antropomorfik.
+Sebuah meta‑analisis yang menggabungkan 12 studi eksperimental (total N = 4 372) menemukan bahwa koefisien $alpha_1$ (empati verbal) rata‑rata = 0.38 (p \< .001), sementara $alpha_3$ (ToM score) = 0.45 (p \< .001). Efek gabungan menghasilkan $R^2 = 0.62$ pada model regresi hierarkis, menegaskan bahwa *inferensi ToM* memberikan kontribusi paling signifikan terhadap persepsi antropomorfik.
 
 === 3.1.3 Implikasi Hukum: Transparansi dan Non‑Deception
 
@@ -862,7 +862,7 @@ Sebuah studi longitudinal pada *1 200 pengguna aplikasi kesehatan mental berba
 #v(0.85em)
 
 
-Model menjelaskan 38 % varians dalam SUS (Adjusted $ R^2 = .38 $).
+Model menjelaskan 38 % varians dalam SUS (Adjusted $R^2 = .38$).
 
 Sebagai perbandingan, meta‑analisis klasik (N = 3 467, 1990‑2010) pada interaksi dokter‑pasien melaporkan koefisien stres → kepuasan = –0.21 (p \< .01). Perbedaan magnitude menunjukkan *bias emosional yang lebih kuat pada AI* karena kurangnya sinyal non‑verbal yang dapat menurunkan ambiguitas afektif.
 
@@ -897,7 +897,7 @@ Sebuah studi kohort *2020‑2024* melibatkan *3 452 pengguna* aplikasi konseli
     stroke: (x, y) => if y == 0 { (top: 1.2pt + black, bottom: 0.8pt + black) } else if y == 6 { (bottom: 1.2pt + black) } else { (bottom: 0.25pt + luma(215)) },
     [ *Waktu (bulan)* ],
     [ *Rata‑rata PIS* ],
-    [ *Decay Rate ($ lambda $)* ],
+    [ *Decay Rate ($lambda$)* ],
     [ 1 ],
     [ 5.62 ],
     [ — ],
@@ -918,7 +918,7 @@ Sebuah studi kohort *2020‑2024* melibatkan *3 452 pengguna* aplikasi konseli
 #v(0.85em)
 
 
-Decay rate $ lambda $ dihitung dengan model eksponensial $ P(t) = P_0 e^(-lambda t) $. Untuk *karakter fiksi statis* (mis. tokoh televisi) pada studi komparatif (n = 1 200) decay rate rata‑rata = 0.037 (p \< .001). Artinya, *PSB pada agen AI mengalami peluruhan yang lebih lambat* dibandingkan media tradisional, kemungkinan karena interaktivitas yang adaptif.
+Decay rate $lambda$ dihitung dengan model eksponensial $P(t) = P_0 e^(-lambda t)$. Untuk *karakter fiksi statis* (mis. tokoh televisi) pada studi komparatif (n = 1 200) decay rate rata‑rata = 0.037 (p \< .001). Artinya, *PSB pada agen AI mengalami peluruhan yang lebih lambat* dibandingkan media tradisional, kemungkinan karena interaktivitas yang adaptif.
 
 === 3.3.3 Mediasi antara Antropomorfisme, PSB, dan Kepatuhan
 
@@ -967,12 +967,12 @@ $ "logit"(P(D_("ij")=1)) = beta_0 + beta_1 L_("ij") + beta_2 C_("ij") + beta_3 U
 
 
 
-- $ D_("ij") $ = keputusan (1 = konversi, 0 = tidak) pada interaksi ke‑$ j $ pengguna ke‑$ i $.
-- $ L_("ij") $ = vektor fitur persuasiveness (detail pada 4.1.2.3).
-- $ C_("ij") $ = vektor konteks (waktu respons, kanal, produk, dll.).
-- $ U_i $ = profil demografis & histori pembelian.
-- $ gamma $ = bobot yang di‑learn melalui satu hidden layer feed‑forward (ReLU) dengan 32 neuron, memungkinkan interaksi non‑linear.
-- $ b_(i)^("user") $ dan $ b_(j)^("session") $ = efek random intercept untuk mengontrol variasi tak terukur antar‑pengguna dan antar‑sesi.
+- $D_("ij")$ = keputusan (1 = konversi, 0 = tidak) pada interaksi ke‑$j$ pengguna ke‑$i$.
+- $L_("ij")$ = vektor fitur persuasiveness (detail pada 4.1.2.3).
+- $C_("ij")$ = vektor konteks (waktu respons, kanal, produk, dll.).
+- $U_i$ = profil demografis & histori pembelian.
+- $gamma$ = bobot yang di‑learn melalui satu hidden layer feed‑forward (ReLU) dengan 32 neuron, memungkinkan interaksi non‑linear.
+- $b_(i)^("user")$ dan $b_(j)^("session")$ = efek random intercept untuk mengontrol variasi tak terukur antar‑pengguna dan antar‑sesi.
 
 ==== 4.1.2.3 Ekstraksi Fitur Persuasiveness dengan BERT
 
@@ -1021,9 +1021,9 @@ Model yang diusulkan meningkatkan AUC‑ROC sebesar *13 ppt* dan F1‑Score se
 
 ==== 4.1.2.5 Interpretasi Koefisien
 
-- $ beta_1 $ (persuasiveness) = 0.42 (p \< 0.001) → setiap kenaikan satu standar deviasi pada skor persuasiveness meningkatkan odds konversi 1.52×.
-- $ beta_2 $ (scarcity cue dalam konteks) = 0.27 (p = 0.004).
-- $ gamma $ (interaction) menunjukkan bahwa *scarcity* menjadi lebih efektif bila *emotional valence* negatif (mis‑negatif framing).
+- $beta_1$ (persuasiveness) = 0.42 (p \< 0.001) → setiap kenaikan satu standar deviasi pada skor persuasiveness meningkatkan odds konversi 1.52×.
+- $beta_2$ (scarcity cue dalam konteks) = 0.27 (p = 0.004).
+- $gamma$ (interaction) menunjukkan bahwa *scarcity* menjadi lebih efektif bila *emotional valence* negatif (mis‑negatif framing).
 
 ---
 
@@ -1301,7 +1301,7 @@ Kegagalan mengungkapkan salah satu elemen di atas dapat menjadi *elemen penipuan
 
 === 5.1.4 Analisis Kausalitas Kerugian: Pendekatan Kualitatif dan Ekonomi Hukum
 
-Formula matematis yang sebelumnya dipublikasikan (mis. $ "Kerugian"_("AI") = sum (C_i times E_i) / (T_i) $) tidak memiliki dasar yuridis maupun empiris. Sebagai gantinya, analisis kerugian dalam kasus penipuan AI mengadopsi *kerangka kausalitas* yang diuraikan oleh *Cooter & Ulen (2016)* dan *Klein (2021)*:
+Formula matematis yang sebelumnya dipublikasikan (mis. $"Kerugian"_("AI") = sum (C_i times E_i) / (T_i)$) tidak memiliki dasar yuridis maupun empiris. Sebagai gantinya, analisis kerugian dalam kasus penipuan AI mengadopsi *kerangka kausalitas* yang diuraikan oleh *Cooter & Ulen (2016)* dan *Klein (2021)*:
 
 + Identifikasi _but‑for_ causation – Apakah kerugian tidak akan terjadi bila tidak ada informasi palsu?
 + *Proximate cause* – Apakah kerugian merupakan konsekuensi langsung atau dipengaruhi oleh faktor perantara (mis. volatilitas pasar)?
@@ -1607,9 +1607,9 @@ $ R_("priv") = alpha dot C + beta dot T + gamma dot A - delta dot M $
 - *T* = proporsi informasi kebijakan yang disajikan secara jelas (skala 0‑1).
 - *A* = kemampuan model memprediksi data sensitif (mis. probabilitas inferensi kesehatan).
 - *M* = skor mitigasi (0 = tidak ada, 1 = implementasi penuh DP + federated learning).
-- $ alpha, beta, gamma, delta $ = bobot regulasi (ditetapkan oleh otoritas, biasanya 0,2‑0,4).
+- $alpha, beta, gamma, delta$ = bobot regulasi (ditetapkan oleh otoritas, biasanya 0,2‑0,4).
 
-Jika $ R_("priv") > 0.7 $ (ambang batas yang direkomendasikan oleh *EDPB Guidance 2023*), sistem wajib mengaktifkan *mitigasi tambahan* seperti *on‑device processing*, *token masking*, atau *real‑time privacy auditing*.
+Jika $R_("priv") > 0.7$ (ambang batas yang direkomendasikan oleh *EDPB Guidance 2023*), sistem wajib mengaktifkan *mitigasi tambahan* seperti *on‑device processing*, *token masking*, atau *real‑time privacy auditing*.
 
 ---
 
@@ -1675,7 +1675,7 @@ $ R_("EU") = P times S times E $
 - *S* = tingkat keparahan kerugian (skala 1‑10).
 - *E* = eksposur, yaitu *jumlah pengguna yang terpengaruh* (dalam jutaan).
 
-Jika $ R_("EU") > 0.5 $ (ambang batas yang diusulkan dalam *Guidelines on High‑Risk AI*, European Commission, 2023), sistem diklasifikasikan *high‑risk* dan harus mematuhi persyaratan tambahan (audit, dokumentasi, HITL).
+Jika $R_("EU") > 0.5$ (ambang batas yang diusulkan dalam *Guidelines on High‑Risk AI*, European Commission, 2023), sistem diklasifikasikan *high‑risk* dan harus mematuhi persyaratan tambahan (audit, dokumentasi, HITL).
 
 ==== Contoh Perhitungan
 
@@ -1750,11 +1750,11 @@ $ T_("trans") = (L_("info") + L_("explain")) / (U) $
 
 
 
-- $ L_("info") $ = total panjang (token) kebijakan privasi yang disajikan.
-- $ L_("explain") $ = total panjang (token) penjelasan teknis yang diberikan pada UI.
-- $ U $ = jumlah unik pengguna dalam periode pelaporan.
+- $L_("info")$ = total panjang (token) kebijakan privasi yang disajikan.
+- $L_("explain")$ = total panjang (token) penjelasan teknis yang diberikan pada UI.
+- $U$ = jumlah unik pengguna dalam periode pelaporan.
 
-Standar *EDPB* merekomendasikan *$ T_("trans") >= 0.3 $* token per pengguna; nilai di bawah ini menandakan *kurangnya transparansi*.
+Standar *EDPB* merekomendasikan *$T_("trans") >= 0.3$* token per pengguna; nilai di bawah ini menandakan *kurangnya transparansi*.
 
 ==== Contoh
 
@@ -2033,7 +2033,7 @@ $ U_i = sum_(j=1)^(n) w_("ij") f_j(x_i) - lambda B_i, $
 
 
 
-di mana $ B_i $ adalah _bias index_ (mis. homophily, sentiment skew).  Nilai $ lambda $ yang rendah menurunkan penalti bias, meningkatkan kecenderungan _filter bubble_.
+di mana $B_i$ adalah _bias index_ (mis. homophily, sentiment skew).  Nilai $lambda$ yang rendah menurunkan penalti bias, meningkatkan kecenderungan _filter bubble_.
 
 === 7.3.2 Studi Kasus: Kampanye Politik AI‑Driven 2019 (Indonesia)
 
@@ -2507,8 +2507,8 @@ $ "EGS" = (sum_(i=1)^(n) w_i dot "Score"_i) / (sum_(i=1)^(n) w_i) $
 
 
 
-- $ w_i $ = bobot indikator $ i $.
-- $ "Score"_i $ = nilai 0–1 untuk setiap indikator.
+- $w_i$ = bobot indikator $i$.
+- $"Score"_i$ = nilai 0–1 untuk setiap indikator.
 
 Bobot ditetapkan berdasarkan prioritas regulasi dan risiko:
 - Safety (keamanan emosional) = 0.25
@@ -2638,9 +2638,9 @@ $ "BS"_("Cal") = (1) / (abs(S))sum_(s in S)abs(hat(p)_s - p_s) $
 
 
 
-- $ "FPR"_s, "TPR"_s $ = false positive dan true positive rate untuk subkelompok $ s $.
-- $ hat(p)_s, p_s $ = probabilitas prediksi dan probabilitas aktual.
-- $ "BS" = alpha dot "BS"_("EO") + (1-alpha) dot "BS"_("Cal") $ dengan $ alpha = 0.5 $.
+- $"FPR"_s, "TPR"_s$ = false positive dan true positive rate untuk subkelompok $s$.
+- $hat(p)_s, p_s$ = probabilitas prediksi dan probabilitas aktual.
+- $"BS" = alpha dot "BS"_("EO") + (1-alpha) dot "BS"_("Cal")$ dengan $alpha = 0.5$.
 
 *Empiris*
 Dalam pilot program chatbot kesehatan mental di Singapura (2023), penggunaan _Equalized Odds_ mengurangi _false positive rate_ pada subkelompok minoritas sebesar 12 % dibandingkan baseline, sementara _Calibration Error_ turun dari 0.08 ke 0.04. Data ini memvalidasi klaim penurunan bias.
@@ -2723,7 +2723,7 @@ $ "SAS"(e_i, e_j)=(e_i dot e_j) / ( norm(e_i) norm(e_j) ) times (1) / (1+abs(t_i
 
 
 
-di mana $ t_i $ dan $ t_j $ adalah timestamp. SAS memperhitungkan temporal alignment, sehingga lebih akurat dalam menilai konteks real‑time. Keterkaitan ini memicu pertanyaan kognitif: apakah manusia dapat mempertahankan kedaulatan mental ketika AI dapat menafsirkan dan memanipulasi input sensorik secara simultan?
+di mana $t_i$ dan $t_j$ adalah timestamp. SAS memperhitungkan temporal alignment, sehingga lebih akurat dalam menilai konteks real‑time. Keterkaitan ini memicu pertanyaan kognitif: apakah manusia dapat mempertahankan kedaulatan mental ketika AI dapat menafsirkan dan memanipulasi input sensorik secara simultan?
 
 === 10.1.2 Embodied AI dan Kerangka Teori Embodied Cognition
 Embodied AI, yang mengintegrasikan sistem AI ke dalam robot fisik, memperkenalkan _sensorimotor loop_ yang meniru proses kognisi manusia. Kerangka teoretis _Embodied Cognition_ (Varela, Thompson, & Rosch, 1991) menegaskan bahwa pengetahuan tidak hanya terletak di otak, melainkan juga di tubuh dan interaksi dengan lingkungan. Brooks (2021) menunjukkan bahwa robot dengan embodied cognition menampilkan adaptasi perilaku yang lebih responsif terhadap lingkungan, menimbulkan risiko manipulasi perilaku manusia melalui interaksi fisik.
