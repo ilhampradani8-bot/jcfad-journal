@@ -9,6 +9,15 @@ This repository (`/root/journal`) contains the complete standalone code and asse
 3. **Backend Engines Stay on UTM**: Heavy PDF compilation (`scripts/generate-paper-pdf.py`), Typst rendering, and automated repository syncs (`scripts/sync-osf-papers.py`, `scripts/zenodo-publisher.py`) are executed locally on UTM.
 4. **Typst PDF Integrity**: When compiling papers to PDF, verify that word count is fully preserved and all headings/subheadings are present (audit score must pass >= 90%). Never truncate text after tables.
 
+## 📚 Book Engine Guardrails & Typography Standards (LOCKED RULES)
+1. **Zero Card / Frameless Math**: Rumus matematika DILARANG dibungkus card, box abu-abu (`#box(fill: luma(248)...)`), atau border apa pun. Wajib native block math `$ equation $` dengan spasi vertikal `#v(0.85em)`.
+2. **Booktabs Dynamic Typography**: Seluruh tabel markdown wajib dikonversi ke `#table(...)` Typst standar Booktabs (tanpa garis vertikal). Tabel dengan 5+ kolom wajib memakai font `7.5pt` dan inset `4pt` agar tidak tumpang tindih (*zero overflow*).
+3. **Zero Blank Pages (Anti Halaman Kosong)**: Dilarang menggunakan `#pagebreak(to: "odd")` ganda. Gunakan `#pagebreak()` bersih agar pembaca PDF digital tidak menemukan halaman kosong.
+4. **Running Header & Footer Wajib**: Setiap halaman (mulai halaman Romawi & Arab) wajib memiliki garis hairline tipis, nomor halaman di pojok luar (*outer margin*), dan metadata penerbit di pojok dalam.
+5. **Integritas Penutup Bab Akhir**: Bab terakhir DILARANG terpotong di tengah jalan. Wajib memuat subbab penutup tuntas, Sintesis Komprehensif, Epilog reflektif, dan Daftar Pustaka Terpilih.
+6. **Gaya Penulisan Humanis (Anti-Robotik)**: Hindari pola template AI berulang (`1. **X** – Y`). Tulisan wajib mengalir dengan panjang paragraf asimetris, kaya transisi alami, analogi membumi, dan gaya skeptis-kritis khas pengguna.
+7. **Automated PDF Review Engine**: Kompilasi buku wajib melewati modul audit `review_book_pdf` dan lulus dengan skor minimal 95%.
+
 ## 🛠 Commands
 - `npm run dev`: Start local Astro dev server
 - `npm run build`: Build production static files into `dist/`
