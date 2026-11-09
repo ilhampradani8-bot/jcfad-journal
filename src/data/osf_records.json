@@ -118,5 +118,15 @@
     "zenodoDoi": "10.5281/zenodo.24089643",
     "pdfFile": "a-mixed-methods-empirical-juridical-economic-logistics-model-for-optimising-incentive-driven-plastic-waste-recovery-in-the-krui-coastal-tourism-cluster.pdf",
     "pdfSize": 159814
+  },
+  "empirical-juridical-digital-twin-for-dynamic-incentive-optimization-of-plastic-waste-management-in-krui-coastal-tourism": {
+    "slug": "empirical-juridical-digital-twin-for-dynamic-incentive-optimization-of-plastic-waste-management-in-krui-coastal-tourism",
+    "title": "Empirical Juridical-Digital Twin for Dynamic Incentive Optimization of Plastic Waste Management in Krui Coastal Tourism",
+    "osfId": "xysf6",
+    "osfUrl": "https://osf.io/xysf6/",
+    "osfDoi": "10.17605/OSF.IO/XYSF6",
+    "zenodoDoi": "10.5281/zenodo.24090695",
+    "pdfFile": "empirical-juridical-digital-twin-for-dynamic-incentive-optimization-of-plastic-waste-management-in-krui-coastal-tourism.pdf",
+    "pdfSize": 189982
   }
 }
