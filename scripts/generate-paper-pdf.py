@@ -743,6 +743,8 @@ if __name__ == "__main__":
                 osf_copy = os.path.join(DOCS_DIR, f"{target_slug}-osf.pdf")
                 shutil.copyfile(out_file, osf_copy)
                 print(f"✅ Generated & synced OSF PDF: {osf_copy}")
+                # Kembalikan file utama ke versi universal resmi jurnal web portal
+                build_article_pdf(target_art, out_file, header_mode="universal")
         else:
             print(f"❌ Article slug not found in D1: {target_slug}")
     elif "--all-osf" in sys.argv:
