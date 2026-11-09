@@ -50,10 +50,11 @@ Proyek ini telah **dipisahkan secara permanen** dari repositori korporat `chaina
 │       ├── submissions.astro     # Panduan Penulisan & Pengiriman Naskah
 │       └── sitemap.xml.js        # Dynamic scholarly sitemap generator
 ├── scripts/
-│   ├── generate-paper-pdf.py     # Engine kompilasi PDF naskah Typst 2-kolom berstandar IEEE/ACM
+│   ├── generate-paper-pdf.py     # Engine kompilasi PDF naskah Typst 2-kolom berstandar IEEE/ACM (Self-Healing Loop)
+│   ├── audit_all_published.py    # Modul audit menyeluruh 100% naskah terbit (Geometri A4, 0 Sintaks Bocor, IMRAD)
 │   ├── auto-article-groq.mjs     # Mesin generator naskah & telaah AI Groq dengan live Telegram tracker
 │   ├── test-telegram.mjs         # Tool verifikasi koneksi Telegram Bot (@log_system_server_bot)
-│   ├── sync-osf-papers.py        # Script sinkronisasi & push revisi naskah ke OSF Storage
+│   ├── sync-osf-papers.py        # Script sinkronisasi & push revisi naskah ke OSF Storage (--update-nodes mode edit)
 │   └── zenodo-publisher.py       # Script deposit naskah ilmiah ke CERN Zenodo API
 ```
 
@@ -66,8 +67,11 @@ Jika Anda adalah AI Agent (Antigravity, Cursor, Claude Code, Gemini CLI) yang be
 1. **Integritas Konteks Ilmiah (Jurnal Murni)**:
    - Proyek ini adalah **portal jurnal ilmiah murni**. Dilarang keras menambahkan card produk jualan, penawaran korporat, atau berita umum yang tidak relevan dengan paper ilmiah.
    - Semua halaman harus mempertahankan nuansa akademik klasik (Oxford University Press / Springer / PKP OJS style): tipografi tajam, latar belakang kontras tinggi, dan tanpa efek washed-out / glassmorphism buram.
-2. **Kompilasi PDF Typst (scripts/generate-paper-pdf.py)**:
+2. **Kompilasi PDF Typst & Self-Healing Architecture (scripts/generate-paper-pdf.py)**:
    - Saat mengompilasi naskah menjadi PDF, gunakan layout 2-kolom dengan Typst (font Libertinus Serif 9pt, leading rapat).
+   - **Bulletproof Self-Healing Loop**: Gunakan loop umpan balik 4 lapis (AST Math Converter -> Compiler Error Feedback -> Quoting Map Injection -> Failsafe Text Mode) untuk menjamin kompilasi tidak pernah gagal (exit code 0 mutlak).
+   - **Pencegahan Tabrakan Tabel (Adaptive Booktabs Density)**: Tabel 5+ kolom wajib memakai font `6.6pt`, inset padding `2.0pt` x `3.0pt`, leading `0.30em`, dan rasio kolom proporsional agar angka milyaran tidak tabrakan (*zero cell collision*).
+   - **Zero Code Leak**: Seluruh formula matematika LaTeX mentah (`\frac`, `\sum`, `\beta`, dll.) dan kurung siku mandiri `[` ... `]` wajib dinormalisasi menjadi native Typst math (`$eq$`).
    - **Wajib menjalankan audit kelengkapan kata & sub-judul** (skrip memiliki auditor otomatis). Jangan izinkan pemotongan teks atau penghapusan bab apapun.
    - Naskah harus memiliki header resmi (OSF Preprints atau Zenodo Preprints) dengan DOI yang aktif.
 3. **Metadata Google Scholar & Indeksasi**:
