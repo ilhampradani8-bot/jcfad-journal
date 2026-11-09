@@ -32,7 +32,7 @@ if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
   console.error('❌ Gagal: TELEGRAM_BOT_TOKEN dan TELEGRAM_CHAT_ID harus diisi.');
   console.log('Penggunaan:');
   console.log('  node scripts/test-telegram.mjs <BOT_TOKEN> <CHAT_ID>');
-  console.log('atau isi variabel TELEGRAM_BOT_TOKEN dan TELEGRAM_CHAT_ID di /root/chainasiaweb/.env');
+  console.log('atau isi variabel TELEGRAM_BOT_TOKEN dan TELEGRAM_CHAT_ID di /root/journal/.env');
   process.exit(1);
 }
 

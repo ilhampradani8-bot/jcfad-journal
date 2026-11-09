@@ -14,6 +14,22 @@ import urllib.request
 import urllib.error
 import subprocess
 
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+env_file = os.path.join(ROOT_DIR, '.env')
+if os.path.exists(env_file):
+    with open(env_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                k, v = line.split('=', 1)
+                k = k.strip()
+                v = v.strip().strip('"').strip("'")
+                if k not in os.environ:
+                    os.environ[k] = v
+
+GENERATE_PDF_SCRIPT = os.path.join(ROOT_DIR, "scripts", "generate-paper-pdf.py")
+TOPICS_JSON_PATH = os.path.join(ROOT_DIR, "scripts", "published_topics.json")
+
 ZENODO_TOKEN = os.environ.get("ZENODO_API_TOKEN", "")
 ORCID_ID = os.environ.get("ORCID_ID", "0009-0008-1310-6169")
 ORCID_CLIENT_ID = os.environ.get("ORCID_CLIENT_ID", "")
@@ -21,7 +37,7 @@ ORCID_CLIENT_SECRET = os.environ.get("ORCID_CLIENT_SECRET", "")
 CLOUDFLARE_ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "")
 CLOUDFLARE_API_TOKEN = os.environ.get("CLOUDFLARE_API_TOKEN", "")
 CLOUDFLARE_D1_DATABASE_ID = os.environ.get("CLOUDFLARE_D1_DATABASE_ID", "d2d582a9-e0c3-4ea4-9dce-4881c9cfb167")
-DOCS_DIR = os.environ.get("DOCS_DIR", "/root/journal/public/docs")
+DOCS_DIR = os.environ.get("DOCS_DIR", os.path.join(ROOT_DIR, "public", "docs"))
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
@@ -270,7 +286,7 @@ if __name__ == "__main__":
         # 2. Re-compile PDF for Paper 2
         print("🔨 Re-compiling PDF galley for Paper 2...")
         import subprocess
-        subprocess.run(["python3", "/root/chainasiaweb/scripts/generate-paper-pdf.py"], check=True)
+        subprocess.run(["python3", GENERATE_PDF_SCRIPT], check=True)
 
         # 3. Publish Paper 2 to Zenodo
         title2 = row2["title"]
@@ -309,7 +325,7 @@ if __name__ == "__main__":
         )
         pass # Cleaned: no raw citation appended to content
 
-        subprocess.run(["python3", "/root/chainasiaweb/scripts/generate-paper-pdf.py"], check=True)
+        subprocess.run(["python3", GENERATE_PDF_SCRIPT], check=True)
         res4 = publish_paper_to_zenodo(
             slug4, r4["title"], r4["excerpt"],
             ["Blockchain", "Cold Storage", "Thermal Modeling", "TNBBS", "Pesisir Barat", "Smart Contract", "Preprint", "JCFAD"],
@@ -341,7 +357,7 @@ if __name__ == "__main__":
         )
         pass # Cleaned: no raw citation appended to content
 
-        subprocess.run(["python3", "/root/chainasiaweb/scripts/generate-paper-pdf.py"], check=True)
+        subprocess.run(["python3", GENERATE_PDF_SCRIPT], check=True)
         res6 = publish_paper_to_zenodo(
             slug6, r6["title"], r6["excerpt"],
             ["DAG", "Edge IoT", "Token Incentive", "Vehicle Routing", "Cold Storage", "TNBBS", "Preprint", "JCFAD"],
@@ -375,7 +391,7 @@ if __name__ == "__main__":
         )
         pass # Cleaned: no raw citation appended to content
 
-        subprocess.run(["python3", "/root/chainasiaweb/scripts/generate-paper-pdf.py"], check=True)
+        subprocess.run(["python3", GENERATE_PDF_SCRIPT], check=True)
         res7 = publish_paper_to_zenodo(
             slug7, r7["title"], r7["excerpt"],
             ["Digital Twin", "MARL", "Legal Ontology", "Multi-Agent RL", "Cold Storage", "Krui", "TNBBS", "Preprint", "JCFAD"],
@@ -435,30 +451,33 @@ if __name__ == "__main__":
                 print(f"📝 Berhasil menginjeksi sitasi silang ke Paper {paper_id} di Cloudflare D1.")
 
             # Pastikan PDF terkompilasi sebelum upload
-            subprocess.run(["python3", "/root/chainasiaweb/scripts/generate-paper-pdf.py"], check=True)
+            subprocess.run(["python3", GENERATE_PDF_SCRIPT], check=True)
 
             pdf_file = f"{slug}.pdf"
             res = publish_paper_to_zenodo(slug, title, excerpt, keywords, pdf_file)
             update_d1_doi(slug, res["doi"])
 
-            # Update published_topics.json
-            topics_path = "/root/chainasiaweb/scripts/published_topics.json"
-            if os.path.exists(topics_path):
-                try:
-                    with open(topics_path, "r", encoding="utf-8") as f:
-                        topics = json.load(f)
-                    for t in topics:
-                        if t.get("slug") == slug:
-                            t["doi"] = res["doi"]
-                    with open(topics_path, "w", encoding="utf-8") as f:
-                        json.dump(topics, f, indent=2, ensure_ascii=False)
-                    print(f"📋 Berhasil memperbarui DOI di {topics_path}")
-                except Exception as e:
-                    print(f"⚠️ Gagal update published_topics.json: {e}")
+            # Update published_topics.json (baik di journal maupun mirror jika ada)
+            for path_candidate in [TOPICS_JSON_PATH, "/root/chainasiaweb/scripts/published_topics.json"]:
+                if os.path.exists(path_candidate):
+                    try:
+                        with open(path_candidate, "r", encoding="utf-8") as f:
+                            topics = json.load(f)
+                        updated = False
+                        for t in topics:
+                            if t.get("slug") == slug:
+                                t["doi"] = res["doi"]
+                                updated = True
+                        if updated:
+                            with open(path_candidate, "w", encoding="utf-8") as f:
+                                json.dump(topics, f, indent=2, ensure_ascii=False)
+                            print(f"📋 Berhasil memperbarui DOI di {path_candidate}")
+                    except Exception as e:
+                        print(f"⚠️ Gagal update {path_candidate}: {e}")
 
         # Final re-compile PDF dengan badge DOI Zenodo yang baru
         print("🔨 Mengompilasi ulang PDF dengan badge resmi Zenodo...")
-        subprocess.run(["python3", "/root/chainasiaweb/scripts/generate-paper-pdf.py"], check=True)
+        subprocess.run(["python3", GENERATE_PDF_SCRIPT], check=True)
         print("\n" + "=" * 70)
         print("🎉 BERHASIL MENERBITKAN PAPER PENDING KE ZENODO DENGAN DOI RESMI!")
         print("=" * 70)

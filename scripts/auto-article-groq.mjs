@@ -1601,41 +1601,50 @@ ${url}
 async function sendTelegramFailureNotification(errorMsg, liveMsgId) {
   if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
   try {
+    const rawError = typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg);
+    // Potong error jika terlalu panjang agar tidak melebihi batas 4096 karakter Telegram
+    const safeError = rawError.length > 1500 ? rawError.slice(0, 1500) + '... [pesan dipotong]' : rawError;
     const nowWib = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
     const message = `⚠️ <b>GAGAL PUBLIKASI ARTIKEL RISET HARIAN</b>
 ━━━━━━━━━━━━━━━━━━━━━━
 ❌ <b>Pesan Error:</b>
-<code>${escapeHtml(errorMsg)}</code>
+<code>${escapeHtml(safeError)}</code>
 
 ⏰ <b>Waktu:</b> ${nowWib} WIB
 ━━━━━━━━━━━━━━━━━━━━━━
 <i>Silakan periksa log server di /root/journal/logs/auto-article.log</i>`;
 
+    let editSuccess = false;
     if (liveMsgId) {
-      await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageText`, {
+      try {
+        const editRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageText`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            message_id: liveMsgId,
+            text: message,
+            parse_mode: 'HTML'
+          })
+        });
+        const editData = await editRes.json();
+        if (editData.ok) editSuccess = true;
+      } catch (_) {}
+    }
+
+    if (!editSuccess) {
+      await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: TELEGRAM_CHAT_ID,
-          message_id: liveMsgId,
           text: message,
           parse_mode: 'HTML'
         })
       });
-      return;
     }
-
-    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text: message,
-        parse_mode: 'HTML'
-      })
-    });
   } catch (e) {
-    // Abaikan error jaringan telegram
+    console.warn('⚠️ Gagal mengirim notifikasi error ke Telegram:', e.message);
   }
 }
 

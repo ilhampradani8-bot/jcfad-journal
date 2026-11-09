@@ -2,6 +2,13 @@
 # JCFAD - Daily Scientific Article Generator & Catch-up Runner
 set -e
 
+LOCK_FILE="/tmp/jcfad-auto-article.lock"
+exec 200>"$LOCK_FILE"
+if ! flock -n 200; then
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] ⚠️ Proses auto-article lain sedang berjalan. Melewati proses ganda (Race-condition dicegah)." >> "/root/journal/logs/auto-article.log"
+  exit 0
+fi
+
 TODAY=$(date '+%Y-%m-%d')
 REGISTRY="/root/journal/scripts/published_topics.json"
 LOG_FILE="/root/journal/logs/auto-article.log"
