@@ -1966,12 +1966,13 @@ async function main() {
     // Simpan ke D1
     const result = await saveToCloudflareD1(finalized, imageUrl, finalRefs, doiToUse, selectedDomain);
 
-    // Simpan judul baru ke registry lokal agar di run berikutnya tidak diduplikasi
+    // Simpan judul baru ke registry lokal agar di run berikutnya tidak diduplikasi (Gunakan tanggal WIB)
+    const todayWib = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
     recordNewTitleToRegistry({
       title: finalized.final_title,
       slug: result.slug,
       doi: doiToUse,
-      date: new Date().toISOString().slice(0, 10),
+      date: todayWib,
       type: 'academic_preprint'
     });
 

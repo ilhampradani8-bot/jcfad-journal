@@ -9,7 +9,7 @@ if ! flock -n 200; then
   exit 0
 fi
 
-TODAY=$(date '+%Y-%m-%d')
+TODAY=$(TZ='Asia/Jakarta' date '+%Y-%m-%d')
 REGISTRY="/root/journal/scripts/published_topics.json"
 LOG_FILE="/root/journal/logs/auto-article.log"
 mkdir -p /root/journal/logs

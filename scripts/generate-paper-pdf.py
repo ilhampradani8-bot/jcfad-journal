@@ -19,6 +19,111 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS_DIR = os.path.join(PROJECT_ROOT, "public/docs")
 os.makedirs(DOCS_DIR, exist_ok=True)
 
+def parse_braced(text, start_idx):
+    depth = 0
+    for idx in range(start_idx, len(text)):
+        if text[idx] == "{":
+            depth += 1
+        elif text[idx] == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start_idx+1:idx], idx + 1
+    return None, len(text)
+
+def replace_fractions(s):
+    while r"\frac" in s:
+        idx = s.find(r"\frac")
+        f_idx = s.find("{", idx + 5)
+        if f_idx == -1: break
+        num, next_idx = parse_braced(s, f_idx)
+        if num is None: break
+        s_idx = s.find("{", next_idx)
+        if s_idx == -1: break
+        den, end_idx = parse_braced(s, s_idx)
+        if den is None: break
+        s = s[:idx] + f"({num.strip()}) / ({den.strip()})" + s[end_idx:]
+    return s
+
+def clean_to_typst_math(raw):
+    """
+    Deterministic LaTeX-to-Typst Math Converter:
+    Mengubah ekspresi matematika LaTeX menjadi Typst Native Math ($...$)
+    Memenuhi standar AGENTS.md (Zero Card, Zero Box, Zero Monospace Code).
+    """
+    if not raw:
+        return ""
+    s = str(raw).strip()
+    s = s.replace(r"\[", "").replace(r"\]", "")
+    s = s.replace(r"\(", "").replace(r"\)", "")
+    s = s.replace("$$", "").replace("$", "")
+    s = re.sub(r"\\tag\{[^}]+\}", "", s)
+    s = s.replace(r"\begin{aligned}", "").replace(r"\end{aligned}", "")
+    s = re.sub(r"\\(?:left|right|bigl|bigr|Bigl|Bigr|big|Big|!)", "", s)
+
+    # Fractions
+    s = replace_fractions(s)
+
+    # Text & operatorname -> quoted string
+    s = re.sub(r"\\(?:text|operatorname)\{([^{}]+)\}", r'"\1"', s)
+
+    # Calligraphic, Blackboard, and Bold
+    s = re.sub(r"\\mathcal\{([^{}]+)\}", r"cal(\1)", s)
+    s = re.sub(r"\\mathbb\{([^{}]+)\}", r"bb(\1)", s)
+    s = re.sub(r"\\mathbf\{([^{}]+)\}", r"bold(\1)", s)
+
+    # Inequalities & Relations (Urutan penting: terpanjang dulu!)
+    s = re.sub(r"\\geq\b|\\geq(?=[^a-zA-Z]|$)", " >= ", s)
+    s = re.sub(r"\\leq\b|\\leq(?=[^a-zA-Z]|$)", " <= ", s)
+    s = re.sub(r"\\ge\b|\\ge(?=[^a-zA-Z]|$)", " >= ", s)
+    s = re.sub(r"\\le\b|\\le(?=[^a-zA-Z]|$)", " <= ", s)
+    s = s.replace(r"\neq", " != ")
+    s = s.replace(r"\approx", " approx ")
+    s = s.replace(r"\sim", " ~ ")
+    s = s.replace(r"\cdot", " dot ")
+    s = s.replace(r"\times", " times ")
+    s = s.replace(r"\in", " in ")
+    s = re.sub(r"\\(?:rightarrow|longrightarrow|to)\b", " -> ", s)
+
+    # Operators
+    s = s.replace(r"\sum", " sum ")
+    s = s.replace(r"\prod", " prod ")
+    s = s.replace(r"\int", " integral ")
+    s = s.replace(r"\sqrt", " sqrt ")
+    s = s.replace(r"\partial", " diff ")
+    s = s.replace(r"\infty", " infinity ")
+    s = s.replace(r"\pm", " plus.minus ")
+    s = re.sub(r"\\circ\b", "degree", s)
+
+    # Multi-letter uppercase identifiers in math (e.g., PI, MMI, GPS, AIC, BIC, TCT, LDI) -> quote them
+    # Menggunakan lookaround (?<![a-zA-Z]) dan (?![a-zA-Z]) agar menangkap PI_i, TCT_t, dll (karena \b terhalang underscore _)
+    s = re.sub(r'(?<![a-zA-Z])([A-Z]{2,})(?![a-zA-Z])', r'"\1"', s)
+
+    # Clean redundant double quotes ""word"" -> "word"
+    s = re.sub(r'""+([^"]+)""+', r'"\1"', s)
+
+    # Greek letters
+    greek = ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega", "Phi", "Delta", "Gamma", "Lambda", "Sigma", "Omega"]
+    s = s.replace(r"\varepsilon", "epsilon")
+    for g in greek:
+        s = re.sub(rf"\\{g}\b|\\{g}(?=[^a-zA-Z]|$)", f" {g} ", s)
+
+    # Subscripts with multi-letter words -> quote them
+    s = re.sub(r"_\{\s*([a-zA-Z]{2,})\s*\}", r'_("\1")', s)
+    # Remaining subscripts and superscripts braces -> parens
+    s = re.sub(r"_\{([^}]+)\}", r"_(\1)", s)
+    s = re.sub(r"\^\{([^}]+)\}", r"^(\1)", s)
+
+    # Spacing commands
+    s = s.replace(r"\,", " ").replace(r"\;", " ").replace(r"\qquad", " ").replace(r"\quad", " ")
+    s = s.replace(r"\\", " ").replace(r"&", " ")
+
+    # Clean remaining stray backslashes
+    s = s.replace("\\", "")
+
+    # Clean redundant whitespace
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
 def clean_inline(text, is_body=False, aggressive_unbold=False):
     if not text:
         return ""
@@ -26,62 +131,66 @@ def clean_inline(text, is_body=False, aggressive_unbold=False):
     # 1. Remove HTML tags
     t = re.sub(r'</?[a-zA-Z0-9]+[^>]*>', '', t)
 
-    # 1.5 Unescape any escaped markdown math delimiters from LLMs
-    t = t.replace(r'\$\$', '$$')
-    t = re.sub(r'\\\[(.*?)\\\]', r'$$\1$$', t, flags=re.DOTALL)
+    # 2. Extract and protect inline math \(...\) or $...$
+    math_inlines = []
+    def stash_inline_math(m):
+        math_content = m.group(1).strip()
+        cleaned = clean_to_typst_math(math_content).strip()
+        idx = len(math_inlines)
+        if cleaned:
+            # Inline math Typst: WAJIB tanpa spasi di tepi dalam ($expr$)
+            math_inlines.append(f"${cleaned}$")
+        else:
+            math_inlines.append("")
+        return f"__SAFE_INLINE_MATH_{idx}__"
 
-    # 2. Convert display math $$...$$ to Typst centered raw box
-    def repl_display_math(m):
-        eq = m.group(1).strip()
-        # Clean any escaped brackets in eq
-        eq = eq.replace(r'\{', '{').replace(r'\}', '}').replace(r'\_', '_')
-        return f'\n#align(center)[#box(fill: luma(248), inset: 6pt, radius: 2pt, stroke: 0.4pt + luma(200))[``` {eq} ```]]\n'
-    t = re.sub(r'\$\$(.*?)\$\$', repl_display_math, t, flags=re.DOTALL)
+    # LaTeX paren math: \( ... \)
+    t = re.sub(r'\\\((.*?)\\\)', stash_inline_math, t, flags=re.DOTALL)
+    # Dollar math: $ ... $ (Hanya yang berisi ekspresi matematika/variabel, bukan harga $100 / US$ 50)
+    t = re.sub(r'(?<![\\a-zA-Z0-9])\$([^\$\n]+?)\$(?![0-9])', stash_inline_math, t)
 
-    # 3. Standardize LaTeX inline math \(...\) to raw code backtick `...`
-    t = re.sub(r'\\\((.*?)\\\)', r'`\1`', t, flags=re.DOTALL)
-
-    # 4. Academic Bold Management: In body text, strip non-structural bolding to prevent AI-style markdown spam
+    # 3. Academic Bold Management: In body text, strip non-structural bolding
     if is_body:
         if aggressive_unbold:
-            # Complete unbolding for all body text
             t = re.sub(r'\*\*\*(.*?)\*\*\*', r'_\1_', t)
             t = re.sub(r'\*\*(.*?)\*\*', r'\1', t)
         else:
-            # Protect structural labels: Table X:, Figure X:, Equation X:, Model X:, Background:, etc.
             def preserve_structural_bold(m):
                 inner = m.group(1).strip()
                 if re.match(r'^(?:Table|Tabel|Figure|Gambar|Theorem|Lemma|Definition|Corollary|Case|Equation|Model|Step)\s+\d+[:.]', inner, re.IGNORECASE) or \
                    re.match(r'^(?:Background|Objectives|Methods|Results|Conclusion)[:.]', inner, re.IGNORECASE):
                     return f'*{inner}*'
-                # Strip inline bolding for regular words in academic prose (Nature/Elsevier standard)
                 return inner
             t = re.sub(r'\*\*\*(.*?)\*\*\*', r'_\1_', t)
             t = re.sub(r'\*\*(.*?)\*\*', preserve_structural_bold, t)
     else:
-        # In headers or standalone elements, standard markdown conversion
         t = re.sub(r'\*\*\*(.*?)\*\*\*', r'*_\1_*', t)
         t = re.sub(r'\*\*(.*?)\*\*', r'*\1*', t)
 
     # Clean stray AI notes/artifacts
     t = re.sub(r'\(?.*(?:the subsequent sentences|the translation continues).*?\)?\*?', '', t, flags=re.IGNORECASE)
 
-    # 5. Escape Typst markup syntax ONLY outside of raw backtick spans
-    parts = re.split(r'(`[^`]*`|```.*?```|#align\(center\)\[.*?\]\])', t, flags=re.DOTALL)
+    # 4. Escape Typst markup syntax outside of math / code blocks
+    parts = re.split(r'(`[^`]*`|```.*?```|__SAFE_INLINE_MATH_\d+__)', t, flags=re.DOTALL)
     out = []
     for p in parts:
-        if (p.startswith('`') and p.endswith('`')) or p.startswith('```') or p.startswith('#align(center)'):
+        if (p.startswith('`') and p.endswith('`')) or p.startswith('```') or p.startswith('__SAFE_INLINE_MATH_'):
             out.append(p)
         else:
             s = p
-            # Escape syntax characters in Typst markup mode
             s = s.replace('<', '\\<').replace('>', '\\>')
             s = s.replace('@', '\\@').replace('#', '\\#')
             s = s.replace('{', '\\{').replace('}', '\\}')
             s = s.replace('$', '\\$')
             s = s.replace('_', '\\_')
             out.append(s)
-    return "".join(out)
+    t = "".join(out)
+
+    # 5. Restore inline math
+    for idx, math_str in enumerate(math_inlines):
+        t = t.replace(f"__SAFE_INLINE_MATH_{idx}__", math_str)
+
+    return t
 
 def render_table(rows):
     if not rows:
@@ -137,19 +246,24 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False):
         md_text
     )
 
-    # Pre-extract multiline display math $$...$$ and \[...\] into placeholders
+    # Pre-extract multiline display math $$...$$ and \[...\] into native Typst display math
+    # STANDAR AGENTS.MD: ZERO CARD, ZERO BOX, ZERO GREY BACKGROUND!
     math_blocks = []
-    def stash_math(m):
-        eq = m.group(1).strip()
-        eq = eq.replace(r'\{', '{').replace(r'\}', '}').replace(r'\_', '_')
+    def stash_display_math(m):
+        raw_eq = m.group(1).strip()
+        cleaned = clean_to_typst_math(raw_eq)
         idx = len(math_blocks)
-        math_blocks.append(f"\n#align(center)[#box(fill: luma(248), inset: 6pt, radius: 2pt, stroke: 0.4pt + luma(200))[``` {eq} ```]]\n")
+        if cleaned:
+            # Native Typst centered display math dengan breathing room
+            math_blocks.append(f"\n#v(0.85em)\n$ {cleaned} $\n#v(0.85em)\n")
+        else:
+            math_blocks.append("")
         return f"\n__MATH_BLOCK_{idx}__\n"
 
     # Normalize escaped math delimiters
     md_text = md_text.replace(r'\$\$', '$$')
-    md_text = re.sub(r'\$\$(.*?)\$\$', stash_math, md_text, flags=re.DOTALL)
-    md_text = re.sub(r'\\\[(.*?)\\\]', stash_math, md_text, flags=re.DOTALL)
+    md_text = re.sub(r'\$\$(.*?)\$\$', stash_display_math, md_text, flags=re.DOTALL)
+    md_text = re.sub(r'\\\[(.*?)\\\]', stash_display_math, md_text, flags=re.DOTALL)
 
     lines = md_text.split("\n")
     out = []
@@ -539,13 +653,21 @@ def review_pdf(pdf_path, article, attempt=1):
         else:
             checks.append(("Preservasi Volume Teks", "FAIL", f"Potensi Teks Hilang! ({pdf_words} kata / {ratio*100:.0f}% dari sumber)"))
 
-        # 4. Analisa Paragraf: Kebocoran Sintaks / Typst Artifacts
+        # 4. Analisa Paragraf: Kebocoran Sintaks Typst & Perintah LaTeX Mentah
         leak_tokens = ['#align', '#block', '#grid', '#table', '#super', r'\begin{', '#v(', '#line(']
         found_leaks = [lt for lt in leak_tokens if lt in all_text]
-        if not found_leaks:
+
+        # Deteksi ketat kebocoran perintah LaTeX mentah di teks PDF
+        latex_leaks = re.findall(
+            r'\\(?:frac|sum|prod|int|sqrt|text|operatorname|mathbf|mathcal|mathbb|mu|beta|alpha|gamma|delta|sigma|rho|theta|lambda|omega|Delta|Sigma|partial|leq|geq|times|cdot|approx|quad|qquad)\b|\\frac\{|\\text\{',
+            all_text
+        )
+
+        if not found_leaks and not latex_leaks:
             checks.append(("Kebersihan Sintaks", "PASS", "0 Kebocoran Sintaks Typst/LaTeX"))
         else:
-            checks.append(("Kebersihan Sintaks", "FAIL", f"Bocor sintaks: {', '.join(found_leaks)}"))
+            all_errs = found_leaks + list(set(latex_leaks))[:4]
+            checks.append(("Kebersihan Sintaks", "FAIL", f"Bocor sintaks: {', '.join(all_errs)}"))
 
         # 5. Analisa Paragraf: Keseimbangan Tanda Baca (Kurung & Kurung Siku)
         open_parens = all_text.count('(')
