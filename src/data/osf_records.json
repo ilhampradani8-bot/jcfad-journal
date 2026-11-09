@@ -68,5 +68,35 @@
     "zenodoDoi": "10.5281/zenodo.24029072",
     "pdfFile": "a-stochastic-optimization-framework-integrating-real-time-wave-forecasting-probabilistic-cargo-loss-assessment-and-performance-linked-subsidy-allocation-for-small-scale-jukung-operators-in-pulau-pisang-pesisir-barat.pdf",
     "pdfSize": 163966
+  },
+  "a-multi-layered-force-majeure-risk-allocation-model-integrating-geohazard-analytics-civil-law-mapping-and-blockchain-execution-for-the-liwa-krui-corridor": {
+    "slug": "a-multi-layered-force-majeure-risk-allocation-model-integrating-geohazard-analytics-civil-law-mapping-and-blockchain-execution-for-the-liwa-krui-corridor",
+    "title": "A Multi-Layered Force-Majeure Risk-Allocation Model Integrating Geohazard Analytics, Civil-Law Mapping, and Blockchain Execution for the Liwa-Krui Corridor",
+    "osfId": "2hdjs",
+    "osfUrl": "https://osf.io/2hdjs/",
+    "osfDoi": "10.17605/OSF.IO/2HDJS",
+    "zenodoDoi": "10.5281/zenodo.24032991",
+    "pdfFile": "a-multi-layered-force-majeure-risk-allocation-model-integrating-geohazard-analytics-civil-law-mapping-and-blockchain-execution-for-the-liwa-krui-corridor.pdf",
+    "pdfSize": 145006
+  },
+  "empirical-juridical-digital-twin-integrating-machine-learning-demand-forecasts-hygiene-compliance-rules-and-multi-objective-routing-optimization-for-culinary-micro-enterprises-in-pesisir-barat": {
+    "slug": "empirical-juridical-digital-twin-integrating-machine-learning-demand-forecasts-hygiene-compliance-rules-and-multi-objective-routing-optimization-for-culinary-micro-enterprises-in-pesisir-barat",
+    "title": "Empirical Juridical-Digital Twin Integrating Machine-Learning Demand Forecasts, Hygiene-Compliance Rules, and Multi-Objective Routing Optimization for Culinary Micro-Enterprises in Pesisir Barat",
+    "osfId": "4w9mn",
+    "osfUrl": "https://osf.io/4w9mn/",
+    "osfDoi": "10.17605/OSF.IO/4W9MN",
+    "zenodoDoi": "10.5281/zenodo.24073588",
+    "pdfFile": "empirical-juridical-digital-twin-integrating-machine-learning-demand-forecasts-hygiene-compliance-rules-and-multi-objective-routing-optimization-for-culinary-micro-enterprises-in-pesisir-barat.pdf",
+    "pdfSize": 136170
+  },
+  "an-empirical-juridical-digital-twin-integrating-blockchain-traceability-multi-agent-reinforcement-learning-and-demand-signal-optimization-for-micro-enterprise-supply-chains-in-pesisir-barat": {
+    "slug": "an-empirical-juridical-digital-twin-integrating-blockchain-traceability-multi-agent-reinforcement-learning-and-demand-signal-optimization-for-micro-enterprise-supply-chains-in-pesisir-barat",
+    "title": "An Empirical Juridical-Digital Twin Integrating Blockchain Traceability, Multi-Agent Reinforcement Learning, and Demand-Signal Optimization for Micro-Enterprise Supply Chains in Pesisir Barat",
+    "osfId": "pxv7e",
+    "osfUrl": "https://osf.io/pxv7e/",
+    "osfDoi": "10.17605/OSF.IO/PXV7E",
+    "zenodoDoi": "10.5281/zenodo.24047039",
+    "pdfFile": "an-empirical-juridical-digital-twin-integrating-blockchain-traceability-multi-agent-reinforcement-learning-and-demand-signal-optimization-for-micro-enterprise-supply-chains-in-pesisir-barat.pdf",
+    "pdfSize": 138769
   }
 }

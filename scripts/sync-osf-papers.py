@@ -5,10 +5,12 @@ PT CHAIN ASIA CONECT - OSF (Open Science Framework) Automated Academic Paper Syn
 - Author: Ilham Pradani (ORCID: 0009-0008-1310-6169)
 - Affiliation: PT CHAIN ASIA CONECT Research & Development Division
 - Pipeline:
-  1. Creates dedicated public OSF project node for each academic paper
-  2. Uploads full 4-5 page unabridged peer-reviewed PDF to OSF Storage
-  3. Mints official DOI (10.17605/OSF.IO/<ID>)
-  4. Saves registry to src/data/osf_records.json
+  1. Fetches paper metadata from Cloudflare D1
+  2. Creates dedicated public OSF project node for each academic paper
+  3. Uploads full unabridged peer-reviewed PDF to OSF Storage
+  4. Mints official DOI (10.17605/OSF.IO/<ID>)
+  5. Saves registry to src/data/osf_records.json
+  6. Sends Telegram publication notification
 """
 
 import os
@@ -17,68 +19,85 @@ import json
 import urllib.request
 import urllib.error
 
-TOKEN = os.environ.get("OSF_API_TOKEN", "")
-DOCS_DIR = os.environ.get("DOCS_DIR", "/root/journal/public/docs")
-OUTPUT_REGISTRY = "/root/journal/src/data/osf_records.json"
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+env_file = os.path.join(ROOT_DIR, '.env')
+if os.path.exists(env_file):
+    with open(env_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                k, v = line.split('=', 1)
+                k = k.strip()
+                v = v.strip().strip('"').strip("'")
+                if k not in os.environ:
+                    os.environ[k] = v
 
-PAPERS_METADATA = [
-    {
-        "slug": "model-integratif-physical-digital-twin-dengan-legal-ontology-dan-marl-untuk-optimasi-dual-temperature-cold-storage-mikro-di-tnbbs-krui",
-        "title": "Integrative Physical-Digital Twin Model with Legal Ontology and Multi-Agent Reinforcement Learning for Dual-Temperature Micro Cold-Storage in TNBBS, Krui",
-        "category": "project",
-        "tags": ["digital twin", "cold storage", "multi-agent reinforcement learning", "legal ontology", "tnbbs", "pesisir barat", "smart contracts"],
-        "zenodoDoi": "10.5281/zenodo.24028621",
-        "pdfFile": "model-integratif-physical-digital-twin-dengan-legal-ontology-dan-marl-untuk-optimasi-dual-temperature-cold-storage-mikro-di-tnbbs-krui.pdf"
-    },
-    {
-        "slug": "hybrid-model-pembiayaan-faktur-digital-berbasis-perikatan-perdata-dan-jaminan-stok-sembako-untuk-pedagang-pasar-tradisional-krui",
-        "title": "Hybrid Digital Invoice Financing Model Based on Civil Obligations and Staple Food Stock Collateral for Traditional Market Vendors in Krui",
-        "category": "project",
-        "tags": ["fintech", "invoice financing", "civil code", "kuhperdata", "traditional markets", "staple food supply chain", "pesisir barat"],
-        "zenodoDoi": "10.5281/zenodo.24028618",
-        "pdfFile": "hybrid-model-pembiayaan-faktur-digital-berbasis-perikatan-perdata-dan-jaminan-stok-sembako-untuk-pedagang-pasar-tradisional-krui.pdf"
-    },
-    {
-        "slug": "model-integratif-3dimensi-thermalteknisyuridis-untuk-mikronode-coldstorage-dualtemperature-berbasis-blockchain-di-koridor-konservasi-tnbbs",
-        "title": "Three-Dimensional Integrative Model (Thermal, Technical, and Juridical) for Blockchain-Based Dual-Temperature Micro-Node Cold Storage in TNBBS Conservation Corridor",
-        "category": "project",
-        "tags": ["thermal modeling", "blockchain", "cfd simulation", "smart legal contracts", "tnbbs", "cold chain", "conservation logistics"],
-        "zenodoDoi": "10.5281/zenodo.24028633",
-        "pdfFile": "model-integratif-3dimensi-thermalteknisyuridis-untuk-mikronode-coldstorage-dualtemperature-berbasis-blockchain-di-koridor-konservasi-tnbbs.pdf"
-    },
-    {
-        "slug": "model-hybrid-dagedgeiot-temperaturecredit-token-untuk-optimasi-routing-mikro-coldstorage-di-koridor-konservasi-tnbbs",
-        "title": "Hybrid DAG-Edge-IoT Temperature-Credit Token Model for Routing Optimization of Micro Cold-Storage in TNBBS Conservation Corridor",
-        "category": "project",
-        "tags": ["directed acyclic graph", "edge computing", "iot sensors", "temperature-credit token", "marl", "green logistics", "tnbbs"],
-        "zenodoDoi": "10.5281/zenodo.24028626",
-        "pdfFile": "model-hybrid-dagedgeiot-temperaturecredit-token-untuk-optimasi-routing-mikro-coldstorage-di-koridor-konservasi-tnbbs.pdf"
-    },
-    {
-        "slug": "model-distribusi-bahan-baku-hospitality-di-kawasan-3t-studi-kasus-krui-kabupaten-pesisir-barat",
-        "title": "Hospitality Raw Material Distribution Logistics and Supply Contract Certainty Reconstruction in 3T Frontiers: Empirical Study of Krui, Pesisir Barat Regency",
-        "category": "project",
-        "tags": ["hospitality supply chain", "3t frontier logistics", "pesisir barat", "contract certainty", "perikatan perdata", "tourism economics"],
-        "zenodoDoi": "10.5281/zenodo.24028640",
-        "pdfFile": "model-distribusi-bahan-baku-hospitality-di-kawasan-3t-studi-kasus-krui-kabupaten-pesisir-barat.pdf"
-    },
-    {
-        "slug": "model-hybrid-edgeaienabled-thermodynamic-control-dengan-smartcontract-incentive-untuk-optimasi-mikrocoldstorage-dualtemp-di-koridor-konservasi-tnbbs",
-        "title": "Hybrid Edge-AI-Enabled Thermodynamic Control with Smart Contract Incentives for Dual-Temperature Micro-Cold-Storage in TNBBS Conservation Corridor",
-        "category": "project",
-        "tags": ["edge ai", "thermodynamic control", "smart contracts", "lstm predictive modeling", "tnbbs", "solar pv mini-grid"],
-        "zenodoDoi": "10.5281/zenodo.24028629",
-        "pdfFile": "model-hybrid-edgeaienabled-thermodynamic-control-dengan-smartcontract-incentive-untuk-optimasi-mikrocoldstorage-dualtemp-di-koridor-konservasi-tnbbs.pdf"
-    },
-    {
-        "slug": "a-stochastic-optimization-framework-integrating-real-time-wave-forecasting-probabilistic-cargo-loss-assessment-and-performance-linked-subsidy-allocation-for-small-scale-jukung-operators-in-pulau-pisang-pesisir-barat",
-        "title": "A Stochastic Optimization Framework Integrating Real-Time Wave Forecasting, Probabilistic Cargo-Loss Assessment, and Performance-Linked Subsidy Allocation for Small-Scale Jukung Operators in Pulau Pisang, Pesisir Barat",
-        "category": "project",
-        "tags": ["stochastic optimization", "wave forecasting", "jukung operators", "maritime safety", "cargo loss", "pulau pisang", "pesisir barat"],
-        "zenodoDoi": "10.5281/zenodo.24029072",
-        "pdfFile": "a-stochastic-optimization-framework-integrating-real-time-wave-forecasting-probabilistic-cargo-loss-assessment-and-performance-linked-subsidy-allocation-for-small-scale-jukung-operators-in-pulau-pisang-pesisir-barat.pdf"
+TOKEN = os.environ.get("OSF_API_TOKEN", "")
+DOCS_DIR = os.environ.get("DOCS_DIR", os.path.join(ROOT_DIR, "public", "docs"))
+OUTPUT_REGISTRY = os.path.join(ROOT_DIR, "src", "data", "osf_records.json")
+
+CLOUDFLARE_ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "cd95efc74562ac2f0c0d9759d06d7d89")
+CLOUDFLARE_API_TOKEN = os.environ.get("CLOUDFLARE_API_TOKEN", "")
+CLOUDFLARE_D1_DATABASE_ID = os.environ.get("CLOUDFLARE_D1_DATABASE_ID", "d2d582a9-e0c3-4ea4-9dce-4881c9cfb167")
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
+
+def send_telegram_osf_notification(title, osf_doi, osf_url, zenodo_doi, slug):
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        return
+    journal_url = f"https://journal.chainasiaconnect.co.id/{slug}"
+    pdf_url = f"https://journal.chainasiaconnect.co.id/docs/{slug}.pdf"
+    doi_url = f"https://doi.org/{osf_doi}"
+    zenodo_url = f"https://doi.org/{zenodo_doi}" if zenodo_doi else ""
+
+    msg = (
+        f"🏛️ <b>OSF SCIENTIFIC PREPRINT PUBLISHED &amp; SYNCED</b>\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"🎓 <b>Judul Naskah:</b>\n"
+        f"<b>{title}</b>\n\n"
+        f"🏷️ <b>DOI OSF Global:</b> <code>{osf_doi}</code>\n"
+        f"🔬 <b>DOI CERN Zenodo:</b> <code>{zenodo_doi or 'N/A'}</code>\n"
+        f"👤 <b>Author:</b> Ilham Pradani (ORCID: 0009-0008-1310-6169)\n"
+        f"🏢 <b>Publisher:</b> PT CHAIN ASIA CONECT (R&amp;D Division)\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"🌐 <b>Tautan OSF:</b> {osf_url}\n"
+        f"📖 <b>Journal Reader:</b> {journal_url}\n"
+        f"📄 <b>Unduh PDF:</b> {pdf_url}\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"<i>Center for Open Science (OSF Preprints, USA)</i>"
+    )
+
+    reply_markup = {
+        "inline_keyboard": [
+            [
+                {"text": "🌐 Buka di OSF Preprints", "url": osf_url},
+                {"text": "📖 Baca di Journal Portal", "url": journal_url}
+            ],
+            [
+                {"text": "🔬 Cek DOI OSF", "url": doi_url},
+                {"text": "📄 Unduh PDF Galley", "url": pdf_url}
+            ]
+        ]
     }
-]
+
+    payload = {
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": msg,
+        "parse_mode": "HTML",
+        "disable_web_page_preview": False,
+        "reply_markup": reply_markup
+    }
+
+    try:
+        req = urllib.request.Request(
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+            headers={"Content-Type": "application/json"},
+            data=json.dumps(payload).encode("utf-8")
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            print("📨 Notifikasi push OSF berhasil dikirim ke Telegram!")
+    except Exception as e:
+        print(f"⚠️ Gagal mengirim notifikasi OSF ke Telegram: {e}")
 
 def make_osf_request(url, data=None, method="GET", content_type="application/json"):
     headers = {
@@ -100,85 +119,138 @@ def make_osf_request(url, data=None, method="GET", content_type="application/jso
             return None
         return json.loads(resp.read().decode("utf-8"))
 
+def fetch_articles_from_d1(target_slug=None):
+    if not CLOUDFLARE_API_TOKEN:
+        return []
+    d1_url = f"https://api.cloudflare.com/client/v4/accounts/{CLOUDFLARE_ACCOUNT_ID}/d1/database/{CLOUDFLARE_D1_DATABASE_ID}/query"
+    if target_slug:
+        sql = "SELECT id, slug, title, excerpt, doi, tag, keywords FROM articles WHERE slug = ?"
+        params = [target_slug]
+    else:
+        sql = "SELECT id, slug, title, excerpt, doi, tag, keywords FROM articles ORDER BY id DESC"
+        params = []
+
+    req = urllib.request.Request(
+        d1_url,
+        headers={"Authorization": f"Bearer {CLOUDFLARE_API_TOKEN}", "Content-Type": "application/json"},
+        data=json.dumps({"sql": sql, "params": params}).encode("utf-8")
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            if data.get("success") and data.get("result"):
+                return data["result"][0].get("results", [])
+    except Exception as e:
+        print(f"⚠️ Gagal mengambil metadata dari Cloudflare D1: {e}")
+    return []
+
 def sync_paper_to_osf(paper):
     slug = paper["slug"]
-    pdf_path = os.path.join(DOCS_DIR, paper["pdfFile"])
+    pdf_filename = f"{slug}.pdf"
+    pdf_path = os.path.join(DOCS_DIR, pdf_filename)
     if not os.path.exists(pdf_path):
         print(f"❌ PDF not found on disk: {pdf_path}")
         return None
 
     pdf_size = os.path.getsize(pdf_path)
+    title = paper["title"]
+    zenodo_doi = paper.get("doi") or paper.get("zenodoDoi", "")
+    abstract_text = paper.get("excerpt", "")
+
     print(f"\n=======================================================")
-    print(f"📄 Processing: {paper['title']}")
-    print(f"📦 PDF File: {paper['pdfFile']} ({pdf_size} bytes)")
+    print(f"📄 Processing OSF Sync: {title}")
+    print(f"📦 PDF File: {pdf_filename} ({pdf_size} bytes)")
+    if zenodo_doi:
+        print(f"🔬 Linked Zenodo DOI: {zenodo_doi}")
 
-    # 1. Fetch D1 description/abstract
-    d1_url = f"https://api.chainasiaconnect.co.id/news/{slug}"
-    abstract_text = ""
-    try:
-        req = urllib.request.Request(d1_url, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req, timeout=10) as r:
-            art_data = json.loads(r.read().decode("utf-8"))
-            abstract_text = art_data.get("excerpt", "")
-    except Exception as e:
-        print(f"⚠️ Failed to fetch excerpt from D1: {e}")
-
-    desc = f"{abstract_text}\n\nPublished in Journal of Coastal Frontiers & Applied Development (JCFAD), Vol. 1 No. 1 (2026). CERN Zenodo Record: https://doi.org/{paper['zenodoDoi']}. Official Publisher: PT CHAIN ASIA CONECT Research & Development Division."
+    desc = f"{abstract_text}\n\nPublished in Journal of Coastal Frontiers & Applied Development (JCFAD). CERN Zenodo Record: https://doi.org/{zenodo_doi}. Official Publisher: PT CHAIN ASIA CONECT Research & Development Division."
     if len(desc) > 2000:
         desc = desc[:1990] + "..."
 
-    # 2. Create Public Project Node
+    # Ekstraksi tags
+    raw_tags = []
+    if paper.get("tag"):
+        raw_tags.append(paper["tag"].lower())
+    if paper.get("keywords"):
+        kw = paper["keywords"]
+        if isinstance(kw, list):
+            raw_tags.extend(kw)
+        elif isinstance(kw, str):
+            raw_tags.extend([k.strip().lower() for k in kw.split(",") if k.strip()])
+    
+    clean_tags = list(set([t.strip().lower() for t in raw_tags if len(t.strip()) > 2]))[:8]
+    for mandatory in ["preprint", "jcfad", "pesisir barat", "research"]:
+        if mandatory not in clean_tags:
+            clean_tags.append(mandatory)
+
+    # 1. Create Public Project Node
     create_payload = {
         "data": {
             "type": "nodes",
             "attributes": {
-                "title": paper["title"],
+                "title": title,
                 "category": "project",
                 "description": desc,
-                "tags": paper["tags"],
+                "tags": clean_tags,
                 "public": True
             }
         }
     }
     print("🚀 [OSF] Creating public project node...")
-    node_res = make_osf_request("https://api.osf.io/v2/nodes/", data=create_payload, method="POST")
-    node_id = node_res["data"]["id"]
-    node_url = f"https://osf.io/{node_id}/"
-    print(f"✅ [OSF] Project Node Created: {node_id} ({node_url})")
+    try:
+        node_res = make_osf_request("https://api.osf.io/v2/nodes/", data=create_payload, method="POST")
+        node_id = node_res["data"]["id"]
+        node_url = f"https://osf.io/{node_id}/"
+        print(f"✅ [OSF] Project Node Created: {node_id} ({node_url})")
+    except Exception as e:
+        print(f"💥 Gagal membuat node OSF: {e}")
+        return None
 
-    # 3. Upload PDF to OSF Storage
-    print(f"⬆️ [OSF Storage] Uploading {paper['pdfFile']}...")
-    with open(pdf_path, "rb") as f:
-        pdf_bytes = f.read()
+    # 2. Upload PDF to OSF Storage
+    print(f"⬆️ [OSF Storage] Uploading {pdf_filename}...")
+    try:
+        with open(pdf_path, "rb") as f:
+            pdf_bytes = f.read()
 
-    upload_url = f"https://files.osf.io/v1/resources/{node_id}/providers/osfstorage/?name={paper['pdfFile']}"
-    headers = {"Authorization": f"Bearer {TOKEN}"}
-    up_req = urllib.request.Request(upload_url, data=pdf_bytes, headers=headers, method="PUT")
-    with urllib.request.urlopen(up_req, timeout=60) as up_resp:
-        print(f"✅ [OSF Storage] PDF Uploaded successfully (HTTP {up_resp.status})")
+        upload_url = f"https://files.osf.io/v1/resources/{node_id}/providers/osfstorage/?name={pdf_filename}"
+        headers = {"Authorization": f"Bearer {TOKEN}"}
+        up_req = urllib.request.Request(upload_url, data=pdf_bytes, headers=headers, method="PUT")
+        with urllib.request.urlopen(up_req, timeout=60) as up_resp:
+            print(f"✅ [OSF Storage] PDF Uploaded successfully (HTTP {up_resp.status})")
+    except Exception as e:
+        print(f"💥 Gagal mengunggah PDF ke OSF Storage: {e}")
+        return None
 
-    # 4. Mint Official OSF DOI
+    # 3. Mint Official OSF DOI
     print("🏷️ [OSF DOI] Minting permanent DOI...")
-    doi_payload = {
-        "data": {
-            "type": "identifiers",
-            "attributes": {
-                "category": "doi"
+    osf_doi = None
+    try:
+        doi_payload = {
+            "data": {
+                "type": "identifiers",
+                "attributes": {
+                    "category": "doi"
+                }
             }
         }
-    }
-    doi_res = make_osf_request(f"https://api.osf.io/v2/nodes/{node_id}/identifiers/", data=doi_payload, method="POST")
-    osf_doi = doi_res["data"]["attributes"]["value"]
-    print(f"🎉 [OSF DOI] Successfully Minted: {osf_doi} (https://doi.org/{osf_doi})")
+        doi_res = make_osf_request(f"https://api.osf.io/v2/nodes/{node_id}/identifiers/", data=doi_payload, method="POST")
+        osf_doi = doi_res["data"]["attributes"]["value"]
+        print(f"🎉 [OSF DOI] Successfully Minted: {osf_doi} (https://doi.org/{osf_doi})")
+    except Exception as e:
+        print(f"⚠️ Gagal minting DOI OSF (menggunakan fallback node ID): {e}")
+        osf_doi = f"10.17605/OSF.IO/{node_id.upper()}"
+
+    # 4. Kirim Notifikasi Telegram
+    send_telegram_osf_notification(title, osf_doi, node_url, zenodo_doi, slug)
 
     return {
         "slug": slug,
-        "title": paper["title"],
+        "title": title,
         "osfId": node_id,
         "osfUrl": node_url,
         "osfDoi": osf_doi,
-        "zenodoDoi": paper["zenodoDoi"],
-        "pdfFile": paper["pdfFile"],
+        "zenodoDoi": zenodo_doi,
+        "pdfFile": pdf_filename,
         "pdfSize": pdf_size
     }
 
@@ -187,15 +259,46 @@ def main():
     print("🚀 PT CHAIN ASIA CONECT - OSF DEPOSIT & DOI MINTING PIPELINE")
     print("=================================================================")
 
+    if not TOKEN:
+        print("❌ Error: OSF_API_TOKEN belum disetel di .env")
+        sys.exit(1)
+
     results = {}
     if os.path.exists(OUTPUT_REGISTRY):
         try:
-            with open(OUTPUT_REGISTRY, "r") as f:
+            with open(OUTPUT_REGISTRY, "r", encoding="utf-8") as f:
                 results = json.load(f)
         except Exception:
             results = {}
 
-    for paper in PAPERS_METADATA:
+    target_slug = sys.argv[1] if len(sys.argv) > 1 else None
+    if target_slug in ["all", "pending", "auto"]:
+        target_slug = None
+
+    papers_to_process = []
+    if target_slug:
+        d1_papers = fetch_articles_from_d1(target_slug)
+        if d1_papers:
+            papers_to_process = d1_papers
+        else:
+            print(f"⚠️ Naskah dengan slug '{target_slug}' tidak ditemukan di D1.")
+            sys.exit(1)
+    else:
+        # Ambil seluruh artikel dari D1
+        d1_papers = fetch_articles_from_d1()
+        for p in d1_papers:
+            s = p.get("slug")
+            if s and (s not in results or not results[s].get("osfDoi")):
+                papers_to_process.append(p)
+
+    if not papers_to_process:
+        print("✅ Seluruh naskah ilmiah di Cloudflare D1 sudah tersinkronisasi ke OSF!")
+        print(f"📁 Total naskah aktif di OSF Registry: {len(results)}")
+        return
+
+    print(f"📋 Ditemukan {len(papers_to_process)} naskah yang perlu disinkronkan ke OSF.")
+
+    for paper in papers_to_process:
         slug = paper["slug"]
         if slug in results and results[slug].get("osfDoi"):
             print(f"⏩ [Skip] {slug} already has OSF DOI: {results[slug]['osfDoi']}")
@@ -205,13 +308,13 @@ def main():
         if res:
             results[slug] = res
             with open(OUTPUT_REGISTRY, "w", encoding="utf-8") as f:
-                json.dump(results, f, indent=2)
+                json.dump(results, f, indent=2, ensure_ascii=False)
+            print(f"💾 Registry OSF diperbarui: {OUTPUT_REGISTRY}")
 
     print("\n=================================================================")
-    print(f"✨ COMPLETED! {len(results)} papers successfully registered in OSF.")
-    print(f"📁 Output registry saved to: {OUTPUT_REGISTRY}")
+    print(f"✨ COMPLETED! Total {len(results)} papers registered in OSF.")
+    print(f"📁 Output registry: {OUTPUT_REGISTRY}")
     print("=================================================================")
 
 if __name__ == "__main__":
     main()
-

@@ -1510,6 +1510,22 @@ async function sendTelegramNotification({ liveMsgId, title, author, doi, confide
 
   console.log('📨 Mengirim notifikasi publikasi ke bot Telegram...');
   const nowWib = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+  const slug = url.split('/').pop() || '';
+
+  // Muat data OSF jika sudah terdaftar
+  let osfDoi = null;
+  let osfUrl = null;
+  try {
+    const osfPath = path.join(rootDir, 'src', 'data', 'osf_records.json');
+    if (fs.existsSync(osfPath)) {
+      const osfData = JSON.parse(fs.readFileSync(osfPath, 'utf-8'));
+      if (osfData[slug]) {
+        osfDoi = osfData[slug].osfDoi;
+        osfUrl = osfData[slug].osfUrl;
+      }
+    }
+  } catch (_) {}
+
   const message = `🚀 <b>PUBLIKASI ARTIKEL RISET HARIAN BERHASIL</b>
 ━━━━━━━━━━━━━━━━━━━━━━
 🎓 <b>Judul Naskah:</b>
@@ -1518,7 +1534,7 @@ async function sendTelegramNotification({ liveMsgId, title, author, doi, confide
 ✍️ <b>Penulis:</b> ${escapeHtml(author || 'Ilham Pradani')}
 🏢 <b>Afiliasi:</b> PT CHAIN ASIA CONECT (R&D Division)
 🔬 <b>DOI Riset (Zenodo/CERN):</b> <code>${escapeHtml(doi)}</code>
-📊 <b>Rigor Score:</b> <b>${confidenceScore}/100</b> (${escapeHtml(editorVerdict || 'ACCEPTED')})
+${osfDoi ? `🏷️ <b>DOI Riset (OSF Global):</b> <code>${escapeHtml(osfDoi)}</code>\n` : ''}📊 <b>Rigor Score:</b> <b>${confidenceScore}/100</b> (${escapeHtml(editorVerdict || 'ACCEPTED')})
 🔄 <b>Peer Review:</b> ${reviewRounds}x Putaran Telaah Sejawat (Lulus Standar Mutu)
 📐 <b>Audit Layout & Mutu PDF:</b>
    • <b>Margin & Kertas:</b> ISO A4 (Top/Bottom: 2.2cm | Left/Right: 1.8cm) [PASS]
@@ -1534,7 +1550,6 @@ ${url}
 ━━━━━━━━━━━━━━━━━━━━━━
 <i>Sistem Otomasi Multi-Agent Academic Working Paper Engine v2.0</i>`;
 
-  const slug = url.split('/').pop() || '';
   const doiUrl = doi ? (doi.startsWith('http') ? doi : `https://doi.org/${doi}`) : `https://journal.chainasiaconnect.co.id/${slug}`;
   const pdfUrl = `https://journal.chainasiaconnect.co.id/docs/${slug}.pdf`;
   const journalUrl = `https://journal.chainasiaconnect.co.id/${slug}`;
@@ -1547,8 +1562,8 @@ ${url}
         { text: '📄 Unduh PDF JCFAD', url: pdfUrl }
       ],
       [
-        { text: '🔬 Cek DOI Internasional', url: doiUrl },
-        { text: '🏛️ Portal Jurnal JCFAD', url: journalHome }
+        { text: '🔬 Cek DOI Zenodo', url: doiUrl },
+        ...(osfUrl ? [{ text: '🌐 Buka di OSF', url: osfUrl }] : [{ text: '🏛️ Portal Jurnal JCFAD', url: journalHome }])
       ]
     ]
   };
@@ -1989,6 +2004,14 @@ async function main() {
       }
     } catch (zenodoErr) {
       console.warn('⚠️ Peringatan rilis Zenodo:', zenodoErr.message);
+    }
+
+    // Otomatis rilis ke OSF (Open Science Framework, USA) & minting DOI OSF resmi (10.17605/OSF.IO/*)
+    try {
+      console.log('🌐 Merilis preprint ilmiah ke OSF (Center for Open Science) & minting DOI resmi...');
+      execSync(`python3 scripts/sync-osf-papers.py ${result.slug}`, { cwd: rootDir, stdio: 'inherit' });
+    } catch (osfErr) {
+      console.warn('⚠️ Peringatan rilis OSF:', osfErr.message);
     }
 
     // Otomatis build & deploy ke Cloudflare Pages Edge agar URL artikel dan PDF langsung aktif sebelum kirim notif Telegram
