@@ -111,6 +111,14 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
     s = s.replace(r"\in", " in ").replace(r"\notin", " not in ")
     s = re.sub(r"\\(?:rightarrow|longrightarrow|to)\b", " -> ", s)
 
+    # Clean concatenated math operators without backslash (e.g. xcdot, dcdot, fleq, fgeq)
+    s = re.sub(r'([a-zA-Z0-9_]+)cdot', r'\1 dot ', s)
+    s = re.sub(r'([a-zA-Z0-9_]+)leq', r'\1 <= ', s)
+    s = re.sub(r'([a-zA-Z0-9_]+)geq', r'\1 >= ', s)
+    s = re.sub(r'(?<![a-zA-Z])cdot(?![a-zA-Z])', ' dot ', s)
+    s = re.sub(r'(?<![a-zA-Z])leq(?![a-zA-Z])', ' <= ', s)
+    s = re.sub(r'(?<![a-zA-Z])geq(?![a-zA-Z])', ' >= ', s)
+
     # Common Math Functions (sin, cos, exp, ln, log, min, max, argmin, argmax, det, lim)
     for fn in ["sin", "cos", "tan", "arcsin", "arccos", "arctan", "exp", "ln", "log", "min", "max", "arg", "argmin", "argmax", "det", "dim", "sup", "inf", "lim"]:
         s = re.sub(rf"\\{fn}\b", f" {fn} ", s)
@@ -245,17 +253,36 @@ def render_table(rows):
     if not rows:
         return ""
     num_cols = max(len(r) for r in rows)
-    col_spec = ", ".join(["1fr"] * num_cols)
     header_row = rows[0]
     data_rows = rows[1:]
     
-    res = f"\n#table(\n  columns: ({col_spec}),\n  stroke: (x, y) => if y == 0 {{ (bottom: 1pt + black, top: 1pt + black) }} else if y == {len(rows)} {{ (bottom: 1pt + black) }} else {{ none }},\n"
+    # Adaptive booktabs typography to prevent column overlapping/collision in 2-column layout
+    if num_cols >= 5:
+        font_size = "6.6pt"
+        inset_x = "2.0pt"
+        inset_y = "3.0pt"
+        leading = "0.30em"
+        col_spec = "1.2fr, " + ", ".join(["1fr"] * (num_cols - 1))
+    elif num_cols == 4:
+        font_size = "7.5pt"
+        inset_x = "3.2pt"
+        inset_y = "3.5pt"
+        leading = "0.35em"
+        col_spec = "1.2fr, " + ", ".join(["1fr"] * (num_cols - 1))
+    else:
+        font_size = "8.2pt"
+        inset_x = "4.5pt"
+        inset_y = "4.0pt"
+        leading = "0.40em"
+        col_spec = ", ".join(["1fr"] * num_cols)
+    
+    res = f"\n#v(0.5em)\n#align(center)[\n  #set text(size: {font_size})\n  #set par(leading: {leading}, justify: false)\n  #table(\n    columns: ({col_spec}),\n    inset: (x: {inset_x}, y: {inset_y}),\n    stroke: (x, y) => if y == 0 {{ (top: 1.1pt + black, bottom: 0.8pt + black) }} else if y == {len(rows)} {{ (bottom: 1.1pt + black) }} else {{ (bottom: 0.25pt + luma(210)) }},\n"
     for cell in header_row:
-        res += f"  [* {clean_inline(cell)} *],\n"
+        res += f"    [* {clean_inline(cell)} *],\n"
     for r in data_rows:
         for cell in r:
-            res += f"  [{clean_inline(cell)}],\n"
-    res += ")\n"
+            res += f"    [{clean_inline(cell)}],\n"
+    res += "  )\n]\n#v(0.5em)\n"
     return res
 
 def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra_quote_vars=None, failsafe_text_mode=False):
@@ -309,6 +336,13 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
         else:
             math_blocks.append("")
         return f"\n__MATH_BLOCK_{idx}__\n"
+
+    # Normalize isolated square bracket display math: [ equation ]
+    md_text = re.sub(r'(?m)^\s*\[\s*\n\s*([a-zA-Z0-9_{}^=+\-*/()\\,\s\.\<\>\~]+?)\s*\n\s*\]\s*$', stash_display_math, md_text)
+
+    # Normalize parenthesized math variables in prose & tables: (C_{total}) -> $C_{total}$, (c_f) -> $c_f$
+    md_text = re.sub(r'\(([a-zA-Z0-9]_{[a-zA-Z0-9]+})\)', r'$\1$', md_text)
+    md_text = re.sub(r'\(([a-zA-Z0-9]_[a-zA-Z0-9]+)\)', r'$\1$', md_text)
 
     # Normalize escaped math delimiters
     md_text = md_text.replace(r'\$\$', '$$')
