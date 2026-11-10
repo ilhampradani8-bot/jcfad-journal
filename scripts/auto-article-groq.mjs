@@ -1663,6 +1663,40 @@ async function sendTelegramFailureNotification(errorMsg, liveMsgId) {
   }
 }
 
+// ============================================================================
+// REAL-TIME DOI MINTING & RESERVATION GATE
+// ============================================================================
+async function reserveRealtimeZenodoDoi() {
+  if (!ZENODO_API_TOKEN) {
+    console.warn('⚠️ ZENODO_API_TOKEN tidak ditemukan, melewati reservasi realtime Zenodo.');
+    return null;
+  }
+  try {
+    console.log('⚡ [Real-Time DOI Gate] Melakukan reservasi DOI resmi CERN Zenodo secara realtime via API...');
+    const res = await fetch('https://zenodo.org/api/deposit/depositions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${ZENODO_API_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      console.warn(`⚠️ Gagal reserve Zenodo draft (HTTP ${res.status}): ${errText}`);
+      return null;
+    }
+    const data = await res.json();
+    const depId = data.id;
+    const reservedDoi = `10.5281/zenodo.${depId}`;
+    console.log(`🎯 [Real-Time Zenodo DOI Resmi Terkunci]: ${reservedDoi} (Draft ID: ${depId})`);
+    return { depId, doi: reservedDoi };
+  } catch (err) {
+    console.warn('⚠️ Error reserve Zenodo DOI:', err.message);
+    return null;
+  }
+}
+
 async function main() {
   console.log('='.repeat(78));
   console.log('   PT CHAIN ASIA CONECT - MULTI-AGENT ACADEMIC WORKING PAPER ENGINE v2.0');
@@ -1941,9 +1975,22 @@ async function main() {
       (h.title && finalized.final_title && h.title.toLowerCase().trim() === finalized.final_title.toLowerCase().trim()) ||
       (h.slug && slugify(finalized.final_title) === h.slug)
     );
-    let doiToUse = (existingDoiEntry && existingDoiEntry.doi && !existingDoiEntry.doi.includes('10.13140')) 
+    let doiToUse = (existingDoiEntry && existingDoiEntry.doi && !existingDoiEntry.doi.includes('10.13140') && !existingDoiEntry.doi.includes('pending')) 
       ? existingDoiEntry.doi 
-      : ((plan.target_doi && !plan.target_doi.includes('10.13140')) ? plan.target_doi : '10.5281/zenodo.pending');
+      : null;
+
+    if (!doiToUse && !IS_DRY_RUN) {
+      const reservedZenodo = await reserveRealtimeZenodoDoi();
+      if (reservedZenodo && reservedZenodo.doi) {
+        doiToUse = reservedZenodo.doi;
+      } else {
+        doiToUse = (plan.target_doi && !plan.target_doi.includes('10.13140') && !plan.target_doi.includes('pending'))
+          ? plan.target_doi
+          : '10.5281/zenodo.pending';
+      }
+    } else if (!doiToUse && IS_DRY_RUN) {
+      doiToUse = '10.5281/zenodo.realtime_preview';
+    }
 
     if (IS_DRY_RUN) {
       await recordBotHeartbeat('READY', `Dry-run berhasil (Rigor: ${finalized.confidence_score}/100, Penulis: Ilham Pradani)`);
@@ -1965,7 +2012,7 @@ async function main() {
     // Update progress ke penyimpanan & kompilasi
     await updateTelegramLiveProgress(liveTelegramMsgId, 5, 'Menyimpan naskah ke Cloudflare D1 & kompilasi PDF ReportLab...', selectedDomain);
 
-    // Simpan ke D1
+    // Simpan ke D1 dengan DOI resmi yang sudah terkunci secara realtime
     const result = await saveToCloudflareD1(finalized, imageUrl, finalRefs, doiToUse, selectedDomain);
 
     // Simpan judul baru ke registry lokal agar di run berikutnya tidak diduplikasi (Gunakan tanggal WIB)
@@ -1978,33 +2025,18 @@ async function main() {
       type: 'academic_preprint'
     });
 
-    // Otomatis kompilasi berkas PDF Typst 2-kolom
+    // Otomatis kompilasi berkas PDF Typst 2-kolom dengan DOI resmi yang sudah terkunci
     try {
-      console.log('📄 Mengompilasi PDF naskah ilmiah via Typst...');
-      execSync('python3 scripts/generate-paper-pdf.py', { cwd: rootDir, stdio: 'inherit' });
+      console.log('📄 Mengompilasi PDF naskah ilmiah via Typst dengan DOI resmi...');
+      execSync(`python3 scripts/generate-paper-pdf.py --slug ${result.slug} --osf`, { cwd: rootDir, stdio: 'inherit' });
     } catch (pdfErr) {
       console.warn('⚠️ Gagal kompilasi PDF otomatis:', pdfErr.message);
     }
 
-    // Otomatis rilis ke Zenodo untuk minting DOI permanen resmi CERN (10.5281/zenodo.*)
+    // Otomatis rilis ke Zenodo untuk minting & aktivasi publik DOI permanen resmi CERN (10.5281/zenodo.*)
     try {
-      console.log('🌐 Merilis preprint ilmiah ke Zenodo (CERN) & minting DOI resmi...');
-      execSync('python3 scripts/zenodo-publisher.py pending', { cwd: rootDir, stdio: 'inherit' });
-      // Ambil DOI Zenodo terbaru dari D1
-      const checkRes = await fetch(
-        `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/d1/database/${CLOUDFLARE_D1_DATABASE_ID}/query`,
-        {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${CLOUDFLARE_API_TOKEN}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sql: 'SELECT doi FROM articles WHERE slug = ?', params: [result.slug] })
-        }
-      );
-      const checkJson = await checkRes.json();
-      const updatedDoi = checkJson?.result?.[0]?.results?.[0]?.doi;
-      if (updatedDoi) {
-        doiToUse = updatedDoi;
-        console.log(`🎯 DOI Resmi Zenodo Aktif: ${doiToUse}`);
-      }
+      console.log('🌐 Mengunggah PDF dan mengaktifkan publikasi DOI resmi di Zenodo (CERN)...');
+      execSync(`python3 scripts/zenodo-publisher.py --slug ${result.slug}`, { cwd: rootDir, stdio: 'inherit' });
     } catch (zenodoErr) {
       console.warn('⚠️ Peringatan rilis Zenodo:', zenodoErr.message);
     }

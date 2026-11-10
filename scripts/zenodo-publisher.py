@@ -92,14 +92,8 @@ def send_telegram_zenodo_notification(title, doi, slug, dep_id):
     except Exception as e:
         print(f"⚠️ Gagal mengirim notifikasi Zenodo ke Telegram: {e}")
 
-def publish_paper_to_zenodo(slug, title, abstract, keywords, pdf_filename):
-    pdf_path = os.path.join(DOCS_DIR, pdf_filename)
-    if not os.path.exists(pdf_path):
-        raise FileNotFoundError(f"PDF file not found: {pdf_path}")
-
-    print(f"\n🚀 [Zenodo Publisher] Initiating publication for: {title[:70]}...")
-
-    # 1. Create Deposition Draft
+def reserve_zenodo_deposition():
+    """Membuat draft deposition di Zenodo dan mengembalikan dep_id serta DOI yang terjamin."""
     req = urllib.request.Request(
         "https://zenodo.org/api/deposit/depositions",
         headers={
@@ -111,10 +105,51 @@ def publish_paper_to_zenodo(slug, title, abstract, keywords, pdf_filename):
     )
     with urllib.request.urlopen(req) as resp:
         dep = json.loads(resp.read().decode())
-    
     dep_id = dep["id"]
-    bucket_url = dep["links"]["bucket"]
-    print(f"📦 Draft Deposition Created: ID {dep_id}")
+    doi = f"10.5281/zenodo.{dep_id}"
+    return {
+        "id": dep_id,
+        "doi": doi,
+        "bucket_url": dep.get("links", {}).get("bucket")
+    }
+
+def publish_paper_to_zenodo(slug, title, abstract, keywords, pdf_filename, dep_id=None):
+    pdf_path = os.path.join(DOCS_DIR, pdf_filename)
+    if not os.path.exists(pdf_path):
+        raise FileNotFoundError(f"PDF file not found: {pdf_path}")
+
+    print(f"\n🚀 [Zenodo Publisher] Initiating publication for: {title[:70]}...")
+
+    bucket_url = None
+    if dep_id:
+        try:
+            get_req = urllib.request.Request(
+                f"https://zenodo.org/api/deposit/depositions/{dep_id}",
+                headers={"Authorization": f"Bearer {ZENODO_TOKEN}"}
+            )
+            with urllib.request.urlopen(get_req) as resp:
+                dep = json.loads(resp.read().decode())
+            bucket_url = dep.get("links", {}).get("bucket")
+            print(f"📦 Menggunakan Draft Deposition yang sudah di-reserve: ID {dep_id}")
+        except Exception as e:
+            print(f"⚠️ Draft ID {dep_id} tidak dapat dimuat ({e}), membuat draft baru...")
+            dep_id = None
+
+    if not dep_id or not bucket_url:
+        req = urllib.request.Request(
+            "https://zenodo.org/api/deposit/depositions",
+            headers={
+                "Authorization": f"Bearer {ZENODO_TOKEN}",
+                "Content-Type": "application/json"
+            },
+            data=b"{}",
+            method="POST"
+        )
+        with urllib.request.urlopen(req) as resp:
+            dep = json.loads(resp.read().decode())
+        dep_id = dep["id"]
+        bucket_url = dep["links"]["bucket"]
+        print(f"📦 Draft Deposition Created: ID {dep_id}")
 
     # 2. Upload PDF File to Bucket
     upload_url = f"{bucket_url}/{pdf_filename}"
@@ -234,8 +269,13 @@ def update_d1_doi(slug, doi):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python3 zenodo-publisher.py <step: 1|2 | pending | --slug <slug>>")
+        print("Usage: python3 zenodo-publisher.py <step: 1|2 | pending | reserve | --slug <slug>>")
         sys.exit(1)
+
+    if "reserve" in sys.argv:
+        res = reserve_zenodo_deposition()
+        print(json.dumps(res))
+        sys.exit(0)
 
     if "--slug" in sys.argv:
         slug_idx = sys.argv.index("--slug") + 1
@@ -249,7 +289,13 @@ if __name__ == "__main__":
             abstract = target.get('excerpt')
             keywords = [k.strip() for k in target.get('keywords', '').split(',') if k.strip()]
             pdf_file = f"{slug}.pdf"
-            res = publish_paper_to_zenodo(slug, title, abstract, keywords, pdf_file)
+            target_doi = target.get('doi', '')
+            dep_id = None
+            if target_doi.startswith('10.5281/zenodo.'):
+                suffix = target_doi.replace('10.5281/zenodo.', '').strip()
+                if suffix.isdigit():
+                    dep_id = int(suffix)
+            res = publish_paper_to_zenodo(slug, title, abstract, keywords, pdf_file, dep_id=dep_id)
             update_d1_doi(slug, res["doi"])
             print(f"🎉 Successfully published [{slug}] to Zenodo: {res['doi']}")
         else:
