@@ -33,19 +33,24 @@ if os.path.exists(ENV_FILE):
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 
-def screen_pdf_page_with_ai(image_bytes, page_num=1):
+def screen_pdf_document_with_ai(pdf_path):
     """
-    Kirim renderan visual halaman PDF ke Google Gemini Vision untuk screening OCR.
+    Kirim berkas PDF langsung (application/pdf) ke Google Gemini Multimodal Vision API
+    untuk audit visual, deteksi tabrakan teks, kebocoran sintaks math, dan Booktabs compliance.
     """
     if not GEMINI_API_KEY:
         return {"status": "SKIP", "score": 100, "summary": "GEMINI_API_KEY tidak dikonfigurasi"}
 
-    b64_img = base64.b64encode(image_bytes).decode("utf-8")
+    with open(pdf_path, "rb") as f:
+        pdf_bytes = f.read()
+
+    b64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
     prompt = """You are a senior academic journal layout auditor and typesetter for IEEE/Elsevier publications.
-Visually inspect this rendered page of an academic journal article (ISO A4 2-column layout):
-1. Column & Table Collision: Are any numbers or letters colliding, overlapping, or fusing across cells/columns (e.g. adjacent numbers merging like '1,234,000,000312,000,000')?
-2. Uncompiled Math / LaTeX Syntax Leaks: Are there uncompiled LaTeX strings, missing fraction backslashes (e.g. 'rac{d}{s}'), concatenated operators ('xcdot', 'fleq'), raw brackets around equations ('[ C_{total}=... ]'), or unformatted subscripts?
+Audit this academic journal PDF directly as a complete document (ISO A4 2-column layout):
+1. Column & Table Collision: Are any numbers, words, code, or letters colliding, overlapping, or fusing across cells or columns?
+2. Uncompiled Math / Code Leaks: Are there uncompiled LaTeX strings, missing fraction backslashes (e.g. 'rac{d}{s}'), concatenated operators ('xcdot'), or raw brackets?
 3. Typography & Formatting: Are tables in clean Booktabs three-line style without vertical lines? Are running headers and footers single-line and unclipped?
+4. Document Flow: Do tables or sections break awkwardly across pages or columns?
 
 Return ONLY valid JSON matching this schema:
 {
@@ -54,14 +59,15 @@ Return ONLY valid JSON matching this schema:
   "collision_detected": <true or false>,
   "uncompiled_math_detected": <true or false>,
   "issues": [<list of specific visual defects found, if any>],
-  "summary": "<concise summary of visual layout quality>"
+  "summary": "<concise summary of visual layout quality>",
+  "page_notes": [{"page": <int>, "notes": "<notes>"}]
 }"""
 
     payload = {
         "contents": [{
             "parts": [
                 {"text": prompt},
-                {"inline_data": {"mime_type": "image/png", "data": b64_img}}
+                {"inline_data": {"mime_type": "application/pdf", "data": b64_pdf}}
             ]
         }],
         "generationConfig": {
@@ -78,7 +84,7 @@ Return ONLY valid JSON matching this schema:
                 data=json.dumps(payload).encode("utf-8"),
                 headers={"Content-Type": "application/json"}
             )
-            with urllib.request.urlopen(req, timeout=25) as resp:
+            with urllib.request.urlopen(req, timeout=35) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
                 return json.loads(text)
@@ -87,52 +93,42 @@ Return ONLY valid JSON matching this schema:
 
     return {"status": "WARN", "score": 85, "summary": "API quota limit / temporary timeout"}
 
-def run_ai_ocr_screening(pdf_path, max_pages=3):
+def run_ai_ocr_screening(pdf_path):
     """
-    Memeriksa seluruh berkas PDF dengan AI OCR Screening.
+    Memeriksa berkas PDF langsung ke Gemini Vision (Direct PDF Multimodal).
     """
     if not os.path.exists(pdf_path):
         return False, {"error": f"File not found: {pdf_path}"}
 
-    doc = pymupdf.open(pdf_path)
-    total_pages = len(doc)
-    pages_to_audit = min(total_pages, max_pages)
+    file_size_kb = os.path.getsize(pdf_path) / 1024
+    print(f"\n🤖 [AI OCR Screening Engine] Mengirim berkas PDF langsung ke Gemini Vision: {os.path.basename(pdf_path)} ({file_size_kb:.1f} KB)...")
 
-    print(f"\n🤖 [AI OCR Screening Engine] Mengaudit visual berkas: {os.path.basename(pdf_path)} ({total_pages} Hal)...")
+    res = screen_pdf_document_with_ai(pdf_path)
 
-    all_passed = True
-    page_results = []
+    st = res.get("status", "WARN")
+    sc = res.get("score", 0)
+    sm = res.get("summary", "")
+    col = res.get("collision_detected", False)
+    math_err = res.get("uncompiled_math_detected", False)
+    issues = res.get("issues", [])
+    page_notes = res.get("page_notes", [])
 
-    for p_idx in range(pages_to_audit):
-        page = doc[p_idx]
-        pix = page.get_pixmap(dpi=150)
-        img_bytes = pix.tobytes("png")
-        res = screen_pdf_page_with_ai(img_bytes, page_num=p_idx + 1)
-        res["page"] = p_idx + 1
-        page_results.append(res)
+    icon = "✅" if st == "PASS" else ("⚠️" if st == "WARN" else "❌")
+    print(f"\n{icon} [Hasil Audit Gemini Vision]: Status: [{st}] | Skor: {sc}% | Collision: {'YA' if col else 'TIDAK'} | Math Leak: {'YA' if math_err else 'TIDAK'}")
+    print(f"   📝 Ringkasan: {sm}")
 
-        st = res.get("status", "WARN")
-        sc = res.get("score", 0)
-        sm = res.get("summary", "")
-        col = res.get("collision_detected", False)
-        math_err = res.get("uncompiled_math_detected", False)
+    if issues:
+        print("\n   ⚠️ Isu yang Ditemukan:")
+        for iss in issues:
+            print(f"      - {iss}")
 
-        icon = "✅" if st == "PASS" else ("⚠️" if st == "WARN" else "❌")
-        print(f"   {icon} Halaman {p_idx + 1}: [{st}] Skor: {sc}% | Collision: {'YA' if col else 'TIDAK'} | Math Leak: {'YA' if math_err else 'TIDAK'}")
-        if res.get("issues"):
-            for iss in res["issues"]:
-                print(f"      - ⚠️ {iss}")
-        print(f"      📝 {sm}")
+    if page_notes:
+        print("\n   📄 Catatan Per Halaman:")
+        for pn in page_notes:
+            print(f"      - Halaman {pn.get('page')}: {pn.get('notes')}")
 
-        if st == "FAIL":
-            all_passed = False
-
-    avg_score = sum(r.get("score", 0) for r in page_results) / max(len(page_results), 1)
-    return all_passed, {
-        "all_passed": all_passed,
-        "average_score": avg_score,
-        "page_results": page_results
-    }
+    passed = (st == "PASS")
+    return passed, res
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -142,3 +138,4 @@ if __name__ == "__main__":
     target_pdf = sys.argv[1]
     passed, report = run_ai_ocr_screening(target_pdf)
     sys.exit(0 if passed else 1)
+

@@ -149,6 +149,14 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
     for w in common_math_words:
         s = re.sub(rf'(?<![a-zA-Z"])\b{re.escape(w)}\b(?![a-zA-Z"])', f'"{w}"', s)
 
+    # Unit divisions in math: prevent vertical fraction rendering (e.g. 1850 / kg)
+    s = re.sub(r'/\s*"(kg|km|hr|h|sec|min|day|year|month|t|ha|L|nmi|degC|°C)"', r' slash "\1"', s)
+    s = re.sub(r'/\s*(kg|km|hr|h|sec|min|day|year|month|t|ha|L|nmi|degC|°C)\b', r' slash "\1"', s)
+
+    # Merge compound subscript and superscript: c_i^{fuel} -> c_("fuel", i)
+    s = re.sub(r'([a-zA-Z])_([a-zA-Z0-9]+)\^[\{\(]"?([a-zA-Z]{2,})"?[\}\)]', r'\1_("\3", \2)', s)
+    s = re.sub(r'([a-zA-Z])\^[\{\(]"?([a-zA-Z]{2,})"?[\}\)]_([a-zA-Z0-9]+)', r'\1_("\2", \3)', s)
+
     # Clean redundant double quotes ""word"" -> "word"
     s = re.sub(r'""+([^"]+)""+', r'"\1"', s)
 
@@ -309,7 +317,13 @@ def render_table(rows):
 
     # Adaptive booktabs typography based on column count and density
     total_avg_chars = sum(sum(len(str(c)) for c in r) for r in rows) / len(rows)
-    if num_cols >= 5 or total_avg_chars > 80:
+    is_wide_table = (num_cols >= 4 and total_avg_chars > 80)
+    if is_wide_table:
+        font_size = "6.8pt"
+        inset_x = "3.5pt"
+        inset_y = "3.2pt"
+        leading = "0.32em"
+    elif num_cols >= 5 or total_avg_chars > 80:
         font_size = "6.0pt"
         inset_x = "2.8pt"
         inset_y = "2.6pt"
@@ -345,6 +359,8 @@ def render_table(rows):
         for cell in r_padded:
             res += f"    [{format_cell_content(cell)}],\n"
     res += "  )\n]\n#v(0.5em)\n"
+    if is_wide_table:
+        return f"\n#place(top, float: true, scope: \"parent\")[\n{res}\n]\n"
     return res
 
 def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra_quote_vars=None, failsafe_text_mode=False):
@@ -367,6 +383,12 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
 
     # Clean stray AI artifact lines
     md_text = re.sub(r'(?m)^[-*•]?\s*\(?.*(?:the subsequent sentences|the translation continues).*?\)?\*?$', '', md_text, flags=re.IGNORECASE)
+
+    # Normalize degree Celsius: degC -> °C
+    md_text = re.sub(r'\bdegC\b', '°C', md_text)
+
+    # Normalize variable definitions with parentheses: - (x) = total tonnage -> - $x$ = total tonnage
+    md_text = re.sub(r'(?m)^(\s*[-*•]\s*)\(([a-zA-Z])\)\s*=', r'\1$\2$ =', md_text)
 
     # Clean leaked revision notes, reviewer feedback, and meta-prompts
     if not relax_notes:
@@ -496,7 +518,7 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
 
 def build_article_pdf(article, out_pdf_path, max_attempts=4, header_mode="universal"):
     title = clean_inline(article.get('title', 'Empirical Study on Coastal Frontiers'))
-    abstract = clean_inline(article.get('excerpt', ''))
+    abstract = clean_inline(article.get('excerpt', '')).replace("degC", "°C")
     doi = article.get('doi') or '10.5281/zenodo.14022601'
     slug = article.get('slug', 'paper')
     raw_content = article.get('content', '') or abstract
