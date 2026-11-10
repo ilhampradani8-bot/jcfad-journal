@@ -1,7 +1,11 @@
 {
   "status": "SUCCESS",
-  "doi": "10.5281/zenodo.24049169",
-  "doi_url": "https://doi.org/10.5281/zenodo.24049169",
-  "record_url": "https://zenodo.org/records/24049169",
-  "dep_id": 24049169
+  "version": "2.0.0",
+  "pages": 268,
+  "doi": "10.5281/zenodo.24106942",
+  "doi_url": "https://doi.org/10.5281/zenodo.24106942",
+  "concept_doi": "10.5281/zenodo.24049168",
+  "record_url": "https://zenodo.org/records/24106942",
+  "dep_id": 24106942,
+  "updated_at": "2026-11-10T19:50:00+08:00"
 }

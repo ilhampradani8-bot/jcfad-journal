@@ -17,8 +17,8 @@ Pada repositori ini telah berhasil dibangun, diuji, dan dideploy mesin pembuat b
 - **Ketebalan**: **268 Halaman Penuh ISO-B5** (Padat, 0 Halaman Kosong).
 - **Total Kosakata**: **107.284 kata** (ekspansi mendalam berstandar riset doktoral/monograf komprehensif).
 - **Kepadatan Sitasi**: **1.084 sitasi in-text ilmiah** (KUHPerdata, UU PDP No. 27/2022, EU AI Act 2024, GDPR, Zuboff, Kahneman, Searle, Floridi, Buber, Levinas, dsb.).
-- **DataCite DOI Resmi (CERN Zenodo)**: [`10.5281/zenodo.24049169`](https://doi.org/10.5281/zenodo.24049169)
-- **Zenodo Official Record**: [`https://zenodo.org/records/24049169`](https://zenodo.org/records/24049169)
+- **DataCite DOI Resmi Versi Baru (CERN Zenodo)**: [`10.5281/zenodo.24106942`](https://doi.org/10.5281/zenodo.24106942) *(Concept DOI / Always Latest: [`10.5281/zenodo.24049168`](https://doi.org/10.5281/zenodo.24049168))*
+- **Zenodo Official Record (Edisi 2 - 268 Halaman)**: [`https://zenodo.org/records/24106942`](https://zenodo.org/records/24106942)
 - **Tabel & Rumus**: 43 Tabel Data (*Booktabs Three-Line Rules*) & 15+ Display Math Bersih (*Frameless*) dilengkapi **Catatan Pemahaman Awam** di setiap rumus.
 - **Bagan Alur Konseptual**: 6 Bagan Kotak Akademik Resmi (`Bagan 1.1`, `Bagan 2.1`, `Bagan 2.2`, `Bagan 2.3`, `Bagan 7.1`, `Bagan 8.1`) bergaris formal `0.6pt`, siku tajam (zero card bulat AI), dan panah typographical (`↓`, `→`, `←`).
 - **Hasil Audit Orisinalitas & Stilometrika**:

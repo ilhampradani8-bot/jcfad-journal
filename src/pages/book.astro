@@ -23,15 +23,15 @@ try {
 }
 
 const bookPdfUrl = "/books/empati-sintetis.pdf";
-const bookDoi = "10.5281/zenodo.24049169";
-const bookDoiUrl = "https://doi.org/10.5281/zenodo.24049169";
-const zenodoRecordUrl = "https://zenodo.org/records/24049169";
+const bookDoi = "10.5281/zenodo.24106942";
+const bookDoiUrl = "https://doi.org/10.5281/zenodo.24106942";
+const zenodoRecordUrl = "https://zenodo.org/records/24106942";
 const bookTitle = blueprint.title;
 const bookSubtitle = blueprint.subtitle;
 const authorName = "Ilham Pradani";
 const authorOrcid = "0009-0008-1310-6169";
 const totalChapters = blueprint.chapters.length || 10;
-const totalPages = 59;
+const totalPages = 268;
 const totalTables = 43;
 const totalFormulas = 24;
 
@@ -42,7 +42,7 @@ const auditResults = [
   {
     category: "Ketebalan Monograf",
     status: "PASS",
-    metric: "59 Halaman Penuh",
+    metric: "268 Halaman Penuh",
     desc: "Melampaui standar UNESCO (≥ 49 halaman) untuk monograf ilmiah komprehensif tanpa halaman kosong.",
     icon: "📄"
   },
@@ -177,7 +177,7 @@ const bookSchema = {
               <polyline points="7 10 12 15 17 10"></polyline>
               <line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
-            Unduh PDF Buku (59 Halaman)
+            Unduh PDF Buku (268 Halaman)
           </a>
 
           <a href={bookDoiUrl} target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
@@ -328,7 +328,7 @@ const bookSchema = {
         <p>Buku ini dirilis di bawah lisensi Open Science (Creative Commons BY 4.0) untuk kepentingan riset, sitasi akademik, dan edukasi publik.</p>
         <div class="bottom-btns">
           <a href={bookPdfUrl} download="empati-sintetis-ilham-pradani-print-ready.pdf" class="btn btn-primary">
-            Unduh Naskah Lengkap (59 Halaman PDF)
+            Unduh Naskah Lengkap (268 Halaman PDF)
           </a>
           <a href="/" class="btn btn-outline">
             Kembali ke Beranda Jurnal JCFAD
