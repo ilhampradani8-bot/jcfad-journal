@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+r #!/usr/bin/env python3
 """
 PT CHAIN ASIA CONECT - Academic Journal AI OCR Visual Screening Engine
 Powered by Google Gemini Multimodal Vision API (gemini-3.5-flash-lite)
