@@ -34,13 +34,14 @@ def clean_to_typst_math(raw):
     if not raw:
         return ''
     s = raw.strip()
-    # Strip environments & delimiters
+    
+    # Strip environments & delimiters first
+    s = re.sub(r'\\(?:begin|end)\{[^}]*\}', '', s)
+    s = re.sub(r'\\(?:left|right|bigl|bigr|Bigl|Bigr|big|Big|middle|!)\b', '', s)
     s = s.replace(r'\[', '').replace(r'\]', '')
     s = s.replace(r'\(', '').replace(r'\)', '')
     s = s.replace('$$', '').replace('$', '')
     s = re.sub(r'\\tag\{[^}]+\}', '', s)
-    s = s.replace(r'\begin{aligned}', '').replace(r'\end{aligned}', '')
-    s = re.sub(r'\\(?:left|right|bigl|bigr|Bigl|Bigr|big|Big|!)', '', s)
     
     # Fractions first
     s = replace_fractions(s)
@@ -54,6 +55,11 @@ def clean_to_typst_math(raw):
     
     # Common math symbols
     s = re.sub(r'\\top\b', 'T', s)
+    s = s.replace(r'\dots', ' ... ')
+    s = s.replace(r'\cdots', ' ... ')
+    s = s.replace(r'\mid', ' | ')
+    s = s.replace(r'\infty', ' oo ')
+    s = re.sub(r'\\lim\b', '"lim"', s)
     s = s.replace(r'\cdot', ' dot ')
     s = s.replace(r'\odot', ' dot ')
     s = s.replace(r'\times', ' times ')
@@ -62,6 +68,8 @@ def clean_to_typst_math(raw):
     s = s.replace(r'\ge', ' >= ').replace(r'\geq', ' >= ')
     s = re.sub(r'\\(?:rightarrow|longrightarrow|to)\b', ' -> ', s)
     s = s.replace(r'\approx', ' approx ')
+    s = s.replace(r'\sim', ' tilde ')
+    s = re.sub(r'\bsim\b', 'tilde', s)
     s = s.replace(r'\neq', ' != ')
     s = s.replace(r'\mathbb{R}', '"RR"')
     s = s.replace(r'\mathbb', '')
@@ -111,8 +119,38 @@ def clean_to_typst_math(raw):
     s = s.replace('\\', '')
     s = s.replace('(,)', '.')
     
+    # Clean mathcal
+    s = re.sub(r'\bmathcal\(([^()]+)\)', r'"\1"', s)
+    s = s.replace('mathcal', '')
+    
+    # Stash already quoted strings to prevent nested quoting (using unicode non-letter placeholder)
+    quoted_strings = []
+    def stash_quotes(m):
+        idx = len(quoted_strings)
+        quoted_strings.append(m.group(0))
+        return f'\uFFF0{idx}\uFFF0'
+    s = re.sub(r'"[^"]*"', stash_quotes, s)
+
+    # Universal multi-letter identifier quoting for Typst math
+    valid_math_ops = set(greek + ['bold', 'norm', 'abs', 'sqrt', 'sum', 'product', 'integral', 'dot', 'times', 'in', 'oo', 'tilde', 'dots'])
+    def auto_quote_math_words(m):
+        w = m.group(1)
+        if w in valid_math_ops:
+            return w
+        return f'"{w}"'
+    s = re.sub(r'(?<![a-zA-Z0-9"])([a-zA-Z]{2,})(?![a-zA-Z0-9"])', auto_quote_math_words, s)
+
+    # Restore quoted strings
+    for idx, qs in enumerate(quoted_strings):
+        s = s.replace(f'\uFFF0{idx}\uFFF0', qs)
+
     # Clean redundant double quotes ""word"" -> "word"
     s = re.sub(r'""+([^"]+)""+', r'"\1"', s)
+    s = re.sub(r'\bend\(right\]', ')', s)
+    s = re.sub(r'\b(?:end|begin)\b', '', s)
+    
+    # Normalize brackets in math [ ... ] to ( ... )
+    s = s.replace('[', '(').replace(']', ')')
     
     s = re.sub(r'\s+', ' ', s).strip()
     return s
@@ -125,12 +163,10 @@ def clean_inline_for_typst(text):
     # Clean HTML tags
     t = re.sub(r'</?[a-zA-Z0-9]+[^>]*>', '', t)
     
-    # 1. Stash inline math \(...\) safely
-    # CRITICAL TYPST RULE: Inline math MUST NOT have spaces adjacent to $ delimiters ($expr$, not $ expr $)
-    # Spaces inside $ ... $ convert the formula into a centered DISPLAY EQUATION, breaking paragraphs!
+    # 1. Stash inline math \(...\) and $...$ safely
     math_inlines = []
     def stash_inline_paren_math(m):
-        math_content = m.group(1).strip()
+        math_content = (m.group(1) or m.group(2) or '').strip()
         cleaned = clean_to_typst_math(math_content).strip()
         idx = len(math_inlines)
         if cleaned:
@@ -138,7 +174,7 @@ def clean_inline_for_typst(text):
         else:
             math_inlines.append("")
         return f"__SAFE_INLINE_MATH_{idx}__"
-    t = re.sub(r'\\\((.*?)\\\)', stash_inline_paren_math, t)
+    t = re.sub(r'\\\((.*?)\\\)|(?<!\\)\$(.*?)(?<!\\)\$', stash_inline_paren_math, t)
 
     # Protect bold and italic spans safely
     bold_spans = []
@@ -163,13 +199,13 @@ def clean_inline_for_typst(text):
     # Strip remaining stray asterisks
     t = t.replace('*', '')
 
-    # Restore bold & italic
+    # Restore bold & italic with guaranteed spacing so delimiters never collide
     for i, b in enumerate(bold_spans):
-        clean_b = b.replace('[', r'\[').replace(']', r'\]')
-        t = t.replace(f'__SAFE_BOLD_{i}__', f'*{clean_b}*')
+        clean_b = b.replace('[', r'\[').replace(']', r'\]').strip()
+        t = t.replace(f'__SAFE_BOLD_{i}__', f' *{clean_b}* ')
     for i, it in enumerate(italic_spans):
-        clean_it = it.replace('[', r'\[').replace(']', r'\]')
-        t = t.replace(f'__SAFE_ITALIC_{i}__', f'_{clean_it}_')
+        clean_it = it.replace('[', r'\[').replace(']', r'\]').strip()
+        t = t.replace(f'__SAFE_ITALIC_{i}__', f' _{clean_it}_ ')
 
     # 3. Escape ALL unescaped dollar signs in text (they are currencies like US$ 2.500, $10, etc.)
     # In Typst, unescaped $ triggers math mode and unclosed delimiter errors!
@@ -177,7 +213,7 @@ def clean_inline_for_typst(text):
 
     # 4. Escape Typst specials
     t = re.sub(r'(?<!\\)@([a-zA-Z0-9_]+)', r'\\@\1', t)
-    t = re.sub(r'(?<!\\)#([a-zA-Z0-9_]+)', r'\\#\1', t)
+    t = re.sub(r'(?<!\\)#', r'\\#', t)
     t = t.replace('<', r'\<').replace('>', r'\>')
 
     # 5. Restore inline math blocks (which DO need $ ... $)
@@ -276,15 +312,15 @@ def clean_chapter_markdown_to_typst(md_content):
     # Standalone centered equation with vertical breathing room above and below.
     math_blocks = []
     def stash_display_math(m):
-        raw_eq = m.group(1).strip()
+        raw_eq = (m.group(1) or m.group(2) or '').strip()
         cleaned = clean_to_typst_math(raw_eq)
         idx = len(math_blocks)
         # Native Typst centered display math without card/box/border
         math_blocks.append(f"\n#v(0.85em)\n$ {cleaned} $\n#v(0.85em)\n")
         return f"\n__TYPST_MATH_BLOCK_{idx}__\n"
 
-    # Multiline display math pattern
-    math_pattern = re.compile(r'(?m)^\s*(?:\\\[|\$\$)\s*\n([\s\S]*?)\n\s*(?:\\\]|\$\$)')
+    # Multiline or single-line display math pattern
+    math_pattern = re.compile(r'\$\$(.*?)\$\$|\\\[(.*?)\\\]', re.DOTALL)
     t = math_pattern.sub(stash_display_math, md_content)
 
     # 2. Extract and convert Markdown Tables into Real Typst Tables (Booktabs)
@@ -321,17 +357,21 @@ def clean_chapter_markdown_to_typst(md_content):
             continue
 
         # Headings
-        if s.startswith('#### '):
-            processed_lines.append('==== ' + clean_inline_for_typst(s[5:]))
-        elif s.startswith('### '):
-            processed_lines.append('=== ' + clean_inline_for_typst(s[4:]))
-        elif s.startswith('## '):
-            processed_lines.append('== ' + clean_inline_for_typst(s[3:]))
-        elif s.startswith('# Bab') or s.startswith('# BAB'):
-            continue
-        elif s.startswith('# '):
-            processed_lines.append('== ' + clean_inline_for_typst(s[2:]))
-        elif re.match(r'^[#=]{1,5}\s*$', s):
+        if re.match(r'^[#=]{1,6}\s*', s):
+            if s.startswith('# Bab') or s.startswith('# BAB'):
+                continue
+            m_h = re.match(r'^([#=]+)', s)
+            h_len = len(m_h.group(1)) if m_h else 2
+            clean_head = re.sub(r'^[#=\s]+', '', s).strip()
+            clean_head = re.sub(r'[#=\s]+$', '', clean_head).strip()
+            if not clean_head:
+                continue
+            if h_len >= 4:
+                processed_lines.append('==== ' + clean_inline_for_typst(clean_head))
+            elif h_len == 3:
+                processed_lines.append('=== ' + clean_inline_for_typst(clean_head))
+            else:
+                processed_lines.append('== ' + clean_inline_for_typst(clean_head))
             continue
         elif s.startswith('- ') or s.startswith('* '):
             processed_lines.append('- ' + clean_inline_for_typst(s[2:]))
