@@ -48,9 +48,10 @@ def screen_pdf_document_with_ai(pdf_path):
     prompt = """You are a senior academic journal layout auditor and typesetter for IEEE/Elsevier publications.
 Audit this academic journal PDF directly as a complete document (ISO A4 2-column layout):
 1. Column & Table Collision: Are any numbers, words, code, or letters colliding, overlapping, or fusing across cells or columns?
-2. Uncompiled Math / Code Leaks: Are there uncompiled LaTeX strings, missing fraction backslashes (e.g. 'rac{d}{s}'), concatenated operators ('xcdot'), or raw brackets?
-3. Typography & Formatting: Are tables in clean Booktabs three-line style without vertical lines? Are running headers and footers single-line and unclipped?
-4. Document Flow: Do tables or sections break awkwardly across pages or columns?
+2. Geometric Lines & Straightness: Are horizontal rules (Booktabs top/mid/bottom lines, header hairline dividers, footer rules) strictly straight and continuous? Are vertical column gutters (celah antar 2 kolom) strictly straight without text bleeding across? Are left/right margins cleanly justified?
+3. Uncompiled Math / Code Leaks: Are there uncompiled LaTeX strings, missing fraction backslashes (e.g. 'rac{d}{s}'), concatenated operators ('xcdot'), or raw brackets?
+4. Typography & Formatting: Are tables in clean Booktabs three-line style without vertical lines? Are running headers and footers single-line and unclipped?
+5. Document Flow: Do tables or sections break awkwardly across pages or columns?
 
 Return ONLY valid JSON matching this schema:
 {
@@ -58,6 +59,8 @@ Return ONLY valid JSON matching this schema:
   "score": <integer from 0 to 100>,
   "collision_detected": <true or false>,
   "uncompiled_math_detected": <true or false>,
+  "lines_straight_and_aligned": <true or false>,
+  "geometric_integrity_notes": "<concise analysis of lines, borders, column gutters, and alignment straightness>",
   "issues": [<list of specific visual defects found, if any>],
   "summary": "<concise summary of visual layout quality>",
   "page_notes": [{"page": <int>, "notes": "<notes>"}]
@@ -110,12 +113,16 @@ def run_ai_ocr_screening(pdf_path):
     sm = res.get("summary", "")
     col = res.get("collision_detected", False)
     math_err = res.get("uncompiled_math_detected", False)
+    lines_straight = res.get("lines_straight_and_aligned", True)
+    geo_notes = res.get("geometric_integrity_notes", "")
     issues = res.get("issues", [])
     page_notes = res.get("page_notes", [])
 
     icon = "✅" if st == "PASS" else ("⚠️" if st == "WARN" else "❌")
-    print(f"\n{icon} [Hasil Audit Gemini Vision]: Status: [{st}] | Skor: {sc}% | Collision: {'YA' if col else 'TIDAK'} | Math Leak: {'YA' if math_err else 'TIDAK'}")
+    print(f"\n{icon} [Hasil Audit Gemini Vision]: Status: [{st}] | Skor: {sc}% | Collision: {'YA' if col else 'TIDAK'} | Math Leak: {'YA' if math_err else 'TIDAK'} | Kelurusan Garis: {'LURUS & PRESISI' if lines_straight else 'TIDAK RAPI'}")
     print(f"   📝 Ringkasan: {sm}")
+    if geo_notes:
+        print(f"   📐 Geometri & Kelurusan: {geo_notes}")
 
     if issues:
         print("\n   ⚠️ Isu yang Ditemukan:")
