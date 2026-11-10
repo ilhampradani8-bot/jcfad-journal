@@ -234,8 +234,48 @@ def update_d1_doi(slug, doi):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python3 zenodo-publisher.py <step: 1|2>")
+        print("Usage: python3 zenodo-publisher.py <step: 1|2 | pending | --slug <slug>>")
         sys.exit(1)
+
+    if "--slug" in sys.argv:
+        slug_idx = sys.argv.index("--slug") + 1
+        slug = sys.argv[slug_idx] if slug_idx < len(sys.argv) else ""
+        req = urllib.request.Request('https://api.chainasiaconnect.co.id/', headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req) as resp:
+            data = json.loads(resp.read().decode())
+        target = next((a for a in data.get('articles', []) if a.get('slug') == slug), None)
+        if target:
+            title = target.get('title')
+            abstract = target.get('excerpt')
+            keywords = [k.strip() for k in target.get('keywords', '').split(',') if k.strip()]
+            pdf_file = f"{slug}.pdf"
+            res = publish_paper_to_zenodo(slug, title, abstract, keywords, pdf_file)
+            update_d1_doi(slug, res["doi"])
+            print(f"🎉 Successfully published [{slug}] to Zenodo: {res['doi']}")
+        else:
+            print(f"❌ Article slug not found in D1: {slug}")
+        sys.exit(0)
+
+    if "pending" in sys.argv:
+        req = urllib.request.Request('https://api.chainasiaconnect.co.id/', headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req) as resp:
+            data = json.loads(resp.read().decode())
+        articles = data.get('articles', [])
+        pending_list = [a for a in articles if not a.get('doi', '').startswith('10.5281/zenodo.')]
+        print(f"🔍 Found {len(pending_list)} pending articles needing official Zenodo DOI...")
+        for target in pending_list:
+            slug = target.get('slug')
+            title = target.get('title')
+            abstract = target.get('excerpt')
+            keywords = [k.strip() for k in target.get('keywords', '').split(',') if k.strip()]
+            pdf_file = f"{slug}.pdf"
+            try:
+                res = publish_paper_to_zenodo(slug, title, abstract, keywords, pdf_file)
+                update_d1_doi(slug, res["doi"])
+                print(f"🎉 Successfully published [{slug}] to Zenodo: {res['doi']}")
+            except Exception as e:
+                print(f"⚠️ Error publishing {slug}: {e}")
+        sys.exit(0)
 
     step = sys.argv[1]
 

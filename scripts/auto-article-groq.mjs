@@ -526,7 +526,7 @@ Output JSON:
   "alternative_title": "Alternative Scientific Title in English",
   "focus_keyword": "Primary English Keyword",
   "lsi_keywords": ["keyword1", "keyword2", "keyword3", "keyword4"],
-  "target_doi": "10.13140/RG.2.2.${Math.floor(10000 + Math.random() * 90000)}.${Math.floor(10000 + Math.random() * 90000)}"
+  "target_doi": "10.5281/zenodo.pending"
 }`;
 
   const prompt = `Turunkan judul ilmiah baku dari kebaruan berikut:
@@ -1287,7 +1287,7 @@ async function saveToCloudflareD1(finalArticle, imageUrl, references = [], schol
     ? references.map(r => sanitizeReferenceForD1(sanitizeUnicodeForAcademic(r))).filter(Boolean)
     : [];
   const refString = JSON.stringify(cleanRefs);
-  const doiValue = scholarDoi || '10.13140/RG.2.2.14820.91520';
+  const doiValue = (scholarDoi && !scholarDoi.includes('10.13140')) ? scholarDoi : '10.5281/zenodo.pending';
   const tagValue = selectedDomain.tag || 'KAJIAN EMPIRIS & FEASIBILITY STUDY';
   const kwList = selectedDomain.keywords ? selectedDomain.keywords.join(', ') : 'UMKM, Logistik, Pesisir Barat, Krui';
   const keywordsValue = finalArticle.keywords || `Pesisir Barat, Krui, ${kwList}, Feasibility Study`;
@@ -1941,7 +1941,9 @@ async function main() {
       (h.title && finalized.final_title && h.title.toLowerCase().trim() === finalized.final_title.toLowerCase().trim()) ||
       (h.slug && slugify(finalized.final_title) === h.slug)
     );
-    let doiToUse = (existingDoiEntry && existingDoiEntry.doi) ? existingDoiEntry.doi : (plan.target_doi || '10.5281/zenodo.24031830');
+    let doiToUse = (existingDoiEntry && existingDoiEntry.doi && !existingDoiEntry.doi.includes('10.13140')) 
+      ? existingDoiEntry.doi 
+      : ((plan.target_doi && !plan.target_doi.includes('10.13140')) ? plan.target_doi : '10.5281/zenodo.pending');
 
     if (IS_DRY_RUN) {
       await recordBotHeartbeat('READY', `Dry-run berhasil (Rigor: ${finalized.confidence_score}/100, Penulis: Ilham Pradani)`);

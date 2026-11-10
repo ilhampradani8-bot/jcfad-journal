@@ -166,6 +166,9 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
     for g in greek:
         s = re.sub(rf"\\{g}\b|\\{g}(?=[^a-zA-Z]|$)", f" {g} ", s)
 
+    # Multi-letter variable before subscript -> quote variable name: OwnershipScore_i -> "OwnershipScore"_i
+    s = re.sub(r'\b([A-Za-z]{2,})_([a-zA-Z0-9]+)\b', r'"\1"_\2', s)
+
     # Subscripts with multi-letter words -> quote them: _{emp} -> _("emp"), _(emp) -> _("emp"), _max -> _("max")
     s = re.sub(r"_[\{\(]\s*([a-zA-Z]{2,})\s*[\}\)]", r'_("\1")', s)
     s = re.sub(r'_([a-zA-Z]{2,})\b', r'_("\1")', s)
@@ -368,7 +371,8 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
         return ""
 
     # 0. Strip duplicate leading H1 title (since masthead already renders the article title)
-    md_text = re.sub(r'^\s*#\s+[^\n]+\n+', '', md_text)
+    # But PRESERVE structural numbered sections like '# 1 Introduction' or '# 1. Pendahuluan'
+    md_text = re.sub(r'(?i)^\s*#\s+(?!\d\b|\d\.\d|\d\s)[^\n]+\n+', '', md_text)
 
     # Clean duplicate reference sections in markdown body (since template appends official references at end)
     md_text = re.sub(r'(?ims)(?:^|\n)#{1,3}\s*(?:\d+\.?\s*)?(?:References|Daftar\s*Pustaka|Bibliography)[\s\S]*$', '', md_text)
@@ -435,33 +439,53 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
             math_blocks.append("")
         return f"\n__MATH_BLOCK_{idx}__\n"
 
+    # Normalize escaped math delimiters & display blocks first
+    md_text = md_text.replace(r'\$\$', '$$')
+    md_text = re.sub(r'\$\$(.*?)\$\$', stash_display_math, md_text, flags=re.DOTALL)
+    md_text = re.sub(r'\\\[(.*?)\\\]', stash_display_math, md_text, flags=re.DOTALL)
+
     # Normalize isolated square bracket display math: [ equation ]
     md_text = re.sub(r'(?m)^\s*\[\s*\n\s*([a-zA-Z0-9_{}^=+\-*/()\\,\s\.\<\>\~]+?)\s*\n\s*\]\s*$', stash_display_math, md_text)
 
-    # Normalize parenthesized math variables in prose & tables: (C_{total}) -> $C_{total}$, (c_f) -> $c_f$
-    md_text = re.sub(r'\(([a-zA-Z0-9]_{[a-zA-Z0-9]+})\)', r'$\1$', md_text)
-    md_text = re.sub(r'\(([a-zA-Z0-9]_[a-zA-Z0-9]+)\)', r'$\1$', md_text)
+    # 1. LaTeX inline math delimiters: \( ... \) -> $...$
+    md_text = re.sub(r'\\\(\s*(.*?)\s*\\\)', r'$\1$', md_text, flags=re.DOTALL)
+
+    # 2. Function calls wrapped in parens: (\exp(...)) -> $\exp(...)$
+    fn_pat = r'\(\s*(\\?(?:exp|ln|log|sin|cos|tan|min|max|det|sqrt|arg|dim|sup|inf)\s*\([^()\n]+\))\s*\)'
+    md_text = re.sub(fn_pat, r'$\1$', md_text)
+
+    # 3. Parenthesized variables in prose & tables: (OwnershipScore_i) -> $OwnershipScore_i$, (C_{total}) -> $C_{total}$, (c_f) -> $c_f$
+    md_text = re.sub(r'\(([a-zA-Z0-9]+_{[a-zA-Z0-9]+})\)', r'$\1$', md_text)
+    md_text = re.sub(r'\(([a-zA-Z0-9]+_[a-zA-Z0-9]+)\)', r'$\1$', md_text)
+
+    # 4. Protect existing inline math from being matched by replace_paren_math
+    safe_math_inlines = []
+    def stash_temp_math(m):
+        idx = len(safe_math_inlines)
+        safe_math_inlines.append(m.group(0))
+        return f"__SAFE_INLINE_MATH_PRE_{idx}__"
+
+    md_text = re.sub(r'(?<![\\a-zA-Z0-9])\$([^\$\n]+?)\$(?![0-9])', stash_temp_math, md_text)
 
     # Convert parenthesized math expressions like (fleq f_{max}) or (|T_{obs}-T_{ref}|leq T_{max}) or (t_{trans}=...) into $...$
     def replace_paren_math(m):
         inner = m.group(1).strip()
-        if re.search(r'^(?:require|assert|revert|if|while|for)\b|["\']|__SAFE_INLINE_CODE_', inner):
+        if re.search(r'^(?:require|assert|revert|if|while|for)\b|["\']|__SAFE_INLINE_', inner):
             return m.group(0)
         if re.search(r'[=<>|]|\\[a-zA-Z]+|_[{a-zA-Z0-9]+|cdot|leq|geq|[\x0c]?rac\{', inner):
             if not re.search(r'\b[a-z]{4,}\s+[a-z]{4,}\b', inner):
                 return '$' + inner + '$'
         return m.group(0)
 
-    md_text = re.sub(r'\(([^()\n]{2,80})\)', replace_paren_math, md_text)
+    md_text = re.sub(r'(?<!\\)\(([^()\n]{2,80})\)', replace_paren_math, md_text)
+
+    # Restore protected temporary inline math
+    for idx, m_val in enumerate(safe_math_inlines):
+        md_text = md_text.replace(f"__SAFE_INLINE_MATH_PRE_{idx}__", m_val)
 
     # Restore protected inline code
     for idx, c_str in enumerate(code_inlines):
         md_text = md_text.replace(f"__SAFE_INLINE_CODE_{idx}__", c_str)
-
-    # Normalize escaped math delimiters
-    md_text = md_text.replace(r'\$\$', '$$')
-    md_text = re.sub(r'\$\$(.*?)\$\$', stash_display_math, md_text, flags=re.DOTALL)
-    md_text = re.sub(r'\\\[(.*?)\\\]', stash_display_math, md_text, flags=re.DOTALL)
 
     lines = md_text.split("\n")
     out = []
@@ -503,7 +527,7 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
         elif s.startswith("## "):
             out.append("== " + clean_inline(s[3:], is_body=False, aggressive_unbold=aggressive_unbold, extra_quote_vars=extra_quote_vars, failsafe_text_mode=failsafe_text_mode))
         elif s.startswith("# "):
-            out.append("= " + clean_inline(s[2:], is_body=False, aggressive_unbold=aggressive_unbold, extra_quote_vars=extra_quote_vars, failsafe_text_mode=failsafe_text_mode))
+            out.append("== " + clean_inline(s[2:], is_body=False, aggressive_unbold=aggressive_unbold, extra_quote_vars=extra_quote_vars, failsafe_text_mode=failsafe_text_mode))
         elif s.startswith("- ") or s.startswith("* "):
             out.append("- " + clean_inline(s[2:], is_body=True, aggressive_unbold=aggressive_unbold, extra_quote_vars=extra_quote_vars, failsafe_text_mode=failsafe_text_mode))
         elif re.match(r'^\d+\.\s+', s):
