@@ -87,7 +87,8 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
     s = s.replace(r"\begin{aligned}", "").replace(r"\end{aligned}", "")
     s = re.sub(r"\\(?:left|right|bigl|bigr|Bigl|Bigr|big|Big|!)", "", s)
 
-    # Fractions
+    # Fractions & Form-Feed Corrupted Fractions (\x0crac or rac{a}{b})
+    s = re.sub(r'[\x0c]?rac\{([^{}]+)\}\{([^{}]+)\}', r'(\1)/(\2)', s)
     s = replace_fractions(s)
 
     # Text & operatorname -> quoted string
@@ -143,6 +144,11 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
         for ev in extra_quote_vars:
             s = re.sub(rf'(?<![a-zA-Z"]){re.escape(ev)}(?![a-zA-Z"])', f'"{ev}"', s)
 
+    # Common units & descriptive words inside math -> auto quote
+    common_math_words = ["kg", "km", "hr", "sec", "min", "day", "days", "year", "years", "month", "months", "USD", "IDR", "SD", "CI", "ha", "liters", "liter", "fuel", "labour", "storage", "trans", "total", "max", "min", "obs", "ref"]
+    for w in common_math_words:
+        s = re.sub(rf'(?<![a-zA-Z"])\b{re.escape(w)}\b(?![a-zA-Z"])', f'"{w}"', s)
+
     # Clean redundant double quotes ""word"" -> "word"
     s = re.sub(r'""+([^"]+)""+', r'"\1"', s)
 
@@ -152,8 +158,14 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
     for g in greek:
         s = re.sub(rf"\\{g}\b|\\{g}(?=[^a-zA-Z]|$)", f" {g} ", s)
 
-    # Subscripts with multi-letter words -> quote them: _{emp} -> _("emp")
-    s = re.sub(r"_\{\s*([a-zA-Z]{2,})\s*\}", r'_("\1")', s)
+    # Subscripts with multi-letter words -> quote them: _{emp} -> _("emp"), _(emp) -> _("emp"), _max -> _("max")
+    s = re.sub(r"_[\{\(]\s*([a-zA-Z]{2,})\s*[\}\)]", r'_("\1")', s)
+    s = re.sub(r'_([a-zA-Z]{2,})\b', r'_("\1")', s)
+
+    # Superscripts with multi-letter words -> quote them: ^{fuel} -> ^("fuel"), ^(fuel) -> ^("fuel"), ^max -> ^("max")
+    s = re.sub(r"\^[\{\(]\s*([a-zA-Z]{2,})\s*[\}\)]", r'^("\1")', s)
+    s = re.sub(r'\^([a-zA-Z]{2,})\b', r'^("\1")', s)
+
     # Remaining subscripts and superscripts braces -> parens
     s = re.sub(r"_\{([^}]+)\}", r"_(\1)", s)
     s = re.sub(r"\^\{([^}]+)\}", r"^(\1)", s)
@@ -184,6 +196,9 @@ def clean_inline(text, is_body=False, aggressive_unbold=False, extra_quote_vars=
     t = str(text)
     # 1. Remove HTML tags
     t = re.sub(r'</?[a-zA-Z0-9]+[^>]*>', '', t)
+
+    # Convert unicode Sigma math in text to math blocks (only up to end of math expr, stop before english words)
+    t = re.sub(r'\b([A-Z]\s*=\s*Σ_[a-zA-Z0-9]+\s*\([^)]+\))', lambda m: '$' + m.group(1).replace('Σ', '\\sum').replace('·', ' \\cdot ') + '$', t)
 
     # 2. Extract and protect inline math \(...\) or $...$
     math_inlines = []
@@ -249,45 +264,106 @@ def clean_inline(text, is_body=False, aggressive_unbold=False, extra_quote_vars=
 
     return t
 
+def split_markdown_table_row(line):
+    s = line.strip()
+    if s.startswith("|"):
+        s = s[1:]
+    if s.endswith("|"):
+        s = s[:-1]
+    def stash_pipe(m):
+        return m.group(0).replace("|", "\x00PIPE\x00")
+    protected = re.sub(r'`[^`]*`', stash_pipe, s)
+    protected = protected.replace(r'\|', '\x00ESCAPED_PIPE\x00')
+    parts = protected.split("|")
+    return [p.replace('\x00PIPE\x00', '|').replace('\x00ESCAPED_PIPE\x00', '|').strip() for p in parts]
+
+def calculate_column_spec(rows):
+    if not rows:
+        return "1fr"
+    num_cols = len(rows[0])
+    weights = []
+    for c in range(num_cols):
+        lens = [len(re.sub(r'[*_`#\[\]]', '', str(r[c])).strip()) for r in rows if c < len(r)]
+        avg = sum(lens) / len(lens) if lens else 10.0
+        if avg <= 5:
+            w = 0.55
+        elif avg <= 15:
+            w = 0.90
+        elif avg <= 35:
+            w = 1.30
+        elif avg <= 60:
+            w = 1.80
+        else:
+            w = 2.50
+        weights.append(w)
+    return ", ".join(f"{w:.2f}fr" for w in weights)
+
 def render_table(rows):
     if not rows:
         return ""
-    num_cols = max(len(r) for r in rows)
     header_row = rows[0]
+    num_cols = len(header_row)
     data_rows = rows[1:]
     
-    # Adaptive booktabs typography to prevent column overlapping/collision in 2-column layout
-    if num_cols >= 5:
-        font_size = "6.6pt"
-        inset_x = "2.0pt"
+    col_spec = calculate_column_spec(rows)
+
+    # Adaptive booktabs typography based on column count and density
+    total_avg_chars = sum(sum(len(str(c)) for c in r) for r in rows) / len(rows)
+    if num_cols >= 5 or total_avg_chars > 80:
+        font_size = "6.0pt"
+        inset_x = "2.8pt"
+        inset_y = "2.6pt"
+        leading = "0.28em"
+    elif num_cols == 4 or total_avg_chars > 50:
+        font_size = "6.8pt"
+        inset_x = "3.2pt"
         inset_y = "3.0pt"
         leading = "0.30em"
-        col_spec = "1.2fr, " + ", ".join(["1fr"] * (num_cols - 1))
-    elif num_cols == 4:
-        font_size = "7.5pt"
-        inset_x = "3.2pt"
-        inset_y = "3.5pt"
-        leading = "0.35em"
-        col_spec = "1.2fr, " + ", ".join(["1fr"] * (num_cols - 1))
+    elif num_cols == 3:
+        font_size = "7.0pt"
+        inset_x = "3.8pt"
+        inset_y = "3.2pt"
+        leading = "0.32em"
     else:
-        font_size = "8.2pt"
+        font_size = "8.0pt"
         inset_x = "4.5pt"
-        inset_y = "4.0pt"
-        leading = "0.40em"
-        col_spec = ", ".join(["1fr"] * num_cols)
-    
-    res = f"\n#v(0.5em)\n#align(center)[\n  #set text(size: {font_size})\n  #set par(leading: {leading}, justify: false)\n  #table(\n    columns: ({col_spec}),\n    inset: (x: {inset_x}, y: {inset_y}),\n    stroke: (x, y) => if y == 0 {{ (top: 1.1pt + black, bottom: 0.8pt + black) }} else if y == {len(rows)} {{ (bottom: 1.1pt + black) }} else {{ (bottom: 0.25pt + luma(210)) }},\n"
-    for cell in header_row:
-        res += f"    [* {clean_inline(cell)} *],\n"
+        inset_y = "3.8pt"
+        leading = "0.38em"
+
+    def format_cell_content(cell):
+        if '`' in cell:
+            cell = re.sub(r'([a-zA-Z0-9_]{6,})\(([^)\s]{8,})\);', r'\1(\n  \2\n);', cell)
+            cell = re.sub(r'([a-zA-Z0-9_]{6,})\(([^)\s])', r'\1( \2', cell)
+            cell = re.sub(r'([^(\s])\)', r'\1 )', cell)
+        return clean_inline(cell)
+
+    header_cells = ", ".join(f"[* {clean_inline(c)} *]" for c in header_row)
+
+    res = f"\n#v(0.5em)\n#align(center)[\n  #set text(size: {font_size})\n  #set par(leading: {leading}, justify: false)\n  #show raw: set text(size: 5.5pt)\n  #table(\n    columns: ({col_spec}),\n    inset: (x: {inset_x}, y: {inset_y}),\n    stroke: (x, y) => if y == 0 {{ (top: 1.1pt + black, bottom: 0.8pt + black) }} else if y == {len(rows)} {{ (bottom: 1.1pt + black) }} else {{ (bottom: 0.25pt + luma(210)) }},\n    table.header({header_cells}),\n"
     for r in data_rows:
-        for cell in r:
-            res += f"    [{clean_inline(cell)}],\n"
+        r_padded = r[:num_cols] + [''] * max(0, num_cols - len(r))
+        for cell in r_padded:
+            res += f"    [{format_cell_content(cell)}],\n"
     res += "  )\n]\n#v(0.5em)\n"
     return res
 
 def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra_quote_vars=None, failsafe_text_mode=False):
     if not md_text:
         return ""
+
+    # 0. Strip duplicate leading H1 title (since masthead already renders the article title)
+    md_text = re.sub(r'^\s*#\s+[^\n]+\n+', '', md_text)
+
+    # Clean duplicate reference sections in markdown body (since template appends official references at end)
+    md_text = re.sub(r'(?ims)(?:^|\n)#{1,3}\s*(?:\d+\.?\s*)?(?:References|Daftar\s*Pustaka|Bibliography)[\s\S]*$', '', md_text)
+
+    # Protect inline code `...` before any math conversions
+    code_inlines = []
+    def stash_inline_code(m):
+        idx = len(code_inlines)
+        code_inlines.append(m.group(0))
+        return f"__SAFE_INLINE_CODE_{idx}__"
+    md_text = re.sub(r'`[^`\n]+`', stash_inline_code, md_text)
 
     # Clean stray AI artifact lines
     md_text = re.sub(r'(?m)^[-*•]?\s*\(?.*(?:the subsequent sentences|the translation continues).*?\)?\*?$', '', md_text, flags=re.IGNORECASE)
@@ -344,6 +420,22 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
     md_text = re.sub(r'\(([a-zA-Z0-9]_{[a-zA-Z0-9]+})\)', r'$\1$', md_text)
     md_text = re.sub(r'\(([a-zA-Z0-9]_[a-zA-Z0-9]+)\)', r'$\1$', md_text)
 
+    # Convert parenthesized math expressions like (fleq f_{max}) or (|T_{obs}-T_{ref}|leq T_{max}) or (t_{trans}=...) into $...$
+    def replace_paren_math(m):
+        inner = m.group(1).strip()
+        if re.search(r'^(?:require|assert|revert|if|while|for)\b|["\']|__SAFE_INLINE_CODE_', inner):
+            return m.group(0)
+        if re.search(r'[=<>|]|\\[a-zA-Z]+|_[{a-zA-Z0-9]+|cdot|leq|geq|[\x0c]?rac\{', inner):
+            if not re.search(r'\b[a-z]{4,}\s+[a-z]{4,}\b', inner):
+                return '$' + inner + '$'
+        return m.group(0)
+
+    md_text = re.sub(r'\(([^()\n]{2,80})\)', replace_paren_math, md_text)
+
+    # Restore protected inline code
+    for idx, c_str in enumerate(code_inlines):
+        md_text = md_text.replace(f"__SAFE_INLINE_CODE_{idx}__", c_str)
+
     # Normalize escaped math delimiters
     md_text = md_text.replace(r'\$\$', '$$')
     md_text = re.sub(r'\$\$(.*?)\$\$', stash_display_math, md_text, flags=re.DOTALL)
@@ -376,7 +468,7 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
         if s.startswith("|") and s.endswith("|"):
             in_table = True
             if not re.match(r'^\|[\s\-:|]+\|$', s):
-                cells = [c.strip() for c in s[1:-1].split("|")]
+                cells = split_markdown_table_row(s)
                 table_rows.append(cells)
             continue
         elif in_table:
