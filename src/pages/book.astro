@@ -147,13 +147,13 @@ const bookSchema = {
           </div>
 
           <div class="meta-item">
-            <span class="meta-label">Penerbit & ISBN Internasional</span>
-            <span class="meta-val">ISBN: 979-8-14154-843-7 (Amazon KDP / JCFAD Press)</span>
+            <span class="meta-label">Penerbit & Afiliasi</span>
+            <span class="meta-val">PT CHAIN ASIA CONECT Research Division</span>
           </div>
 
           <div class="meta-item">
-            <span class="meta-label">Edisi Tersedia</span>
-            <span class="meta-val">English (267 Hal) • Indonesia (318 / 268 Hal)</span>
+            <span class="meta-label">Format & Tebal Siap Cetak</span>
+            <span class="meta-val">Bahasa Indonesia • 318 Hal (6"×9") / 268 Hal (ISO-B5)</span>
           </div>
 
           <div class="meta-item">
@@ -176,7 +176,7 @@ const bookSchema = {
               <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
-            Baca Pratinjau Web Terproteksi (English & Indo)
+            Baca Naskah Bahasa Indonesia Siap Cetak (Web View Terproteksi)
           </a>
 
           <a href={bookDoiUrl} target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
@@ -248,11 +248,10 @@ const bookSchema = {
             <span class="viewer-tip">Seluruh halaman dirender melalui kanvas terenkripsi dengan watermark otomatis untuk melindungi hak distribusi penerbit internasional (Amazon KDP & Google Play Books).</span>
           </div>
           <div class="edition-selector">
-            <label for="edition-select">Pilih Edisi Naskah:</label>
+            <label for="edition-select">Pilih Format Cetak Bahasa Indonesia:</label>
             <select id="edition-select" class="edition-dropdown">
-              <option value="/books/preview-english-watermarked.pdf">🌐 English International Edition — Manipulative Intelligence (Amazon KDP 6"×9" • 267 Hal)</option>
-              <option value="/books/preview-indo-6x9-watermarked.pdf">🇮🇩 Edisi Komersial Indonesia — Kecerdasan Manipulatif (Google Books 6"×9" • 318 Hal)</option>
-              <option value="/books/preview-indo-watermarked.pdf">📚 Edisi Monograf Akademik — Empati Sintetis (ISO-B5 • 268 Hal)</option>
+              <option value="/books/preview-indo-6x9-watermarked.pdf" selected>🇮🇩 Edisi Siap Cetak Internasional 6" × 9" — Bahasa Indonesia (318 Halaman)</option>
+              <option value="/books/preview-indo-watermarked.pdf">📚 Edisi Siap Cetak Monograf ISO-B5 — Bahasa Indonesia (268 Halaman)</option>
             </select>
           </div>
         </div>
@@ -262,7 +261,7 @@ const bookSchema = {
           <div class="toolbar-group">
             <button id="prev-page" class="tool-btn" type="button">◀ Sebelumnya</button>
             <div class="page-indicator">
-              Hal <input id="page-num-input" type="number" min="1" value="1" class="page-input" /> dari <span id="page-count">267</span>
+              Hal <input id="page-num-input" type="number" min="1" value="1" class="page-input" /> dari <span id="page-count">318</span>
             </div>
             <button id="next-page" class="tool-btn" type="button">Berikutnya ▶</button>
           </div>
@@ -403,10 +402,10 @@ const bookSchema = {
         context.rotate((-38 * Math.PI) / 180);
         context.textAlign = "center";
         context.fillStyle = "rgba(185, 28, 28, 0.10)";
-        context.font = "bold 22px sans-serif";
-        context.fillText("PROTECTED WEB VIEW • DO NOT DOWNLOAD", 0, -14);
-        context.font = "bold 16px sans-serif";
-        context.fillText("COPYRIGHT © 2026 ILHAM PRADANI • ISBN 979-8-14154-843-7", 0, 14);
+        context.font = "bold 20px sans-serif";
+        context.fillText("PRATINJAU WEB TERPROTEKSI • DILARANG MENGUNDUH", 0, -14);
+        context.font = "bold 15px sans-serif";
+        context.fillText("HAK CIPTA © 2026 ILHAM PRADANI • NASKAH SIAP CETAK", 0, 14);
         context.restore();
 
         // Top & Bottom Security Header/Footer Bar on Canvas
@@ -417,7 +416,7 @@ const bookSchema = {
         context.font = "bold 10px monospace";
         context.textAlign = "center";
         context.fillText(
-          `🔒 JCFAD PUBLISHER WEB VIEW • PAGE ${currentPage}/${totalPages} • DOWNLOAD & PRINT LOCKED`,
+          `🔒 PRATINJAU WEB JCFAD • HALAMAN ${currentPage}/${totalPages} • UNDUH & CETAK DINONAKTIFKAN`,
           w / 2,
           14
         );
@@ -549,7 +548,7 @@ const bookSchema = {
         });
         loadPdf(editionSelect.value);
       } else {
-        loadPdf("/books/preview-english-watermarked.pdf");
+        loadPdf("/books/preview-indo-6x9-watermarked.pdf");
       }
     })();
   </script>
