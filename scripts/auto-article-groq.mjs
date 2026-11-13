@@ -200,10 +200,17 @@ function formatDateIndo(dateObj = new Date()) {
     'JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI',
     'JULI', 'AGUSTUS', 'SEPTEMBER', 'OKTOBER', 'NOVEMBER', 'DESEMBER'
   ];
-  const day = String(dateObj.getDate()).padStart(2, '0');
-  const month = months[dateObj.getMonth()];
-  const year = dateObj.getFullYear();
-  return `${day} ${month} ${year}`;
+  // Wajib gunakan timezone Asia/Jakarta (WIB) secara konsisten di seluruh server
+  const parts = new Intl.DateTimeFormat('id-ID', {
+    timeZone: 'Asia/Jakarta',
+    day: '2-digit',
+    month: 'numeric',
+    year: 'numeric'
+  }).formatToParts(dateObj);
+  const day = parts.find(p => p.type === 'day')?.value.padStart(2, '0') || '01';
+  const monthIdx = (parseInt(parts.find(p => p.type === 'month')?.value || '1', 10) - 1);
+  const year = parts.find(p => p.type === 'year')?.value || '2026';
+  return `${day} ${months[monthIdx]} ${year}`;
 }
 
 // Batasi abstrak agar pas dengan standar dan batas karakter ResearchGate (150-200 kata, <= 1700 karakter)
@@ -1703,6 +1710,45 @@ async function main() {
   console.log('   Mode: ResearchGate Working Paper Preprint (Mode Polos / Terbit Mandiri)');
   console.log('   Author: Ilham Pradani | Rigor Gate: Confidence >= 95%');
   console.log('='.repeat(78));
+
+  // 0. Daily Gate: Pastikan HANYA 1 paper per hari (1x sehari Asia/Jakarta WIB)
+  const isForce = process.argv.includes('--force');
+  const todayWib = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
+  const todayIndo = formatDateIndo(new Date());
+
+  if (!isForce) {
+    // A. Cek di registry lokal
+    if (fs.existsSync(REGISTRY_FILE)) {
+      try {
+        const reg = JSON.parse(fs.readFileSync(REGISTRY_FILE, 'utf-8'));
+        const foundLocal = Array.isArray(reg) && reg.find(item => item.date === todayWib);
+        if (foundLocal) {
+          console.log(`⏩ [Daily Gate] Artikel ilmiah untuk hari ini (${todayWib} WIB) sudah terbit: "${foundLocal.title}".`);
+          console.log(`   Proses dilewati untuk menjaga integritas 1 hari 1x publikasi (gunakan --force untuk bypass).`);
+          process.exit(0);
+        }
+      } catch (err) {
+        console.warn('⚠️ Gagal membaca registry lokal untuk daily gate:', err.message);
+      }
+    }
+
+    // B. Cek di basis data Cloudflare D1
+    try {
+      const d1Res = await fetch('https://api.chainasiaconnect.co.id/?_t=' + Date.now(), { cache: 'no-store' });
+      if (d1Res.ok) {
+        const d1Data = await d1Res.json();
+        const articles = d1Data.articles || [];
+        const foundD1 = articles.find(a => a.date === todayIndo || (a.published_iso && a.published_iso.startsWith(todayWib)));
+        if (foundD1) {
+          console.log(`⏩ [Daily Gate] Artikel ilmiah untuk hari ini (${todayIndo} / ${todayWib} WIB) sudah ada di Cloudflare D1: "${foundD1.title}".`);
+          console.log(`   Proses dilewati untuk menjaga integritas 1 hari 1x publikasi (gunakan --force untuk bypass).`);
+          process.exit(0);
+        }
+      }
+    } catch (d1Err) {
+      console.warn('⚠️ Gagal verifikasi D1 untuk daily gate:', d1Err.message);
+    }
+  }
 
   // 1. Ambil seluruh riwayat judul untuk blacklist anti-duplikasi
   console.log('📚 Memeriksa riwayat publikasi untuk mencegah duplikasi topik...');

@@ -16,7 +16,15 @@ mkdir -p /root/journal/logs
 
 # Cek apakah artikel dengan tanggal hari ini sudah ada dalam published_topics.json
 if [ -f "$REGISTRY" ] && grep -q "\"date\": \"$TODAY\"" "$REGISTRY"; then
-  echo "[$TODAY $(date '+%H:%M:%S')] Artikel riset untuk hari ini ($TODAY) sudah terbit. Melewati proses." >> "$LOG_FILE"
+  echo "[$TODAY $(date '+%H:%M:%S')] Artikel riset untuk hari ini ($TODAY) sudah terbit (Registry). Melewati proses." >> "$LOG_FILE"
+  exit 0
+fi
+
+# Guard Tambahan: Verifikasi langsung ke Cloudflare D1 API (WIB Jakarta)
+TODAY_INDO=$(TZ='Asia/Jakarta' date '+%-d %B %Y' | tr '[:lower:]' '[:upper:]' | sed 's/JANUARY/JANUARI/;s/FEBRUARY/FEBRUARI/;s/MARCH/MARET/;s/MAY/MEI/;s/JUNE/JUNI/;s/JULY/JULI/;s/AUGUST/AGUSTUS/;s/OCTOBER/OKTOBER/;s/DECEMBER/DESEMBER/')
+D1_CHECK=$(curl -s --max-time 4 "https://api.chainasiaconnect.co.id/?_t=$(date +%s)" 2>/dev/null || echo "")
+if echo "$D1_CHECK" | grep -q "$TODAY" || echo "$D1_CHECK" | grep -q "$TODAY_INDO"; then
+  echo "[$TODAY $(date '+%H:%M:%S')] Artikel riset untuk hari ini ($TODAY / $TODAY_INDO WIB) sudah ada di Cloudflare D1. Melewati proses (Cegah terbit ganda, 1 hari 1x)." >> "$LOG_FILE"
   exit 0
 fi
 
