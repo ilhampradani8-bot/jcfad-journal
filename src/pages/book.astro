@@ -121,11 +121,11 @@ const bookSchema = {
       <!-- Breadcrumb & Header Box -->
       <div class="book-header-box">
         <div class="book-sup-badge">
-          <span>📚 PT CHAIN ASIA CONECT MONOGRAPH SERIES</span>
+          <span>📚 JCFAD INTERNATIONAL MONOGRAPH SERIES</span>
           <span class="badge-dot">•</span>
-          <span>OPEN ACCESS BOOK</span>
+          <span>🔒 PROTECTED PUBLISHER EDITION (NO DOWNLOAD)</span>
           <span class="badge-dot">•</span>
-          <span>PRINT-READY ISO-B5</span>
+          <span>AMAZON KDP ISBN: 979-8-14154-843-7</span>
         </div>
 
         <h1 class="book-title">{bookTitle}</h1>
@@ -147,13 +147,13 @@ const bookSchema = {
           </div>
 
           <div class="meta-item">
-            <span class="meta-label">Penerbit & Afiliasi</span>
-            <span class="meta-val">PT CHAIN ASIA CONECT Research Division</span>
+            <span class="meta-label">Penerbit & ISBN Internasional</span>
+            <span class="meta-val">ISBN: 979-8-14154-843-7 (Amazon KDP / JCFAD Press)</span>
           </div>
 
           <div class="meta-item">
-            <span class="meta-label">Format & Tebal</span>
-            <span class="meta-val">{totalChapters} Bab • {totalPages} Halaman (ISO-B5)</span>
+            <span class="meta-label">Edisi Tersedia</span>
+            <span class="meta-val">English (267 Hal) • Indonesia (318 / 268 Hal)</span>
           </div>
 
           <div class="meta-item">
@@ -164,20 +164,19 @@ const bookSchema = {
           </div>
 
           <div class="meta-item">
-            <span class="meta-label">Aksesibilitas</span>
-            <span class="meta-val text-green">Open Access Full Monograph (CC BY 4.0)</span>
+            <span class="meta-label">Proteksi Hak Cipta</span>
+            <span class="meta-val text-green">🔒 Web View Only (AES-256 + Watermark Otomatis)</span>
           </div>
         </div>
 
-        <!-- Action CTAs -->
+        <!-- Action CTAs (No Direct PDF Download Allowed) -->
         <div class="book-cta-bar">
-          <a href={bookPdfUrl} download="empati-sintetis-ilham-pradani-print-ready.pdf" class="btn btn-primary">
+          <a href="#protected-reader" class="btn btn-primary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
             </svg>
-            Unduh PDF Buku (268 Halaman)
+            Baca Pratinjau Web Terproteksi (English & Indo)
           </a>
 
           <a href={bookDoiUrl} target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
@@ -185,20 +184,11 @@ const bookSchema = {
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
             </svg>
-            Buka DOI Zenodo CERN
-          </a>
-
-          <a href={bookPdfUrl} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
-            Buka PDF di Tab Baru
+            Sitasi DOI Zenodo CERN
           </a>
 
           <a href="#audit-review" class="btn btn-outline">
-            Audit Mutu & Standar PDF (100%) ↓
+            Audit Mutu & Standar Cetak (100%) ↓
           </a>
 
           <a href="#daftar-isi" class="btn btn-outline">
@@ -249,26 +239,56 @@ const bookSchema = {
         </div>
       </section>
 
-      <!-- Embedded PDF Viewer -->
-      <section class="viewer-section">
-        <div class="viewer-header">
-          <h2>Pembaca Buku Digital (Interactive Reader)</h2>
-          <span class="viewer-tip">Gunakan kontrol di dalam viewer untuk zoom, navigasi halaman, atau layar penuh.</span>
+      <!-- Protected Publisher Canvas Viewer (No Download, Auto Watermark) -->
+      <section id="protected-reader" class="viewer-section" oncontextmenu="return false;">
+        <div class="viewer-header-top">
+          <div>
+            <div class="drm-badge">🔒 DRM-PROTECTED PUBLISHER WEB VIEW • DOWNLOAD & PRINT DISABLED • AUTO-WATERMARKED</div>
+            <h2>Pembaca Buku Digital Terproteksi (Publisher Review Reader)</h2>
+            <span class="viewer-tip">Seluruh halaman dirender melalui kanvas terenkripsi dengan watermark otomatis untuk melindungi hak distribusi penerbit internasional (Amazon KDP & Google Play Books).</span>
+          </div>
+          <div class="edition-selector">
+            <label for="edition-select">Pilih Edisi Naskah:</label>
+            <select id="edition-select" class="edition-dropdown">
+              <option value="/books/preview-english-watermarked.pdf">🌐 English International Edition — Manipulative Intelligence (Amazon KDP 6"×9" • 267 Hal)</option>
+              <option value="/books/preview-indo-6x9-watermarked.pdf">🇮🇩 Edisi Komersial Indonesia — Kecerdasan Manipulatif (Google Books 6"×9" • 318 Hal)</option>
+              <option value="/books/preview-indo-watermarked.pdf">📚 Edisi Monograf Akademik — Empati Sintetis (ISO-B5 • 268 Hal)</option>
+            </select>
+          </div>
         </div>
 
-        <div class="pdf-container">
-          <iframe
-            src={`${bookPdfUrl}#toolbar=1&navpanes=1&scrollbar=1`}
-            title={bookTitle}
-            width="100%"
-            height="750px"
-            class="embedded-pdf-frame"
-          >
-            <p>
-              Browser Anda tidak mendukung preview PDF langsung. 
-              <a href={bookPdfUrl} target="_blank">Klik di sini untuk mengunduh dan membaca berkas PDF</a>.
-            </p>
-          </iframe>
+        <!-- Custom Reader Toolbar (Zero Download / Zero Print Buttons) -->
+        <div class="canvas-toolbar">
+          <div class="toolbar-group">
+            <button id="prev-page" class="tool-btn" type="button">◀ Sebelumnya</button>
+            <div class="page-indicator">
+              Hal <input id="page-num-input" type="number" min="1" value="1" class="page-input" /> dari <span id="page-count">267</span>
+            </div>
+            <button id="next-page" class="tool-btn" type="button">Berikutnya ▶</button>
+          </div>
+
+          <div class="toolbar-group">
+            <button id="zoom-out" class="tool-btn" type="button" title="Perkecil">−</button>
+            <span id="zoom-level" class="zoom-label">125%</span>
+            <button id="zoom-in" class="tool-btn" type="button" title="Perbesar">+</button>
+            <button id="fullscreen-btn" class="tool-btn" type="button">⛶ Layar Penuh</button>
+          </div>
+        </div>
+
+        <!-- Protected Canvas Stage -->
+        <div id="canvas-stage" class="pdf-canvas-stage" oncontextmenu="return false;">
+          <div id="reader-loading" class="reader-loading">Memuat halaman terproteksi & watermark penerbit...</div>
+          <div class="canvas-wrapper">
+            <canvas id="pdf-render-canvas" class="protected-canvas"></canvas>
+            <!-- Live CSS + DOM Anti-Screenshot / Anti-Save Watermark Shield -->
+            <div class="watermark-shield" oncontextmenu="return false;">
+              <div class="wm-pattern">
+                <span>PROTECTED WEB VIEW • © 2026 ILHAM PRADANI • ISBN 979-8-14154-843-7 • DO NOT DOWNLOAD</span>
+                <span>PUBLISHER REVIEW COPY • AMAZON KDP & GOOGLE PLAY BOOKS • UNAUTHORIZED COPYING PROHIBITED</span>
+                <span>PROTECTED WEB VIEW • © 2026 ILHAM PRADANI • ISBN 979-8-14154-843-7 • DO NOT DOWNLOAD</span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -322,13 +342,16 @@ const bookSchema = {
         </div>
       </section>
 
-      <!-- Bottom Download Box -->
+      <!-- Bottom Publisher Box (No Free PDF Download) -->
       <section class="bottom-download-box">
-        <h3>Miliki Versi Cetak / PDF Lengkap Sekarang</h3>
-        <p>Buku ini dirilis di bawah lisensi Open Science (Creative Commons BY 4.0) untuk kepentingan riset, sitasi akademik, dan edukasi publik.</p>
+        <h3>Edisi Penerbit Internasional & Perlindungan Hak Cipta</h3>
+        <p>Naskah buku ini dilindungi hak distribusi penerbit internasional (Amazon KDP ISBN: <strong>979-8-14154-843-7</strong> & Google Play Books). Fitur pengunduhan berkas PDF dinonaktifkan pada Web View dan dilengkapi enkripsi watermark otomatis.</p>
         <div class="bottom-btns">
-          <a href={bookPdfUrl} download="empati-sintetis-ilham-pradani-print-ready.pdf" class="btn btn-primary">
-            Unduh Naskah Lengkap (268 Halaman PDF)
+          <a href="#protected-reader" class="btn btn-primary">
+            📖 Baca Pratinjau di Web Viewer Terproteksi
+          </a>
+          <a href={bookDoiUrl} target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+            🔗 Sitasi Akademik DOI (Zenodo CERN)
           </a>
           <a href="/" class="btn btn-outline">
             Kembali ke Beranda Jurnal JCFAD
@@ -339,6 +362,197 @@ const bookSchema = {
   </main>
 
   <Footer />
+
+  <script is:inline src="/vendor/pdfjs/pdf.min.js"></script>
+  <script is:inline>
+    (function () {
+      // Block Ctrl+S, Ctrl+P, Ctrl+U to protect publisher web preview
+      window.addEventListener("keydown", function (e) {
+        if ((e.ctrlKey || e.metaKey) && ["s", "p", "u"].includes((e.key || "").toLowerCase())) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+      });
+
+      const canvas = document.getElementById("pdf-render-canvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const loadingEl = document.getElementById("reader-loading");
+      const pageNumInput = document.getElementById("page-num-input");
+      const pageCountEl = document.getElementById("page-count");
+      const prevBtn = document.getElementById("prev-page");
+      const nextBtn = document.getElementById("next-page");
+      const zoomInBtn = document.getElementById("zoom-in");
+      const zoomOutBtn = document.getElementById("zoom-out");
+      const zoomLevelEl = document.getElementById("zoom-level");
+      const fullscreenBtn = document.getElementById("fullscreen-btn");
+      const editionSelect = document.getElementById("edition-select");
+      const readerSection = document.getElementById("protected-reader");
+
+      let pdfDoc = null;
+      let pageNum = 1;
+      let pageRendering = false;
+      let pageNumPending = null;
+      let scale = 1.35;
+
+      function stampCanvasWatermark(context, w, h, currentPage, totalPages) {
+        context.save();
+        // Diagonal Dynamic Canvas Stamp (Baked directly into pixel buffer)
+        context.translate(w / 2, h / 2);
+        context.rotate((-38 * Math.PI) / 180);
+        context.textAlign = "center";
+        context.fillStyle = "rgba(185, 28, 28, 0.10)";
+        context.font = "bold 22px sans-serif";
+        context.fillText("PROTECTED WEB VIEW • DO NOT DOWNLOAD", 0, -14);
+        context.font = "bold 16px sans-serif";
+        context.fillText("COPYRIGHT © 2026 ILHAM PRADANI • ISBN 979-8-14154-843-7", 0, 14);
+        context.restore();
+
+        // Top & Bottom Security Header/Footer Bar on Canvas
+        context.save();
+        context.fillStyle = "rgba(15, 23, 42, 0.06)";
+        context.fillRect(0, 0, w, 22);
+        context.fillStyle = "rgba(185, 28, 28, 0.55)";
+        context.font = "bold 10px monospace";
+        context.textAlign = "center";
+        context.fillText(
+          `🔒 JCFAD PUBLISHER WEB VIEW • PAGE ${currentPage}/${totalPages} • DOWNLOAD & PRINT LOCKED`,
+          w / 2,
+          14
+        );
+        context.restore();
+      }
+
+      function renderPage(num) {
+        pageRendering = true;
+        if (loadingEl) loadingEl.style.display = "flex";
+        pdfDoc.getPage(num).then(function (page) {
+          const viewport = page.getViewport({ scale: scale });
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+
+          const renderContext = {
+            canvasContext: ctx,
+            viewport: viewport,
+          };
+          const renderTask = page.render(renderContext);
+
+          renderTask.promise.then(function () {
+            // Stamp dynamic watermark directly onto the canvas pixels after PDF page renders
+            stampCanvasWatermark(ctx, canvas.width, canvas.height, num, pdfDoc.numPages);
+            pageRendering = false;
+            if (loadingEl) loadingEl.style.display = "none";
+            if (pageNumPending !== null) {
+              renderPage(pageNumPending);
+              pageNumPending = null;
+            }
+          });
+        });
+
+        if (pageNumInput) pageNumInput.value = num;
+      }
+
+      function queueRenderPage(num) {
+        if (pageRendering) {
+          pageNumPending = num;
+        } else {
+          renderPage(num);
+        }
+      }
+
+      function loadPdf(url) {
+        if (!window.pdfjsLib) return;
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.min.js";
+        if (loadingEl) {
+          loadingEl.textContent = "Memuat naskah terproteksi & watermark penerbit...";
+          loadingEl.style.display = "flex";
+        }
+        window.pdfjsLib
+          .getDocument({
+            url: url,
+            disableAutoFetch: false,
+            disableStream: false,
+          })
+          .promise.then(function (pdfDoc_) {
+            pdfDoc = pdfDoc_;
+            if (pageCountEl) pageCountEl.textContent = pdfDoc.numPages;
+            if (pageNumInput) pageNumInput.max = pdfDoc.numPages;
+            pageNum = 1;
+            renderPage(pageNum);
+          })
+          .catch(function (err) {
+            if (loadingEl) {
+              loadingEl.textContent = "Gagal memuat dokumen pratinjau: " + (err && err.message ? err.message : "");
+            }
+          });
+      }
+
+      if (prevBtn) {
+        prevBtn.addEventListener("click", function () {
+          if (!pdfDoc || pageNum <= 1) return;
+          pageNum--;
+          queueRenderPage(pageNum);
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener("click", function () {
+          if (!pdfDoc || pageNum >= pdfDoc.numPages) return;
+          pageNum++;
+          queueRenderPage(pageNum);
+        });
+      }
+
+      if (pageNumInput) {
+        pageNumInput.addEventListener("change", function () {
+          if (!pdfDoc) return;
+          let val = parseInt(pageNumInput.value, 10);
+          if (isNaN(val) || val < 1) val = 1;
+          if (val > pdfDoc.numPages) val = pdfDoc.numPages;
+          pageNum = val;
+          queueRenderPage(pageNum);
+        });
+      }
+
+      if (zoomInBtn) {
+        zoomInBtn.addEventListener("click", function () {
+          if (!pdfDoc || scale >= 2.5) return;
+          scale = Math.round((scale + 0.2) * 100) / 100;
+          if (zoomLevelEl) zoomLevelEl.textContent = Math.round((scale / 1.35) * 125) + "%";
+          queueRenderPage(pageNum);
+        });
+      }
+
+      if (zoomOutBtn) {
+        zoomOutBtn.addEventListener("click", function () {
+          if (!pdfDoc || scale <= 0.7) return;
+          scale = Math.round((scale - 0.2) * 100) / 100;
+          if (zoomLevelEl) zoomLevelEl.textContent = Math.round((scale / 1.35) * 125) + "%";
+          queueRenderPage(pageNum);
+        });
+      }
+
+      if (fullscreenBtn && readerSection) {
+        fullscreenBtn.addEventListener("click", function () {
+          if (!document.fullscreenElement) {
+            readerSection.requestFullscreen().catch(function () {});
+          } else {
+            document.exitFullscreen().catch(function () {});
+          }
+        });
+      }
+
+      if (editionSelect) {
+        editionSelect.addEventListener("change", function () {
+          loadPdf(editionSelect.value);
+        });
+        loadPdf(editionSelect.value);
+      } else {
+        loadPdf("/books/preview-english-watermarked.pdf");
+      }
+    })();
+  </script>
 
   <script type="application/ld+json" set:html={JSON.stringify(bookSchema)} />
 </Layout>
@@ -662,41 +876,224 @@ const bookSchema = {
     margin-top: 0.15rem;
   }
 
-  /* Viewer Section */
+  /* Protected Publisher Viewer Section */
   .viewer-section {
     background: #0f172a;
     border: 1px solid #1e293b;
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 2.5rem;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
-  .viewer-header {
-    margin-bottom: 1rem;
+  .viewer-header-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
   }
 
-  .viewer-header h2 {
+  .drm-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #fca5a5;
+    background: rgba(220, 38, 38, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    margin-bottom: 0.5rem;
+  }
+
+  .viewer-header-top h2 {
     font-size: 1.35rem;
     font-weight: 700;
     color: #f8fafc;
-    margin-bottom: 0.25rem;
+    margin: 0 0 0.25rem;
   }
 
   .viewer-tip {
     font-size: 0.85rem;
-    color: #64748b;
+    color: #94a3b8;
+    display: block;
+    max-width: 620px;
   }
 
-  .pdf-container {
+  .edition-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 280px;
+  }
+
+  .edition-selector label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #38bdf8;
+  }
+
+  .edition-dropdown {
+    background: #020617;
+    color: #f8fafc;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .canvas-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
     background: #020617;
     border: 1px solid #1e293b;
-    border-radius: 8px;
-    overflow: hidden;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    padding: 0.75rem 1.25rem;
   }
 
-  .embedded-pdf-frame {
-    border: none;
+  .toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .tool-btn {
+    background: #1e293b;
+    color: #e2e8f0;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .tool-btn:hover {
+    background: #334155;
+    color: #ffffff;
+  }
+
+  .page-indicator {
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .page-input {
+    width: 60px;
+    background: #0f172a;
+    color: #f8fafc;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    padding: 0.3rem 0.45rem;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .zoom-label {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    min-width: 46px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .pdf-canvas-stage {
+    position: relative;
+    background: #090d16;
+    border: 1px solid #1e293b;
+    border-radius: 0 0 8px 8px;
+    min-height: 680px;
+    max-height: 820px;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 1.5rem;
+  }
+
+  .reader-loading {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.82);
+    color: #38bdf8;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    display: inline-block;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65);
+  }
+
+  .protected-canvas {
     display: block;
+    max-width: 100%;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .watermark-shield {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: auto;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wm-pattern {
+    display: flex;
+    flex-direction: column;
+    gap: 11rem;
+    transform: rotate(-35deg);
+    pointer-events: none;
+    opacity: 0.12;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .wm-pattern span {
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: #991b1b;
+  }
+
+  @media print {
+    body * {
+      display: none !important;
+    }
+    body::after {
+      content: "PROTECTED PUBLISHER EDITION — PRINTING IS DISABLED (COPYRIGHT © 2026 ILHAM PRADANI)";
+      display: block !important;
+      font-size: 18pt;
+      padding: 2rem;
+      color: #000;
+    }
   }
 
   /* Preface Section */

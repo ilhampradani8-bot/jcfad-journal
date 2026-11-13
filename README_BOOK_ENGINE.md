@@ -78,37 +78,84 @@ Setiap sesi AI baru **WAJIB** mematuhi 10 prinsip desain percetakan berikut tanp
 
 ---
 
-## 🏛️ Ketentuan Pendaftaran ISBN & Hak Cipta Penerbit (Perpusnas RI)
+## 🌎 Edisi Internasional Amazon KDP (Hardcover & Paperback Ready)
 
-1. **Aturan Resmi Perpusnas RI**:
+Selain edisi monograf akademik ISO-B5 berbahasa Indonesia, repositori ini telah dilengkapi mesin publikasi cetak internasional Amazon KDP (Kindle Direct Publishing) dalam bahasa Inggris melalui naskah **MANIPULATIVE INTELLIGENCE: Reclaiming Your Consciousness in the Age of AI** (10 Bab Lengkap, 267 Halaman 6" × 9").
+
+### 📦 Spesifikasi Berkas Siap Terbit (Amazon KDP Print-Ready & Kindle eBook):
+1. **Naskah Interior (Manuscript Cetak 6" × 9")**:
+   - **File**: `books/output/manipulative-intelligence-kdp-6x9-manuscript.pdf` (tersedia juga di `public/books/`)
+   - **Format Cetak**: 6" × 9" (15.24 × 22.86 cm) — *No Bleed*
+   - **Ketebalan**: 267 Halaman (Tipografi Libertinus Serif 10pt, Booktabs tables, frameless math dengan Intuitive Conceptual Notes).
+2. **Cover Hardcover (Case Laminate)**:
+   - **File**: `books/output/manipulative-intelligence-kdp-6x9-hardcover-cover.pdf`
+   - **Dimensi**: 14.365" × 10.417" (Wrap 0.591", Punggung/Spine 0.790" untuk 267 halaman).
+   - **Status**: *Selesai / Terbit di KDP*.
+3. **Cover Paperback (Softcover)**:
+   - **File**: `books/output/manipulative-intelligence-kdp-6x9-paperback-cover.pdf`
+   - **Dimensi**: 12.851" × 9.250" (Bleed 0.125", Punggung/Spine 0.601" untuk 267 halaman kertas putih KDP).
+   - **Rumus Geometri Spine**: `267 halaman × 0.002252 = 0.601284"`.
+   - **Lebar Total**: `0.125" (bleed) + 6.00" (back) + 0.601" (spine) + 6.00" (front) + 0.125" (bleed) = 12.851"`.
+   - **Tinggi Total**: `0.125" (bleed) + 9.00" (trim) + 0.125" (bleed) = 9.250"`.
+   - **Status**: *Siap Rilis (Production Ready)*.
+4. **Amazon Kindle eBook (Reflowable EPUB 3)**:
+   - **File eBook**: `books/output/manipulative-intelligence-kindle-ebook.epub` (tersedia juga di `public/books/`)
+   - **File Cover eBook**: `books/output/manipulative-intelligence-kindle-cover.jpeg` (1696 × 2528 px, RGB, rasio 1:1.49)
+   - **Format**: Reflowable EPUB 3.0 (MathML native, Booktabs CSS styling, callout box catatan konseptual awam, metadata Dublin Core lengkap, dan daftar isi navigasi interaktif ganda: NCX + NAV).
+   - **Status**: *Siap Rilis (100% Validated untuk Amazon Kindle KDP & Send to Kindle)*.
+
+---
+
+## 🏛️ Ketentuan Pendaftaran ISBN & Hak Cipta Penerbit (Perpusnas RI & Amazon KDP)
+
+1. **Aturan ISBN Amazon KDP (Hardcover vs Paperback)**:
+   - **Aturan Mutlak**: Satu nomor ISBN **hanya berlaku untuk satu format cetak**. ISBN versi Hardcover (`979-8-1415-4843-7`) dilarang dipakai ulang untuk Paperback.
+   - **Solusi KDP Paperback**: Saat membuat Paperback di KDP Bookshelf, cukup pilih opsi **"Assign me a free KDP ISBN"** (Amazon akan menerbitkan ISBN gratis resmi untuk paperback).
+2. **Aturan Resmi Perpusnas RI**:
    - Pendaftaran ISBN di Indonesia **tidak dapat dilakukan oleh perorangan/penulis pribadi**.
    - Permohonan akun ISBN di situs resmi Perpusnas (`isbn.perpusnas.go.id`) **wajib melalui badan usaha / badan hukum resmi** (PT, CV, Yayasan, Lembaga Litbang, Perguruan Tinggi, dsb.) yang memiliki Akta Notaris, NPWP, dan NIB/izin usaha.
-2. **Biaya Resmi ISBN**:
+3. **Biaya Resmi ISBN Perpusnas**:
    - Biaya resmi permohonan ISBN di Perpustakaan Nasional RI adalah **Rp 0 (GRATIS)**.
-3. **Pencantuman Nama PT CHAIN ASIA CONECT**:
+4. **Pencantuman Nama PT CHAIN ASIA CONECT**:
    - Dicantumkan saat ini sebagai **Afiliasi Riset Penulis** (*Research & Development Division*) untuk legitimasi kepakaran dan hak cipta draf.
    - Sebagai pemilik badan hukum PT resmi, PT CHAIN ASIA CONECT dapat didaftarkan sebagai **Penerbit Mandiri Resmi** di Perpusnas tanpa perantara.
    - Jika di masa mendatang buku ini dicetak massal oleh penerbit eksternal (Gramedia, Prenada, Mizan, Deepublish, atau Penerbit Kampus), pihak penerbit tersebut yang akan menguruskan ISBN atas nama penerbit mereka, dan imprint penerbit dapat disesuaikan dengan mudah.
 
 ---
 
-## 🛠️ Panduan Perintah Cepat untuk Sesi Baru
+## 🛠️ Panduan Perintah Cepat untuk Sesi Baru (Saved Engine Blueprint)
 
-Bila membuka sesi baru, gunakan perintah-perintah berikut:
+Bila membuka sesi baru, seluruh mesin kompilasi buku cetak, eBook, dan proteksi watermark penerbit telah tersimpan permanen di repositori:
 
 ```bash
-# 1. Mengompilasi ulang buku dari cache JSON ke PDF berstandar cetak:
+# 1. Mengompilasi naskah monograf Indonesia ISO-B5 ke PDF (0 Margin Overflow):
 python3 /root/journal/scripts/compile-book-typst.py empati-sintetis-buku-cetak
 
-# 2. Build ulang website Astro:
+# 2. Mengompilasi naskah & cover internasional Amazon KDP English (Hardcover & Paperback 6x9 + EPUB):
+python3 /root/journal/scripts/compile-kdp-typst.py
+
+# 3. Mengompilasi paket lengkap Bahasa Indonesia (6x9 Cetak + Cover Full Spread + EPUB 3 Google Play Books):
+python3 /root/journal/scripts/compile-indo-googlebooks-kdp.py
+
+# 4. Membubuhkan Watermark Otomatis + Kunci AES-256 (No-Print/No-Copy) untuk Web View & menyimpan Master ke Vault:
+python3 /root/journal/scripts/build-publisher-protected-edition.py
+
+# 5. Build ulang website Astro (Protected Canvas DRM Reader di /book):
 npm run build
 
-# 3. Deploy langsung ke Cloudflare Pages (menggunakan kredensial global):
+# 6. Deploy langsung ke Cloudflare Pages:
 npx wrangler pages deploy dist --project-name=jcfad-journal --branch=main
-
-# 4. Sinkronisasi Git ganda (GitHub + VPS):
-autopush "pesan commit"
 ```
+
+### 🔒 Arsitektur Proteksi Penerbit Internasional (Web View DRM & Watermark)
+- **Halaman Publik (`/book` — `src/pages/book.astro`)**:
+  - Tidak menyediakan tombol download PDF bebas agar tidak melanggar ketentuan distribusi komersial Amazon KDP (`ISBN 979-8-14154-843-7`) & Google Play Books.
+  - Menggunakan **Custom PDF.js Canvas DRM Reader** (tanpa toolbar download/print bawaan browser, klik kanan dimatikan, `Ctrl+S`/`Ctrl+P` diblokir, `@media print` dikosongkan).
+  - Membubuhkan **Watermark Berlapis**:
+    1. **Layer Vektor PDF (`build-publisher-protected-edition.py`)**: Watermark diagonal + footer keamanan di setiap halaman PDF + Enkripsi `PDF_ENCRYPT_AES_256` (`permissions=0`).
+    2. **Layer Piksel Kanvas & CSS Shield (`src/pages/book.astro`)**: Stempel watermark real-time langsung di atas piksel `<canvas>` saat halaman dirender.
+- **Brankas Master Cetak Murni (Tanpa Watermark — Khusus Penulis/Penerbit)**:
+  - Tersimpan aman di `/root/journal/books/output/` dan `/root/journal/public/books/publisher-master-vault/`.
 
 ---
 

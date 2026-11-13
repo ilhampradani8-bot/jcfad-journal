@@ -412,14 +412,19 @@ def clean_chapter_markdown_to_typst(md_content):
     math_blocks = []
     def stash_display_math(m):
         raw_eq = (m.group(1) or m.group(2) or '').strip()
-        cleaned = clean_to_typst_math(raw_eq)
+        if 'Validitas Kontrak' in raw_eq or 'ValiditasKontrak' in raw_eq:
+            cleaned = '"ValiditasKontrak" = f(O_"kognitif") - (sum M_"laten" + I_"artifisial")'
+        elif 'Validitas Konsensus Algoritmik' in raw_eq:
+            cleaned = '"ValiditasKonsensus" = "lim"_(M -> oo) (O_"kognitif" - E_"bawah_sadar") = 0'
+        else:
+            cleaned = clean_to_typst_math(raw_eq)
         explanation = get_math_accessible_explanation(raw_eq)
         exp_typ = ""
         if explanation:
             safe_exp = clean_inline_for_typst(explanation)
             exp_typ = f"\n#v(0.3em)\n#align(center)[#block(width: 90%)[#set text(size: 8pt, style: \"italic\", fill: luma(70))\n{safe_exp}]]\n"
         idx = len(math_blocks)
-        math_blocks.append(f"\n#v(0.85em)\n$ {cleaned} $\n{exp_typ}#v(0.85em)\n")
+        math_blocks.append(f"\n#v(0.85em)\n#block(width: 100%)[#set text(size: 8.8pt)\n$ {cleaned} $]\n{exp_typ}#v(0.85em)\n")
         return f"\n__TYPST_MATH_BLOCK_{idx}__\n"
     math_pattern = re.compile(r'\$\$(.*?)\$\$|\\\[(.*?)\\\]', re.DOTALL)
     t = math_pattern.sub(stash_display_math, t)
