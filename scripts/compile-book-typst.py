@@ -197,7 +197,7 @@ def render_typst_table(table_text):
         else: col_specs.append("0.85fr")
     col_str = ", ".join(col_specs)
     out = [
-        f"\n#v(0.85em)", f"#align(center)[",
+        f"\n#v(0.85em)", f"#align(center)[#block(breakable: false)[",
         f"  #set text(size: {font_size})",
         f"  #set par(leading: {leading}, first-line-indent: 0pt, justify: false)",
         f"  #table(",
@@ -214,7 +214,7 @@ def render_typst_table(table_text):
             clean_c = clean_inline_for_typst(val)
             out.append(f"    [ {clean_c} ],")
     out.append("  )")
-    out.append("]")
+    out.append("]]")
     out.append("#v(0.85em)\n")
     return "\n".join(out)
 
@@ -223,7 +223,7 @@ def render_typst_diagram(diagram_raw):
     if 'Aku merasa sangat kesepian' in raw:
         return """
 #v(0.85em)
-#align(center)[#block(width: 92%, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
+#align(center)[#block(width: 92%, breakable: false, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
   #set text(size: 8pt, font: "Libertinus Serif")
   #align(center)[*Bagan 1.1: Alur Komputasional Pemrosesan Input Afektif Menuju Empati Sintetis*]
   #v(0.5em)
@@ -239,7 +239,7 @@ def render_typst_diagram(diagram_raw):
     elif 'Lonjakan Dopamin' in raw or 'Ekspresi Kesepian/Kerentanan' in raw:
         return """
 #v(0.85em)
-#align(center)[#block(width: 92%, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
+#align(center)[#block(width: 92%, breakable: false, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
   #set text(size: 8pt, font: "Libertinus Serif")
   #align(center)[*Bagan 2.1: Siklus Umpan Balik Neuro-Afektif Mesin Terhadap Kerentanan Pengguna*]
   #v(0.5em)
@@ -257,7 +257,7 @@ def render_typst_diagram(diagram_raw):
     elif 'Sensasi Keintiman' in raw and 'Kalkulasi Probabilitas Afektif' in raw:
         return """
 #v(0.85em)
-#align(center)[#block(width: 95%, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
+#align(center)[#block(width: 95%, breakable: false, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
   #set text(size: 8pt, font: "Libertinus Serif")
   #align(center)[*Bagan 2.2: Loop Tertutup Resonansi Afektif Komputasional*]
   #v(0.5em)
@@ -279,7 +279,7 @@ def render_typst_diagram(diagram_raw):
     elif 'Arsitektur Algoritma Manipulatif' in raw or 'Tanggung jawab Perdata Korporasi' in raw:
         return """
 #v(0.85em)
-#align(center)[#block(width: 95%, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
+#align(center)[#block(width: 95%, breakable: false, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
   #set text(size: 8pt, font: "Libertinus Serif")
   #align(center)[*Bagan 2.3: Rantai Kausalitas Tanggung Jawab Perdata atas Eksploitasi Algoritmik*]
   #v(0.5em)
@@ -301,7 +301,7 @@ def render_typst_diagram(diagram_raw):
     elif 'Null and Void' in raw or 'Manipulasi Algoritmik (GenAI/Dark Patterns)' in raw:
         return """
 #v(0.85em)
-#align(center)[#block(width: 92%, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
+#align(center)[#block(width: 92%, breakable: false, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
   #set text(size: 8pt, font: "Libertinus Serif")
   #align(center)[*Bagan 7.1: Rantai Kausalitas Yuridis Pembatalan Perjanjian Akibat Manipulasi Algoritmik*]
   #v(0.5em)
@@ -317,7 +317,7 @@ def render_typst_diagram(diagram_raw):
     elif 'Analisis Forensik Linguistik' in raw or 'Pola Retoris Manipulatif' in raw:
         return """
 #v(0.85em)
-#align(center)[#block(width: 95%, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
+#align(center)[#block(width: 95%, breakable: false, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
   #set text(size: 8pt, font: "Libertinus Serif")
   #align(center)[*Bagan 8.1: Metodologi Audit Forensik Linguistik dalam Pembuktian Cacat Kehendak*]
   #v(0.5em)
@@ -337,7 +337,7 @@ def render_typst_diagram(diagram_raw):
         content = " ".join(lines)
         return f"""
 #v(0.85em)
-#align(center)[#block(width: 90%, stroke: 0.6pt + luma(100), inset: 8pt, radius: 0pt)[
+#align(center)[#block(width: 90%, breakable: false, stroke: 0.6pt + luma(100), inset: 8pt, radius: 0pt)[
   #set text(size: 8pt, font: "Libertinus Serif")
   #align(center)[{content}]
 ]]
@@ -424,7 +424,7 @@ def clean_chapter_markdown_to_typst(md_content):
             safe_exp = clean_inline_for_typst(explanation)
             exp_typ = f"\n#v(0.3em)\n#align(center)[#block(width: 90%)[#set text(size: 8pt, style: \"italic\", fill: luma(70))\n{safe_exp}]]\n"
         idx = len(math_blocks)
-        math_blocks.append(f"\n#v(0.85em)\n#block(width: 100%)[#set text(size: 8.8pt)\n$ {cleaned} $]\n{exp_typ}#v(0.85em)\n")
+        math_blocks.append(f"\n#v(0.85em)\n#block(width: 100%, breakable: false)[#set text(size: 8.8pt)\n$ {cleaned} ${exp_typ}]\n#v(0.85em)\n")
         return f"\n__TYPST_MATH_BLOCK_{idx}__\n"
     math_pattern = re.compile(r'\$\$(.*?)\$\$|\\\[(.*?)\\\]', re.DOTALL)
     t = math_pattern.sub(stash_display_math, t)
@@ -481,7 +481,10 @@ def clean_chapter_markdown_to_typst(md_content):
                 processed_lines.append('=== ' + clean_inline_for_typst(clean_title))
             else:
                 clean_title = re.sub(r'^Sub-bab\s+\d+\.\d+:\s*', '', clean_title).strip()
-                processed_lines.append('== ' + clean_inline_for_typst(clean_title))
+                if re.match(r'^\d+\.\d+\b', clean_title):
+                    processed_lines.append('== ' + clean_inline_for_typst(clean_title))
+                else:
+                    processed_lines.append('=== ' + clean_inline_for_typst(clean_title))
             continue
         elif s.startswith('- ') or s.startswith('* '):
             processed_lines.append('- ' + clean_inline_for_typst(s[2:]))

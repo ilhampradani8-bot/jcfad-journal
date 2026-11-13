@@ -37,27 +37,22 @@ def apply_publisher_watermark_and_lock(
         w, h = rect.width, rect.height
         cx, cy = w / 2.0, h / 2.0
 
-        # 1. Diagonal Center Watermark (3 lines, rotated -42 degrees)
+        # 1. Diagonal Center Watermark (2 compact lines, 100% inside page bounds, rotated -38 degrees)
         tw_diag = fitz.TextWriter(rect)
         if lang == "en":
             line1 = "WEB PREVIEW ONLY • DO NOT DISTRIBUTE"
             line2 = "COPYRIGHT © 2026 ILHAM PRADANI"
-            line3 = edition_label
         else:
-            line1 = "PRATINJAU WEB • DILARANG MENGUNDUH / MENCETAK"
+            line1 = "PRATINJAU WEB • DILARANG MENGUNDUH"
             line2 = "HAK CIPTA © 2026 ILHAM PRADANI"
-            line3 = edition_label
 
-        # Calculate centered positions before rotation
-        w1 = font_bold.text_length(line1, fontsize=18)
-        w2 = font_bold.text_length(line2, fontsize=15)
-        w3 = font_reg.text_length(line3, fontsize=10.5)
+        w1 = font_bold.text_length(line1, fontsize=14)
+        w2 = font_bold.text_length(line2, fontsize=11.5)
 
-        tw_diag.append((cx - w1 / 2.0, cy - 18), line1, font=font_bold, fontsize=18)
-        tw_diag.append((cx - w2 / 2.0, cy + 6), line2, font=font_bold, fontsize=15)
-        tw_diag.append((cx - w3 / 2.0, cy + 25), line3, font=font_reg, fontsize=10.5)
+        tw_diag.append((cx - w1 / 2.0, cy - 8), line1, font=font_bold, fontsize=14)
+        tw_diag.append((cx - w2 / 2.0, cy + 12), line2, font=font_bold, fontsize=11.5)
 
-        rot_matrix = fitz.Matrix(-42)
+        rot_matrix = fitz.Matrix(-38)
         tw_diag.write_text(
             page,
             color=(0.55, 0.12, 0.12),
@@ -66,28 +61,14 @@ def apply_publisher_watermark_and_lock(
             overlay=True,
         )
 
-        # 2. Secondary Subtle Diagonal Stamp (Upper & Lower thirds)
-        tw_sub = fitz.TextWriter(rect)
-        sub_text = "PROTECTED PUBLISHER COPY • JCFAD ACADEMIC PRESS • ALL RIGHTS RESERVED"
-        ws = font_reg.text_length(sub_text, fontsize=8.5)
-        tw_sub.append((cx - ws / 2.0, cy - h * 0.27), sub_text, font=font_reg, fontsize=8.5)
-        tw_sub.append((cx - ws / 2.0, cy + h * 0.27), sub_text, font=font_reg, fontsize=8.5)
-        tw_sub.write_text(
-            page,
-            color=(0.35, 0.35, 0.40),
-            opacity=0.09,
-            morph=(fitz.Point(cx, cy), rot_matrix),
-            overlay=True,
-        )
-
-        # 3. Bottom Margin Micro-Stamp (Horizontal Security Footer)
+        # 2. Bottom Margin Micro-Stamp (Horizontal Security Footer)
         tw_foot = fitz.TextWriter(rect)
         if lang == "en":
-            foot_text = f"PROTECTED WEB VIEW (PAGE {page_idx + 1} OF {len(doc)}) • COMMERCIAL PRINT & EBOOK EDITION: AMAZON KDP (ISBN 9798141548437) • UNAUTHORIZED DOWNLOADING PROHIBITED"
+            foot_text = f"PROTECTED WEB VIEW (PAGE {page_idx + 1} OF {len(doc)}) • COMMERCIAL EDITION: AMAZON KDP (ISBN 9798141548437) • UNAUTHORIZED COPYING PROHIBITED"
         else:
-            foot_text = f"PRATINJAU WEB TERPROTEKSI (HAL {page_idx + 1} DARI {len(doc)}) • EDISI KOMERSIAL RESMI: AMAZON KDP & GOOGLE PLAY BOOKS • DILARANG MENYALIN TANPA IZIN"
-        wf = font_reg.text_length(foot_text, fontsize=5.6)
-        tw_foot.append((cx - wf / 2.0, h - 10), foot_text, font=font_reg, fontsize=5.6)
+            foot_text = f"PRATINJAU WEB TERPROTEKSI (HAL {page_idx + 1} DARI {len(doc)}) • EDISI CETAK & GOOGLE PLAY BOOKS • DILARANG MENYALIN TANPA IZIN"
+        wf = font_reg.text_length(foot_text, fontsize=5.4)
+        tw_foot.append((cx - wf / 2.0, h - 10), foot_text, font=font_reg, fontsize=5.4)
         tw_foot.write_text(
             page,
             color=(0.45, 0.15, 0.15),
@@ -186,3 +167,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

@@ -250,8 +250,8 @@ const bookSchema = {
           <div class="edition-selector">
             <label for="edition-select">Pilih Format Cetak Bahasa Indonesia:</label>
             <select id="edition-select" class="edition-dropdown">
-              <option value="/books/preview-indo-6x9-watermarked.pdf" selected>🇮🇩 Edisi Siap Cetak Internasional 6" × 9" — Bahasa Indonesia (318 Halaman)</option>
-              <option value="/books/preview-indo-watermarked.pdf">📚 Edisi Siap Cetak Monograf ISO-B5 — Bahasa Indonesia (268 Halaman)</option>
+              <option value="/books/preview-indo-6x9-watermarked.pdf?v=2" selected>🇮🇩 Edisi Siap Cetak Internasional 6" × 9" — Bahasa Indonesia (319 Halaman)</option>
+              <option value="/books/preview-indo-watermarked.pdf?v=2">📚 Edisi Siap Cetak Monograf ISO-B5 — Bahasa Indonesia (268 Halaman)</option>
             </select>
           </div>
         </div>
@@ -261,14 +261,14 @@ const bookSchema = {
           <div class="toolbar-group">
             <button id="prev-page" class="tool-btn" type="button">◀ Sebelumnya</button>
             <div class="page-indicator">
-              Hal <input id="page-num-input" type="number" min="1" value="1" class="page-input" /> dari <span id="page-count">318</span>
+              Hal <input id="page-num-input" type="number" min="1" value="1" class="page-input" /> dari <span id="page-count">319</span>
             </div>
             <button id="next-page" class="tool-btn" type="button">Berikutnya ▶</button>
           </div>
 
           <div class="toolbar-group">
             <button id="zoom-out" class="tool-btn" type="button" title="Perkecil">−</button>
-            <span id="zoom-level" class="zoom-label">125%</span>
+            <span id="zoom-level" class="zoom-label">100%</span>
             <button id="zoom-in" class="tool-btn" type="button" title="Perbesar">+</button>
             <button id="fullscreen-btn" class="tool-btn" type="button">⛶ Layar Penuh</button>
           </div>
@@ -276,17 +276,10 @@ const bookSchema = {
 
         <!-- Protected Canvas Stage -->
         <div id="canvas-stage" class="pdf-canvas-stage" oncontextmenu="return false;">
-          <div id="reader-loading" class="reader-loading">Memuat halaman terproteksi & watermark penerbit...</div>
+          <div id="reader-loading" class="reader-loading">Memuat halaman PDF siap cetak...</div>
           <div class="canvas-wrapper">
             <canvas id="pdf-render-canvas" class="protected-canvas"></canvas>
-            <!-- Live CSS + DOM Anti-Screenshot / Anti-Save Watermark Shield -->
-            <div class="watermark-shield" oncontextmenu="return false;">
-              <div class="wm-pattern">
-                <span>PROTECTED WEB VIEW • © 2026 ILHAM PRADANI • ISBN 979-8-14154-843-7 • DO NOT DOWNLOAD</span>
-                <span>PUBLISHER REVIEW COPY • AMAZON KDP & GOOGLE PLAY BOOKS • UNAUTHORIZED COPYING PROHIBITED</span>
-                <span>PROTECTED WEB VIEW • © 2026 ILHAM PRADANI • ISBN 979-8-14154-843-7 • DO NOT DOWNLOAD</span>
-              </div>
-            </div>
+            <div class="watermark-shield" oncontextmenu="return false;"></div>
           </div>
         </div>
       </section>
@@ -438,8 +431,6 @@ const bookSchema = {
           const renderTask = page.render(renderContext);
 
           renderTask.promise.then(function () {
-            // Stamp dynamic watermark directly onto the canvas pixels after PDF page renders
-            stampCanvasWatermark(ctx, canvas.width, canvas.height, num, pdfDoc.numPages);
             pageRendering = false;
             if (loadingEl) loadingEl.style.display = "none";
             if (pageNumPending !== null) {

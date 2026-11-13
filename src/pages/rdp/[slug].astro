@@ -4,32 +4,28 @@ export function getStaticPaths() {
     {
       params: { slug: "kecerdasan-manipulatif" },
       props: {
-        title: "Kecerdasan Manipulatif — Edisi Siap Cetak Bahasa Indonesia (6×9)",
+        title: "Kecerdasan Manipulatif — Naskah Siap Cetak Bahasa Indonesia",
         pdfUrl: "/books/preview-indo-6x9-watermarked.pdf",
-        totalPages: 318,
       },
     },
     {
       params: { slug: "empati-sintetis" },
       props: {
-        title: "Empati Sintetis — Edisi Siap Cetak Bahasa Indonesia (ISO-B5)",
-        pdfUrl: "/books/preview-indo-watermarked.pdf",
-        totalPages: 268,
+        title: "Empati Sintetis — Naskah Siap Cetak Bahasa Indonesia",
+        pdfUrl: "/books/preview-indo-6x9-watermarked.pdf",
       },
     },
     {
       params: { slug: "manipulative-intelligence" },
       props: {
-        title: "Manipulative Intelligence — International Edition (6×9)",
+        title: "Manipulative Intelligence — International Edition",
         pdfUrl: "/books/preview-english-watermarked.pdf",
-        totalPages: 267,
       },
     },
   ];
 }
 
-const { slug } = Astro.params;
-const { title, pdfUrl, totalPages } = Astro.props;
+const { title, pdfUrl } = Astro.props;
 ---
 
 <!doctype html>
@@ -51,7 +47,7 @@ const { title, pdfUrl, totalPages } = Astro.props;
         width: 100vw;
         height: 100vh;
         overflow: hidden;
-        background: #14171c;
+        background: #202328;
         color: #e2e8f0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         user-select: none;
@@ -59,22 +55,21 @@ const { title, pdfUrl, totalPages } = Astro.props;
       }
 
       .rdp-topbar {
-        height: 44px;
+        height: 42px;
         width: 100vw;
-        background: #0b0d10;
-        border-bottom: 1px solid #262b33;
+        background: #111317;
+        border-bottom: 1px solid #2b303a;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 14px;
+        padding: 0 16px;
         gap: 10px;
-        z-index: 50;
       }
 
       .rdp-title {
         font-size: 13px;
         font-weight: 600;
-        color: #cbd5e1;
+        color: #d1d5db;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -87,9 +82,9 @@ const { title, pdfUrl, totalPages } = Astro.props;
       }
 
       .rdp-btn {
-        background: #1e232b;
+        background: #1f242d;
         color: #e2e8f0;
-        border: 1px solid #323946;
+        border: 1px solid #353c49;
         border-radius: 4px;
         padding: 4px 10px;
         font-size: 12px;
@@ -98,22 +93,22 @@ const { title, pdfUrl, totalPages } = Astro.props;
       }
 
       .rdp-btn:hover {
-        background: #2c333f;
+        background: #2d3440;
       }
 
       .rdp-page-info {
         font-size: 12px;
-        color: #94a3b8;
+        color: #9ca3af;
         display: flex;
         align-items: center;
         gap: 5px;
       }
 
       .rdp-page-input {
-        width: 52px;
-        background: #14171c;
+        width: 54px;
+        background: #16191f;
         color: #fff;
-        border: 1px solid #323946;
+        border: 1px solid #353c49;
         border-radius: 4px;
         padding: 3px 5px;
         text-align: center;
@@ -121,68 +116,38 @@ const { title, pdfUrl, totalPages } = Astro.props;
         font-weight: 600;
       }
 
-      .rdp-switch {
-        background: #14171c;
-        color: #cbd5e1;
-        border: 1px solid #323946;
-        border-radius: 4px;
-        padding: 4px 8px;
-        font-size: 12px;
-        cursor: pointer;
-      }
-
       .rdp-viewport {
         width: 100vw;
-        height: calc(100vh - 44px);
+        height: calc(100vh - 42px);
         overflow-y: auto;
         overflow-x: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 16px 0 40px;
-        gap: 16px;
-        background: #14171c;
+        padding: 20px 12px 48px;
+        background: #202328;
+        text-align: center;
       }
 
       .rdp-page-slot {
         position: relative;
         background: #ffffff;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.55);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+        margin: 0 auto 18px auto;
+        display: block;
       }
 
       .rdp-page-slot canvas {
         display: block;
         width: 100%;
-        height: 100%;
+        height: auto;
         pointer-events: none;
         user-select: none;
         -webkit-user-drag: none;
       }
 
-      .rdp-watermark-overlay {
+      .rdp-shield {
         position: absolute;
         inset: 0;
-        pointer-events: auto;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .rdp-watermark-overlay span {
-        transform: rotate(-38deg);
-        font-size: 15px;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        color: rgba(185, 28, 28, 0.11);
-        white-space: nowrap;
-        pointer-events: none;
-        text-align: center;
-        line-height: 2.2;
+        z-index: 5;
+        background: transparent;
       }
 
       @media print {
@@ -190,7 +155,7 @@ const { title, pdfUrl, totalPages } = Astro.props;
           display: none !important;
         }
         body::after {
-          content: "DOKUMEN TERPROTEKSI — DILARANG MENCETAK / MENGUNDUH (© 2026 ILHAM PRADANI)";
+          content: "DOKUMEN TERPROTEKSI — DILARANG MENCETAK ATAU MENGUNDUH (© 2026 ILHAM PRADANI)";
           display: block !important;
           font-size: 18pt;
           padding: 2rem;
@@ -204,20 +169,11 @@ const { title, pdfUrl, totalPages } = Astro.props;
       <div class="rdp-title">{title}</div>
 
       <div class="rdp-controls">
-        <select id="rdp-edition" class="rdp-switch">
-          <option value="/rdp/kecerdasan-manipulatif" selected={slug === "kecerdasan-manipulatif"}>
-            Bahasa Indonesia 6"×9" (318 Hal)
-          </option>
-          <option value="/rdp/empati-sintetis" selected={slug === "empati-sintetis"}>
-            Bahasa Indonesia ISO-B5 (268 Hal)
-          </option>
-        </select>
-
         <button id="btn-prev" class="rdp-btn" type="button">◀</button>
         <div class="rdp-page-info">
-          <input id="input-page" class="rdp-page-input" type="number" min="1" max={totalPages} value="1" />
+          <input id="input-page" class="rdp-page-input" type="number" min="1" value="1" />
           <span>/</span>
-          <span id="label-total">{totalPages}</span>
+          <span id="label-total">...</span>
         </div>
         <button id="btn-next" class="rdp-btn" type="button">▶</button>
 
@@ -232,7 +188,6 @@ const { title, pdfUrl, totalPages } = Astro.props;
     <script is:inline src="/vendor/pdfjs/pdf.min.js"></script>
     <script is:inline>
       (function () {
-        // Block Save, Print, View Source
         window.addEventListener("keydown", function (e) {
           if ((e.ctrlKey || e.metaKey) && ["s", "p", "u"].includes((e.key || "").toLowerCase())) {
             e.preventDefault();
@@ -250,44 +205,13 @@ const { title, pdfUrl, totalPages } = Astro.props;
         const btnNext = document.getElementById("btn-next");
         const btnZoomIn = document.getElementById("btn-zoom-in");
         const btnZoomOut = document.getElementById("btn-zoom-out");
-        const selectEdition = document.getElementById("rdp-edition");
-
-        if (selectEdition) {
-          selectEdition.addEventListener("change", function () {
-            window.location.href = selectEdition.value;
-          });
-        }
 
         let pdfDoc = null;
         let zoomFactor = 1.0;
-        let baseScale = 1.45;
+        let baseScale = 1.35;
         let pageSlots = [];
         let renderedPages = new Set();
         let observer = null;
-
-        function stampWatermark(ctx, w, h, pageNum, total) {
-          ctx.save();
-          ctx.translate(w / 2, h / 2);
-          ctx.rotate((-38 * Math.PI) / 180);
-          ctx.textAlign = "center";
-          ctx.fillStyle = "rgba(185, 28, 28, 0.11)";
-          ctx.font = "bold 22px sans-serif";
-          ctx.fillText("PRATINJAU WEB TERPROTEKSI • DILARANG MENGUNDUH", 0, -12);
-          ctx.font = "bold 15px sans-serif";
-          ctx.fillText("HAK CIPTA © 2026 ILHAM PRADANI • SIAP CETAK", 0, 14);
-          ctx.restore();
-
-          ctx.save();
-          ctx.fillStyle = "rgba(185, 28, 28, 0.55)";
-          ctx.font = "bold 10px monospace";
-          ctx.textAlign = "center";
-          ctx.fillText(
-            "🔒 PRATINJAU TERPROTEKSI • HALAMAN " + pageNum + "/" + total + " • UNDUH & CETAK DINONAKTIFKAN",
-            w / 2,
-            14
-          );
-          ctx.restore();
-        }
 
         function renderPageSlot(pageNum) {
           if (!pdfDoc || renderedPages.has(pageNum)) return;
@@ -300,26 +224,22 @@ const { title, pdfUrl, totalPages } = Astro.props;
             const cssViewport = page.getViewport({ scale: baseScale * zoomFactor });
             const renderViewport = page.getViewport({ scale: baseScale * zoomFactor * dpr });
 
-            slot.style.width = Math.floor(cssViewport.width) + "px";
-            slot.style.height = Math.floor(cssViewport.height) + "px";
+            slot.style.width = Math.round(cssViewport.width) + "px";
+            slot.style.minHeight = Math.round(cssViewport.height) + "px";
 
             let canvas = slot.querySelector("canvas");
             if (!canvas) {
               canvas = document.createElement("canvas");
               slot.insertBefore(canvas, slot.firstChild);
             }
-            canvas.width = Math.floor(renderViewport.width);
-            canvas.height = Math.floor(renderViewport.height);
+            canvas.width = Math.round(renderViewport.width);
+            canvas.height = Math.round(renderViewport.height);
 
             const ctx = canvas.getContext("2d");
-            page
-              .render({
-                canvasContext: ctx,
-                viewport: renderViewport,
-              })
-              .promise.then(function () {
-                stampWatermark(ctx, canvas.width, canvas.height, pageNum, pdfDoc.numPages);
-              });
+            page.render({
+              canvasContext: ctx,
+              viewport: renderViewport,
+            });
           });
         }
 
@@ -342,26 +262,24 @@ const { title, pdfUrl, totalPages } = Astro.props;
             },
             {
               root: viewportEl,
-              rootMargin: "600px 0px",
+              rootMargin: "800px 0px",
               threshold: 0.01,
             }
           );
 
-          const w = Math.floor(firstPageViewport.width);
-          const h = Math.floor(firstPageViewport.height);
+          const w = Math.round(firstPageViewport.width);
+          const h = Math.round(firstPageViewport.height);
 
           for (let i = 1; i <= pdfDoc.numPages; i++) {
             const slot = document.createElement("div");
             slot.className = "rdp-page-slot";
             slot.setAttribute("data-page", i);
             slot.style.width = w + "px";
-            slot.style.height = h + "px";
+            slot.style.minHeight = h + "px";
 
-            const overlay = document.createElement("div");
-            overlay.className = "rdp-watermark-overlay";
-            overlay.innerHTML =
-              "<span>PRATINJAU WEB TERPROTEKSI • © 2026 ILHAM PRADANI<br/>DILARANG MENGUNDUH ATAU MENYALIN NASKAH</span>";
-            slot.appendChild(overlay);
+            const shield = document.createElement("div");
+            shield.className = "rdp-shield";
+            slot.appendChild(shield);
 
             viewportEl.appendChild(slot);
             pageSlots.push(slot);
@@ -377,7 +295,7 @@ const { title, pdfUrl, totalPages } = Astro.props;
 
         viewportEl.addEventListener("scroll", function () {
           if (!pageSlots.length) return;
-          const scrollTop = viewportEl.scrollTop + 120;
+          const scrollTop = viewportEl.scrollTop + 140;
           for (let i = 0; i < pageSlots.length; i++) {
             const slot = pageSlots[i];
             if (slot.offsetTop + slot.offsetHeight >= scrollTop) {
@@ -426,14 +344,13 @@ const { title, pdfUrl, totalPages } = Astro.props;
         });
 
         window.pdfjsLib.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.min.js";
-        window.pdfjsLib.getDocument(pdfUrl).promise.then(function (doc) {
+        window.pdfjsLib.getDocument(pdfUrl + "?v=2").promise.then(function (doc) {
           pdfDoc = doc;
           labelTotal.textContent = doc.numPages;
           inputPage.max = doc.numPages;
-          // Auto-fit width nicely on desktop/mobile
           doc.getPage(1).then(function (page) {
             const rawVp = page.getViewport({ scale: 1.0 });
-            const maxW = Math.min(window.innerWidth - 32, 920);
+            const maxW = Math.min(window.innerWidth - 36, 860);
             baseScale = maxW / rawVp.width;
             const vp = page.getViewport({ scale: baseScale * zoomFactor });
             buildSlots(vp);
