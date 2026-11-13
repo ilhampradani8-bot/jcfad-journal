@@ -1,0 +1,445 @@
+---
+export function getStaticPaths() {
+  return [
+    {
+      params: { slug: "kecerdasan-manipulatif" },
+      props: {
+        title: "Kecerdasan Manipulatif — Edisi Siap Cetak Bahasa Indonesia (6×9)",
+        pdfUrl: "/books/preview-indo-6x9-watermarked.pdf",
+        totalPages: 318,
+      },
+    },
+    {
+      params: { slug: "empati-sintetis" },
+      props: {
+        title: "Empati Sintetis — Edisi Siap Cetak Bahasa Indonesia (ISO-B5)",
+        pdfUrl: "/books/preview-indo-watermarked.pdf",
+        totalPages: 268,
+      },
+    },
+    {
+      params: { slug: "manipulative-intelligence" },
+      props: {
+        title: "Manipulative Intelligence — International Edition (6×9)",
+        pdfUrl: "/books/preview-english-watermarked.pdf",
+        totalPages: 267,
+      },
+    },
+  ];
+}
+
+const { slug } = Astro.params;
+const { title, pdfUrl, totalPages } = Astro.props;
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title}</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background: #14171c;
+        color: #e2e8f0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      .rdp-topbar {
+        height: 44px;
+        width: 100vw;
+        background: #0b0d10;
+        border-bottom: 1px solid #262b33;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 14px;
+        gap: 10px;
+        z-index: 50;
+      }
+
+      .rdp-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #cbd5e1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .rdp-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .rdp-btn {
+        background: #1e232b;
+        color: #e2e8f0;
+        border: 1px solid #323946;
+        border-radius: 4px;
+        padding: 4px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .rdp-btn:hover {
+        background: #2c333f;
+      }
+
+      .rdp-page-info {
+        font-size: 12px;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .rdp-page-input {
+        width: 52px;
+        background: #14171c;
+        color: #fff;
+        border: 1px solid #323946;
+        border-radius: 4px;
+        padding: 3px 5px;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .rdp-switch {
+        background: #14171c;
+        color: #cbd5e1;
+        border: 1px solid #323946;
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .rdp-viewport {
+        width: 100vw;
+        height: calc(100vh - 44px);
+        overflow-y: auto;
+        overflow-x: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px 0 40px;
+        gap: 16px;
+        background: #14171c;
+      }
+
+      .rdp-page-slot {
+        position: relative;
+        background: #ffffff;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.55);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .rdp-page-slot canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+
+      .rdp-watermark-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: auto;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .rdp-watermark-overlay span {
+        transform: rotate(-38deg);
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: rgba(185, 28, 28, 0.11);
+        white-space: nowrap;
+        pointer-events: none;
+        text-align: center;
+        line-height: 2.2;
+      }
+
+      @media print {
+        body * {
+          display: none !important;
+        }
+        body::after {
+          content: "DOKUMEN TERPROTEKSI — DILARANG MENCETAK / MENGUNDUH (© 2026 ILHAM PRADANI)";
+          display: block !important;
+          font-size: 18pt;
+          padding: 2rem;
+          color: #000;
+        }
+      }
+    </style>
+  </head>
+  <body oncontextmenu="return false;">
+    <header class="rdp-topbar">
+      <div class="rdp-title">{title}</div>
+
+      <div class="rdp-controls">
+        <select id="rdp-edition" class="rdp-switch">
+          <option value="/rdp/kecerdasan-manipulatif" selected={slug === "kecerdasan-manipulatif"}>
+            Bahasa Indonesia 6"×9" (318 Hal)
+          </option>
+          <option value="/rdp/empati-sintetis" selected={slug === "empati-sintetis"}>
+            Bahasa Indonesia ISO-B5 (268 Hal)
+          </option>
+        </select>
+
+        <button id="btn-prev" class="rdp-btn" type="button">◀</button>
+        <div class="rdp-page-info">
+          <input id="input-page" class="rdp-page-input" type="number" min="1" max={totalPages} value="1" />
+          <span>/</span>
+          <span id="label-total">{totalPages}</span>
+        </div>
+        <button id="btn-next" class="rdp-btn" type="button">▶</button>
+
+        <button id="btn-zoom-out" class="rdp-btn" type="button">−</button>
+        <span id="label-zoom" class="rdp-page-info">100%</span>
+        <button id="btn-zoom-in" class="rdp-btn" type="button">+</button>
+      </div>
+    </header>
+
+    <main id="rdp-viewport" class="rdp-viewport" data-pdf-url={pdfUrl} oncontextmenu="return false;"></main>
+
+    <script is:inline src="/vendor/pdfjs/pdf.min.js"></script>
+    <script is:inline>
+      (function () {
+        // Block Save, Print, View Source
+        window.addEventListener("keydown", function (e) {
+          if ((e.ctrlKey || e.metaKey) && ["s", "p", "u"].includes((e.key || "").toLowerCase())) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+          }
+        });
+
+        const viewportEl = document.getElementById("rdp-viewport");
+        const pdfUrl = viewportEl.getAttribute("data-pdf-url");
+        const inputPage = document.getElementById("input-page");
+        const labelTotal = document.getElementById("label-total");
+        const labelZoom = document.getElementById("label-zoom");
+        const btnPrev = document.getElementById("btn-prev");
+        const btnNext = document.getElementById("btn-next");
+        const btnZoomIn = document.getElementById("btn-zoom-in");
+        const btnZoomOut = document.getElementById("btn-zoom-out");
+        const selectEdition = document.getElementById("rdp-edition");
+
+        if (selectEdition) {
+          selectEdition.addEventListener("change", function () {
+            window.location.href = selectEdition.value;
+          });
+        }
+
+        let pdfDoc = null;
+        let zoomFactor = 1.0;
+        let baseScale = 1.45;
+        let pageSlots = [];
+        let renderedPages = new Set();
+        let observer = null;
+
+        function stampWatermark(ctx, w, h, pageNum, total) {
+          ctx.save();
+          ctx.translate(w / 2, h / 2);
+          ctx.rotate((-38 * Math.PI) / 180);
+          ctx.textAlign = "center";
+          ctx.fillStyle = "rgba(185, 28, 28, 0.11)";
+          ctx.font = "bold 22px sans-serif";
+          ctx.fillText("PRATINJAU WEB TERPROTEKSI • DILARANG MENGUNDUH", 0, -12);
+          ctx.font = "bold 15px sans-serif";
+          ctx.fillText("HAK CIPTA © 2026 ILHAM PRADANI • SIAP CETAK", 0, 14);
+          ctx.restore();
+
+          ctx.save();
+          ctx.fillStyle = "rgba(185, 28, 28, 0.55)";
+          ctx.font = "bold 10px monospace";
+          ctx.textAlign = "center";
+          ctx.fillText(
+            "🔒 PRATINJAU TERPROTEKSI • HALAMAN " + pageNum + "/" + total + " • UNDUH & CETAK DINONAKTIFKAN",
+            w / 2,
+            14
+          );
+          ctx.restore();
+        }
+
+        function renderPageSlot(pageNum) {
+          if (!pdfDoc || renderedPages.has(pageNum)) return;
+          renderedPages.add(pageNum);
+          const slot = pageSlots[pageNum - 1];
+          if (!slot) return;
+
+          pdfDoc.getPage(pageNum).then(function (page) {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const cssViewport = page.getViewport({ scale: baseScale * zoomFactor });
+            const renderViewport = page.getViewport({ scale: baseScale * zoomFactor * dpr });
+
+            slot.style.width = Math.floor(cssViewport.width) + "px";
+            slot.style.height = Math.floor(cssViewport.height) + "px";
+
+            let canvas = slot.querySelector("canvas");
+            if (!canvas) {
+              canvas = document.createElement("canvas");
+              slot.insertBefore(canvas, slot.firstChild);
+            }
+            canvas.width = Math.floor(renderViewport.width);
+            canvas.height = Math.floor(renderViewport.height);
+
+            const ctx = canvas.getContext("2d");
+            page
+              .render({
+                canvasContext: ctx,
+                viewport: renderViewport,
+              })
+              .promise.then(function () {
+                stampWatermark(ctx, canvas.width, canvas.height, pageNum, pdfDoc.numPages);
+              });
+          });
+        }
+
+        function buildSlots(firstPageViewport) {
+          viewportEl.innerHTML = "";
+          pageSlots = [];
+          renderedPages.clear();
+
+          if (observer) observer.disconnect();
+          observer = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                  const p = parseInt(entry.target.getAttribute("data-page"), 10);
+                  renderPageSlot(p);
+                  if (p > 1) renderPageSlot(p - 1);
+                  if (p < pdfDoc.numPages) renderPageSlot(p + 1);
+                }
+              });
+            },
+            {
+              root: viewportEl,
+              rootMargin: "600px 0px",
+              threshold: 0.01,
+            }
+          );
+
+          const w = Math.floor(firstPageViewport.width);
+          const h = Math.floor(firstPageViewport.height);
+
+          for (let i = 1; i <= pdfDoc.numPages; i++) {
+            const slot = document.createElement("div");
+            slot.className = "rdp-page-slot";
+            slot.setAttribute("data-page", i);
+            slot.style.width = w + "px";
+            slot.style.height = h + "px";
+
+            const overlay = document.createElement("div");
+            overlay.className = "rdp-watermark-overlay";
+            overlay.innerHTML =
+              "<span>PRATINJAU WEB TERPROTEKSI • © 2026 ILHAM PRADANI<br/>DILARANG MENGUNDUH ATAU MENYALIN NASKAH</span>";
+            slot.appendChild(overlay);
+
+            viewportEl.appendChild(slot);
+            pageSlots.push(slot);
+            observer.observe(slot);
+          }
+        }
+
+        function scrollToPage(p) {
+          if (!pageSlots[p - 1]) return;
+          pageSlots[p - 1].scrollIntoView({ behavior: "instant", block: "start" });
+          inputPage.value = p;
+        }
+
+        viewportEl.addEventListener("scroll", function () {
+          if (!pageSlots.length) return;
+          const scrollTop = viewportEl.scrollTop + 120;
+          for (let i = 0; i < pageSlots.length; i++) {
+            const slot = pageSlots[i];
+            if (slot.offsetTop + slot.offsetHeight >= scrollTop) {
+              inputPage.value = i + 1;
+              break;
+            }
+          }
+        });
+
+        btnPrev.addEventListener("click", function () {
+          const cur = parseInt(inputPage.value, 10) || 1;
+          if (cur > 1) scrollToPage(cur - 1);
+        });
+
+        btnNext.addEventListener("click", function () {
+          const cur = parseInt(inputPage.value, 10) || 1;
+          if (pdfDoc && cur < pdfDoc.numPages) scrollToPage(cur + 1);
+        });
+
+        inputPage.addEventListener("change", function () {
+          if (!pdfDoc) return;
+          let v = parseInt(inputPage.value, 10) || 1;
+          if (v < 1) v = 1;
+          if (v > pdfDoc.numPages) v = pdfDoc.numPages;
+          scrollToPage(v);
+        });
+
+        function applyZoom(newZoom) {
+          if (!pdfDoc) return;
+          const currentPage = parseInt(inputPage.value, 10) || 1;
+          zoomFactor = Math.max(0.6, Math.min(2.2, Math.round(newZoom * 100) / 100));
+          labelZoom.textContent = Math.round(zoomFactor * 100) + "%";
+          pdfDoc.getPage(1).then(function (page) {
+            const vp = page.getViewport({ scale: baseScale * zoomFactor });
+            buildSlots(vp);
+            scrollToPage(currentPage);
+          });
+        }
+
+        btnZoomIn.addEventListener("click", function () {
+          applyZoom(zoomFactor + 0.15);
+        });
+
+        btnZoomOut.addEventListener("click", function () {
+          applyZoom(zoomFactor - 0.15);
+        });
+
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.min.js";
+        window.pdfjsLib.getDocument(pdfUrl).promise.then(function (doc) {
+          pdfDoc = doc;
+          labelTotal.textContent = doc.numPages;
+          inputPage.max = doc.numPages;
+          // Auto-fit width nicely on desktop/mobile
+          doc.getPage(1).then(function (page) {
+            const rawVp = page.getViewport({ scale: 1.0 });
+            const maxW = Math.min(window.innerWidth - 32, 920);
+            baseScale = maxW / rawVp.width;
+            const vp = page.getViewport({ scale: baseScale * zoomFactor });
+            buildSlots(vp);
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
