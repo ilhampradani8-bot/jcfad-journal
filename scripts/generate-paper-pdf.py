@@ -84,6 +84,7 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
     s = s.replace(r"\(", "").replace(r"\)", "")
     s = s.replace("$$", "").replace("$", "")
     s = re.sub(r"\\tag\{[^}]+\}", "", s)
+    s = re.sub(r"\\?displaystyle\b", "", s)
     s = s.replace(r"\begin{aligned}", "").replace(r"\end{aligned}", "")
     s = re.sub(r"\\(?:left|right|bigl|bigr|Bigl|Bigr|big|Big|!)", "", s)
 
@@ -92,7 +93,13 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
     s = replace_fractions(s)
 
     # Text & operatorname -> quoted string
-    s = re.sub(r"\\(?:text|operatorname)\{([^{}]+)\}", r'"\1"', s)
+    # Corrupted escaped greek letters / math symbols (\b eaten into backspace or \t into tab)
+    s = s.replace('\x08eta', ' beta ')
+    s = re.sub(r'(?:\\|\b|\s)(?:text|ext|operatorname)\{([^{}]+)\}', r' "\1" ', s)
+
+    # Subscripts with corrupted text/ext like _( ext{daily),t} or _( \text{actual} )
+    s = re.sub(r"_[\{\(]\s*(?:\\?text|ext)?\{?([^}),]+)[\}\)]\s*,\s*([a-zA-Z0-9_]+)\s*[\}\)]", r'_("\1", \2)', s)
+    s = re.sub(r"_[\{\(]\s*(?:\\?text|ext)?\{?([^}),]+)[\}\)]\s*[\}\)]", r'_("\1")', s)
 
     # Calligraphic, Blackboard, and Bold
     s = re.sub(r"\\mathcal\{([^{}]+)\}", r"cal(\1)", s)
@@ -145,7 +152,13 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
             s = re.sub(rf'(?<![a-zA-Z"]){re.escape(ev)}(?![a-zA-Z"])', f'"{ev}"', s)
 
     # Common units & descriptive words inside math -> auto quote
-    common_math_words = ["kg", "km", "hr", "sec", "min", "day", "days", "year", "years", "month", "months", "USD", "IDR", "SD", "CI", "ha", "liters", "liter", "fuel", "labour", "storage", "trans", "total", "max", "min", "obs", "ref"]
+    common_math_words = [
+        "kg", "km", "hr", "sec", "min", "day", "days", "year", "years", "month", "months",
+        "USD", "IDR", "SD", "CI", "ha", "liters", "liter", "fuel", "labour", "storage",
+        "trans", "total", "max", "min", "obs", "ref", "wave", "for", "daily", "actual",
+        "threshold", "event", "loss", "base", "risk", "rate", "cost", "price", "penalty",
+        "vs", "kn"
+    ]
     for w in common_math_words:
         s = re.sub(rf'(?<![a-zA-Z"])\b{re.escape(w)}\b(?![a-zA-Z"])', f'"{w}"', s)
 
@@ -309,7 +322,7 @@ def calculate_column_spec(rows):
         weights.append(w)
     return ", ".join(f"{w:.2f}fr" for w in weights)
 
-def render_table(rows):
+def render_table(rows, extra_quote_vars=None, failsafe_text_mode=False):
     if not rows:
         return ""
     header_row = rows[0]
@@ -352,9 +365,9 @@ def render_table(rows):
             cell = re.sub(r'([a-zA-Z0-9_]{6,})\(([^)\s]{8,})\);', r'\1(\n  \2\n);', cell)
             cell = re.sub(r'([a-zA-Z0-9_]{6,})\(([^)\s])', r'\1( \2', cell)
             cell = re.sub(r'([^(\s])\)', r'\1 )', cell)
-        return clean_inline(cell)
+        return clean_inline(cell, is_body=True, extra_quote_vars=extra_quote_vars, failsafe_text_mode=failsafe_text_mode)
 
-    header_cells = ", ".join(f"[* {clean_inline(c)} *]" for c in header_row)
+    header_cells = ", ".join(f"[* {clean_inline(c, is_body=False, extra_quote_vars=extra_quote_vars, failsafe_text_mode=failsafe_text_mode)} *]" for c in header_row)
 
     res = f"\n#v(0.5em)\n#align(center)[\n  #set text(size: {font_size})\n  #set par(leading: {leading}, justify: false)\n  #show raw: set text(size: 5.5pt)\n  #table(\n    columns: ({col_spec}),\n    inset: (x: {inset_x}, y: {inset_y}),\n    stroke: (x, y) => if y == 0 {{ (top: 1.1pt + black, bottom: 0.8pt + black) }} else if y == {len(rows)} {{ (bottom: 1.1pt + black) }} else {{ (bottom: 0.25pt + luma(210)) }},\n    table.header({header_cells}),\n"
     for r in data_rows:
@@ -496,7 +509,7 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
         s = line.strip()
         if not s:
             if in_table and table_rows:
-                out.append(render_table(table_rows))
+                out.append(render_table(table_rows, extra_quote_vars=extra_quote_vars, failsafe_text_mode=failsafe_text_mode))
                 in_table = False
                 table_rows = []
             out.append("")
@@ -505,7 +518,7 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
         math_match = re.match(r'^__MATH_BLOCK_(\d+)__$', s)
         if math_match:
             if in_table and table_rows:
-                out.append(render_table(table_rows))
+                out.append(render_table(table_rows, extra_quote_vars=extra_quote_vars, failsafe_text_mode=failsafe_text_mode))
                 in_table = False
                 table_rows = []
             out.append(math_blocks[int(math_match.group(1))])
@@ -518,7 +531,7 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
                 table_rows.append(cells)
             continue
         elif in_table:
-            out.append(render_table(table_rows))
+            out.append(render_table(table_rows, extra_quote_vars=extra_quote_vars, failsafe_text_mode=failsafe_text_mode))
             in_table = False
             table_rows = []
 
@@ -536,7 +549,7 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
             out.append(clean_inline(s, is_body=True, aggressive_unbold=aggressive_unbold, extra_quote_vars=extra_quote_vars, failsafe_text_mode=failsafe_text_mode))
 
     if in_table and table_rows:
-        out.append(render_table(table_rows))
+        out.append(render_table(table_rows, extra_quote_vars=extra_quote_vars, failsafe_text_mode=failsafe_text_mode))
 
     return "\n".join(out)
 
@@ -612,6 +625,14 @@ def build_article_pdf(article, out_pdf_path, max_attempts=4, header_mode="univer
     for attempt in range(1, max_attempts + 1):
         if attempt > 1:
             print(f"🔄 [Adaptive Self-Correction] Regenerating Attempt {attempt}/{max_attempts} for [{slug}]...")
+
+        curr_abstract = clean_inline(
+            article.get('excerpt', ''),
+            is_body=True,
+            aggressive_unbold=aggressive_unbold,
+            extra_quote_vars=extra_quote_vars,
+            failsafe_text_mode=failsafe_text_mode
+        ).replace("degC", "°C")
 
         body_text = markdown_to_typst(
             raw_content,
@@ -736,7 +757,7 @@ def build_article_pdf(article, out_pdf_path, max_attempts=4, header_mode="univer
 )[
   #text(weight: "bold", size: 8pt)[ABSTRACT] \\
   #text(size: 8pt, style: "italic")[
-    {abstract}
+    {curr_abstract}
   ]
   #v(4pt)
   #text(weight: "bold", size: 7.6pt)[Keywords:] #text(size: 7.6pt)[Pesisir Barat, Krui, Frontier Economics, Legal Certainty, Indonesian Civil Code, Empirical Modeling, Cold Storage.]

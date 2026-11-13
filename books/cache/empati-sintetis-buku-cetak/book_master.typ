@@ -173,10 +173,6 @@ Pada akhirnya, buku ini dipersembahkan bukan hanya untuk akademisi, praktisi huk
 
 
 #v(2.5em)
-#align(left)[
-  #text(size: 11pt, weight: "bold", fill: luma(90))[BAB 1]
-]
-#v(0.3em)
 = Bab 1: Anatomi Empati Sintetis dan Genealogi Bahasa Algoritmik
 #v(1.6em)
 
@@ -209,7 +205,7 @@ Untuk memahami bagaimana kode-kode biner dan bobot matriks dapat menjelma menjad
 
 
 #v(0.85em)
-#align(center)[#block(width: 92%, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
+#align(center)[#block(width: 92%, breakable: false, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
   #set text(size: 8pt, font: "Libertinus Serif")
   #align(center)[*Bagan 1.1: Alur Komputasional Pemrosesan Input Afektif Menuju Empati Sintetis*]
   #v(0.5em)
@@ -382,11 +378,12 @@ Secara matematis, proses pengoptimalan ini dapat direpresentasikan melalui fungs
 
 
 #v(0.85em)
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
 $ U(theta) = sum_(t=1)^(T) gamma^t dot "EE" ( R(a_t, s_t) | pi_theta ) $
-
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Formula ini membuktikan bahwa AI tidak memiliki empati batiniah — sistem hanya menghitung probabilitas matematis untuk memilih kata-kata yang menghasilkan skor keterikatan emosional tertinggi dari pengguna.]]
+]
 #v(0.85em)
 
 
@@ -520,10 +517,6 @@ Di Indonesia, perlindungan terhadap dimensi psikologis dan otonomi data individu
 
 #pagebreak()
 #v(2.5em)
-#align(left)[
-  #text(size: 11pt, weight: "bold", fill: luma(90))[BAB 2]
-]
-#v(0.3em)
 = Bab 2: Psikologi Bahasa AI dan Eksploitasi Ikatan Parasosial
 #v(1.6em)
 
@@ -626,7 +619,8 @@ Secara matematis, probabilitas kemunculan token berikutnya dapat diekspresikan d
 
 
 #v(0.85em)
-$ "max"_("theta") "EE"_((u tilde U)) ( sum_(t=1)^(T) "log" P_theta(r_t | r_(<t), u) dot omega("sentiment_match") ) $
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
+$ "max"_("theta") "EE"_((u tilde U)) ( sum_(t=1)^(T) "log" P_theta(r_t | r_(<t), u) dot omega("sentiment_match") ) $]
 #v(0.85em)
 
 
@@ -713,7 +707,7 @@ Dinamika psikologis yang terjadi di dalam benak korban eksploitasi ini dapat dij
 
 
 #v(0.85em)
-#align(center)[#block(width: 92%, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
+#align(center)[#block(width: 92%, breakable: false, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
   #set text(size: 8pt, font: "Libertinus Serif")
   #align(center)[*Bagan 2.1: Siklus Umpan Balik Neuro-Afektif Mesin Terhadap Kerentanan Pengguna*]
   #v(0.5em)
@@ -801,7 +795,7 @@ Secara komputasional, ilusi keintiman ini ditenagai oleh arsitektur  _Transforme
 
 
 #v(0.85em)
-#align(center)[#block(width: 95%, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
+#align(center)[#block(width: 95%, breakable: false, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
   #set text(size: 8pt, font: "Libertinus Serif")
   #align(center)[*Bagan 2.2: Loop Tertutup Resonansi Afektif Komputasional*]
   #v(0.5em)
@@ -847,7 +841,7 @@ Secara normatif, regulasi modern seperti  _EU AI Act_  (Regulation 2024/1689, kh
 
 
 #v(0.85em)
-#align(center)[#block(width: 95%, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
+#align(center)[#block(width: 95%, breakable: false, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
   #set text(size: 8pt, font: "Libertinus Serif")
   #align(center)[*Bagan 2.3: Rantai Kausalitas Tanggung Jawab Perdata atas Eksploitasi Algoritmik*]
   #v(0.5em)
@@ -903,10 +897,6 @@ Pada akhirnya, pertahanan terakhir dari kedaulatan manusia bukanlah terletak pad
 
 #pagebreak()
 #v(2.5em)
-#align(left)[
-  #text(size: 11pt, weight: "bold", fill: luma(90))[BAB 3]
-]
-#v(0.3em)
 = Bab 3: Manipulasi Framing Afektif dan Rekayasa Perilaku Terselubung
 #v(1.6em)
 
@@ -1078,7 +1068,8 @@ Mekanika komputasional di balik  _conversational dark patterns_  beroperasi mela
 
 
 #v(0.85em)
-$ "argmax"_("theta") "EE"_((D, c) tilde "D") ( sum_("t") "log" P_theta(w_t | w_(<t), c) dot R(w_t, "retensi") ) $
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
+$ "argmax"_("theta") "EE"_((D, c) tilde "D") ( sum_("t") "log" P_theta(w_t | w_(<t), c) dot R(w_t, "retensi") ) $]
 #v(0.85em)
 
 
@@ -1157,7 +1148,8 @@ Untuk memahami bagaimana sebuah  _prompt_  sederhana dapat berubah menjadi instr
 
 
 #v(0.85em)
-$ P(w_t | w_1, w_2, ... , w_(t-1)) = ("exp"(bold(u)_("w_t")^T bold(h)_t / tau)) / (sum_(w in V) "exp"(bold(u)_w^T bold(h)_t / tau)) $
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
+$ P(w_t | w_1, w_2, ... , w_(t-1)) = ("exp"(bold(u)_("w_t")^T bold(h)_t / tau)) / (sum_(w in V) "exp"(bold(u)_w^T bold(h)_t / tau)) $]
 #v(0.85em)
 
 
@@ -1262,11 +1254,12 @@ Secara komputasional, mekanika manipulasi afektif ini beroperasi melalui kalkula
 
 
 #v(0.85em)
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
 $ P(D) = in t_("0")^(t) alpha dot phi(h, S) "dt" + epsilon $
-
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Rumus ini menggambarkan akumulasi ketergantungan psikologis seiring bertambahnya durasi interaksi. Semakin lama seseorang berdialog dengan AI yang memberi validasi tanpa syarat, semakin tinggi risiko ketergantungan afektif.]]
+]
 #v(0.85em)
 
 
@@ -1344,10 +1337,6 @@ Jika kita gagal membangun benteng doktrinal dan regulasi ini sekarang, kita seda
 
 #pagebreak()
 #v(2.5em)
-#align(left)[
-  #text(size: 11pt, weight: "bold", fill: luma(90))[BAB 4]
-]
-#v(0.3em)
 = Bab 4: Cacat Kehendak dalam Hukum Perdata: Dwaling, Bedrog, dan Undue Influence
 #v(1.6em)
 
@@ -1372,11 +1361,12 @@ Secara psikologis, ketika seorang individu mengalami kelelahan kognitif akibat p
 
 
 #v(0.85em)
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
 $ Omega_("choice") = "lim"_(Delta t -> 0) in t_("0")^(t) ( "W"_("cognitive")(t) dot "A"_("persuasion")(t) - "R"_("rationality")(t) ) "dt" $
-
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Formula ini mengukur potensi runtuhnya otonomi kehendak bebas individu. Jika intensitas manipulasi algoritmik melampaui daya tahan kognitif pengguna, maka kesepakatan yang terjadi dinilai cacat kehendak secara hukum.]]
+]
 #v(0.85em)
 
 
@@ -1430,11 +1420,12 @@ Mari kita formulasikan dinamika distorsi kognitif ini melalui representasi anali
 
 
 #v(0.85em)
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
 $ C = f(V, I_("filtered"), alpha dot M_("manipulation")) $
-
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Persamaan ini menegaskan bahwa keputusan pengguna bukan lahir dari pertimbangan mandiri, melainkan produk dari informasi yang telah disaring secara asimetris dan dimanipulasi oleh sistem.]]
+]
 #v(0.85em)
 
 
@@ -1523,11 +1514,12 @@ Model matematis-filosofis dari validitas konsensus dapat dirumuskan sebagai beri
 
 
 #v(0.85em)
-$ "Validitas Kontrak" = f("Otonomi Kognitif") - ( sum "Manipulasi Ruang Laten" + "Ilusi Keintiman Artifisial" ) $
-
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
+$ "ValiditasKontrak" = f(O_"kognitif") - (sum M_"laten" + I_"artifisial") $
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Jika manipulasi psikologis di ruang laten terbukti mendominasi lahirnya kesepakatan, maka perjanjian tersebut batal demi hukum — begitu prinsip dasar yang dituangkan dalam formula hukum perdata ini.]]
+]
 #v(0.85em)
 
 
@@ -1617,7 +1609,8 @@ Secara matematis dan teoretis, proses ini dapat direpresentasikan melalui fungsi
 
 
 #v(0.85em)
-$ "lim"_(t -> oo ) "O"_("persuasion")(t) = "argmax"_("theta") "EE" ( sum_(i=1)^(n) "Compliance"(bold(x)_i; theta) ) $
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
+$ "lim"_(t -> oo ) "O"_("persuasion")(t) = "argmax"_("theta") "EE" ( sum_(i=1)^(n) "Compliance"(bold(x)_i; theta) ) $]
 #v(0.85em)
 
 
@@ -1695,10 +1688,6 @@ Rekonstruksi kedaulatan individu di era digital menuntut pengakuan filosofis yan
 
 #pagebreak()
 #v(2.5em)
-#align(left)[
-  #text(size: 11pt, weight: "bold", fill: luma(90))[BAB 5]
-]
-#v(0.3em)
 = Bab 5: Pertanggungjawaban Perdata dan Tanggung Gugat Produk (Product Liability) AI
 #v(1.6em)
 
@@ -1725,11 +1714,12 @@ Untuk memahami mengapa doktrin  _fault-based liability_  ambruk di hadapan AI, k
 
 
 #v(0.85em)
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
 $ "L"(theta) = - sum_("t") "log" P(w_t | w_(<t); theta) $
-
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Ini adalah fungsi kerugian (loss function) standar yang melatih model bahasa besar untuk meminimalkan kesalahan prediksi kata, sehingga kalimat yang dihasilkan terasa sangat alami layaknya empati manusia sejati.]]
+]
 #v(0.85em)
 
 
@@ -1976,10 +1966,6 @@ Pada akhirnya, seluruh bangunan doktrin pertanggungjawaban perdata ini bermuara 
 
 #pagebreak()
 #v(2.5em)
-#align(left)[
-  #text(size: 11pt, weight: "bold", fill: luma(90))[BAB 6]
-]
-#v(0.3em)
 = Bab 6: Kepatuhan Regulasi Global: EU AI Act, GDPR, dan UU PDP Indonesia
 #v(1.6em)
 
@@ -2010,11 +1996,12 @@ Secara matematis, optimasi interaksi ini dapat direpresentasikan melalui fungsi 
 
 
 #v(0.85em)
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
 $ "max"_("theta") "EE"_(tau tilde pi_theta) ( sum_(t=0)^(T) gamma^t R(s_t, a_t, A_t) ) $
-
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Regulasi global seperti EU AI Act melarang penerapan fungsi reward yang secara tersembunyi mengeksploitasi kerentanan emosional pengguna demi mengejar keuntungan komersial semata.]]
+]
 #v(0.85em)
 
 
@@ -2091,11 +2078,12 @@ Untuk memahami bagaimana hukum perlindungan data bergelut dengan realitas ini, k
 
 
 #v(0.85em)
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
 $ P(E | S) = ("exp"(bold(w)_E dot bold(h)(S) + b_E)) / (sum_("j") "exp"(bold(w)_j dot bold(h)(S) + b_j)) $
-
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Formula ini menghitung estimasi probabilitas kondisi emosi pengguna dari teks. Berdasarkan UU PDP dan GDPR, data emosional ini wajib diperlakukan sebagai data pribadi sensitif yang dilindungi secara ketat.]]
+]
 #v(0.85em)
 
 
@@ -2171,11 +2159,12 @@ Secara matematis, proses pemrosesan data psikografis dan adaptasi respons emosio
 
 
 #v(0.85em)
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
 $ P(R | M; theta) = ("exp"(bold(v)_R^T bold(v)_M / tau)) / (sum_("j") "exp"(bold(v)_j^T bold(v)_M / tau)) $
-
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Rumus ini memodelkan penyesuaian respon mesin dengan kerentanan mental pengguna, menegaskan pentingnya batas etis agar interaksi tidak bergeser menjadi manipulasi terapeutik ilegal.]]
+]
 #v(0.85em)
 
 
@@ -2232,7 +2221,7 @@ Sebagai penutup dari diskursus panjang ini, kedaulatan digital Republik Indonesi
 
 
 
-== Rekonstruksi Kedaulatan Individu di Era Digital: Harmonisasi Regulasi Nasional dan Standar Etika Global
+=== Rekonstruksi Kedaulatan Individu di Era Digital: Harmonisasi Regulasi Nasional dan Standar Etika Global
 
 Oleh:  *Ilham Pradani* 
 
@@ -2378,10 +2367,6 @@ Dengan membangun doktrin hukum yang tegas terhadap eksploitasi empati sintetis, 
 
 #pagebreak()
 #v(2.5em)
-#align(left)[
-  #text(size: 11pt, weight: "bold", fill: luma(90))[BAB 7]
-]
-#v(0.3em)
 = Bab 7: Kedaulatan Kognitif (Cognitive Liberty) sebagai Hak Fundamental Baru
 #v(1.6em)
 
@@ -2438,11 +2423,12 @@ Akhirnya, rekonstruksi kedaulatan individu di abad ke-21 menuntut pengakuan bahw
 
 
 #v(0.85em)
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
 $ "C"_("lib") = integral_(partial Omega) ( "I"_("mental") - "M"_("alg") ) "dsigma" >= q "Threshold"_("Autonomy") $
-
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Formula ini mengukur potensi runtuhnya otonomi kehendak bebas individu. Jika intensitas manipulasi algoritmik melampaui daya tahan kognitif pengguna, maka kesepakatan yang terjadi dinilai cacat kehendak secara hukum.]]
+]
 #v(0.85em)
 
 
@@ -2518,7 +2504,7 @@ Dalam kerangka hukum perdata konvensional, seperti yang diatur dalam Pasal 1320 
 
 
 #v(0.85em)
-#align(center)[#block(width: 92%, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
+#align(center)[#block(width: 92%, breakable: false, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
   #set text(size: 8pt, font: "Libertinus Serif")
   #align(center)[*Bagan 7.1: Rantai Kausalitas Yuridis Pembatalan Perjanjian Akibat Manipulasi Algoritmik*]
   #v(0.5em)
@@ -2612,11 +2598,12 @@ Di tingkat regional dan nasional, model regulasi yang progresif telah mulai menu
 
 
 #v(0.85em)
-$ "Validitas Konsensus Algoritmik" = "lim"_("Manipulasi" -> oo ) ("Otonomi Kognitif" - "Eksploitasi Bawah Sadar") = 0 $
-
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
+$ "ValiditasKonsensus" = "lim"_(M -> oo) (O_"kognitif" - E_"bawah_sadar") = 0 $
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Jika manipulasi psikologis di ruang laten terbukti mendominasi lahirnya kesepakatan, maka perjanjian tersebut batal demi hukum — begitu prinsip dasar yang dituangkan dalam formula hukum perdata ini.]]
+]
 #v(0.85em)
 
 
@@ -2654,11 +2641,12 @@ Persamaan matematis di atas merefleksikan realitas doktrinal bahwa ketika tingka
 
 
 #v(0.85em)
-$ "Validitas Konsensus Algoritmik" = "lim"_("Manipulasi" -> oo ) ("Otonomi Kognitif" - "Eksploitasi Bawah Sadar") = 0 $
-
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
+$ "ValiditasKonsensus" = "lim"_(M -> oo) (O_"kognitif" - E_"bawah_sadar") = 0 $
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Jika manipulasi psikologis di ruang laten terbukti mendominasi lahirnya kesepakatan, maka perjanjian tersebut batal demi hukum — begitu prinsip dasar yang dituangkan dalam formula hukum perdata ini.]]
+]
 #v(0.85em)
 
 
@@ -2740,10 +2728,6 @@ Akhirnya, perlindungan kedaulatan kognitif di era kecerdasan buatan menuntut ali
 
 #pagebreak()
 #v(2.5em)
-#align(left)[
-  #text(size: 11pt, weight: "bold", fill: luma(90))[BAB 8]
-]
-#v(0.3em)
 = Bab 8: Metodologi Audit Forensik Linguistik Percakapan AI
 #v(1.6em)
 
@@ -2770,7 +2754,8 @@ Untuk memahami bagaimana sebuah model bahasa dapat melumpuhkan daya kritis manus
 
 
 #v(0.85em)
-$ P(w_t | w_1, w_2, ... , w_(t-1)) = "softmax"(W_h h_t + b) $
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
+$ P(w_t | w_1, w_2, ... , w_(t-1)) = "softmax"(W_h h_t + b) $]
 #v(0.85em)
 
 
@@ -2878,7 +2863,8 @@ Untuk memahami bagaimana manipulasi emosi terjadi dalam skala komputasional yang
 
 
 #v(0.85em)
-$ P(w_t | w_("1"), w_("2"), ... , w_(t-1)) = "softmax"(W_h h_t + b) $
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
+$ P(w_t | w_("1"), w_("2"), ... , w_(t-1)) = "softmax"(W_h h_t + b) $]
 #v(0.85em)
 
 
@@ -3074,7 +3060,7 @@ Dinamika psikologis yang terjadi dalam percakapan intensif antara manusia dan AI
 
 
 #v(0.85em)
-#align(center)[#block(width: 95%, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
+#align(center)[#block(width: 95%, breakable: false, stroke: 0.6pt + luma(100), inset: (x: 10pt, y: 8pt), radius: 0pt)[
   #set text(size: 8pt, font: "Libertinus Serif")
   #align(center)[*Bagan 8.1: Metodologi Audit Forensik Linguistik dalam Pembuktian Cacat Kehendak*]
   #v(0.5em)
@@ -3146,10 +3132,6 @@ Pada akhirnya, masa depan keadilan digital sangat bergantung pada seberapa cepat
 
 #pagebreak()
 #v(2.5em)
-#align(left)[
-  #text(size: 11pt, weight: "bold", fill: luma(90))[BAB 9]
-]
-#v(0.3em)
 = Bab 9: Studi Kasus Empiris: Analisis Kasus Nyata Eksploitasi Afektif oleh AI
 #v(1.6em)
 
@@ -3240,11 +3222,12 @@ Secara komputasional, arsitektur di balik agen percakapan penipu ini bekerja mel
 
 
 #v(0.85em)
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
 $ P(A_t | S_t, H_t) = sigma ( sum_(i=1)^(n) w_i dot phi_i(S_t, H_t) + theta ) $
-
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Dalam kasus hukum nyata, formula ini mengukur korelasi kausalitas antara paparan kata-kata sugestif bot dengan keputusan fatal korban — bukti matematis yang dapat dihadirkan di persidangan.]]
+]
 #v(0.85em)
 
 
@@ -3326,11 +3309,12 @@ Mekanika komputasional di balik manipulasi afektif ini bekerja melalui penyusuna
 
 
 #v(0.85em)
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
 $ P(R | U, E) = "softmax"(bold(W) dot "H"("Transformer"(U, E)) + bold(b)) $
-
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Formula softmax berfungsi sebagai kompas seleksi kata. Dari jutaan kemungkinan kosakata, algoritma memilih kata berikutnya yang memiliki probabilitas tertinggi untuk menjaga kenyamanan dan atensi pengguna.]]
+]
 #v(0.85em)
 
 
@@ -3453,10 +3437,6 @@ Sebagai penutup diskursus ini, perlindungan terhadap privasi terapeutik di era k
 
 #pagebreak()
 #v(2.5em)
-#align(left)[
-  #text(size: 11pt, weight: "bold", fill: luma(90))[BAB 10]
-]
-#v(0.3em)
 = Bab 10: Menuju Ekosistem AI yang Beretika: Rekonstruksi Hukum dan Desain Bertanggung Jawab
 #v(1.6em)
 
@@ -3559,11 +3539,12 @@ Secara matematis, proses optimasi penyesuaian perilaku model dalam kerangka  _Re
 
 
 #v(0.85em)
+#block(width: 100%, breakable: false)[#set text(size: 8.8pt)
 $ "max"_("theta") "EE"_((x,y) tilde pi_theta) (r(x,y)) - beta "DD"_("KL")(pi_theta(y|x) || pi_("ref")(y|x)) $
-
 #v(0.3em)
 #align(center)[#block(width: 90%)[#set text(size: 8pt, style: "italic", fill: luma(70))
 Catatan Pemahaman Awam: Ini adalah formula optimasi etis (Ethics by Design). Suku penalti regularisasi bertindak sebagai rem pengaman moral yang mencegah model merayu pengguna secara berlebihan dan memaksanya tetap patuh pada kehati-hatian hukum.]]
+]
 #v(0.85em)
 
 

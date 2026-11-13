@@ -159,11 +159,23 @@
     "pdfSize": 173867
   },
   "hybrid-real-time-dammar-price-index-and-adat-based-contract-template-for-supply-chain-finance-in-pesisir-barat": {
-    "osfId": "bm58j",
-    "osfUrl": "https://osf.io/bm58j/"
+    "slug": "hybrid-real-time-dammar-price-index-and-adat-based-contract-template-for-supply-chain-finance-in-pesisir-barat",
+    "title": "Hybrid Real-Time Dammar Price Index and Adat-Based Contract Template for Supply-Chain Finance in Pesisir Barat",
+    "osfId": "pqkaf",
+    "osfUrl": "https://osf.io/pqkaf/",
+    "osfDoi": "10.17605/OSF.IO/PQKAF",
+    "zenodoDoi": "10.5281/zenodo.24201465",
+    "pdfFile": "hybrid-real-time-dammar-price-index-and-adat-based-contract-template-for-supply-chain-finance-in-pesisir-barat.pdf",
+    "pdfSize": 168157
   },
   "a-hybrid-legal-digital-demand-aggregation-framework-for-co-optimised-procurement-hygiene-compliance-and-inter-city-logistics-in-pesisir-barat": {
-    "osfId": "r6ejq",
-    "osfUrl": "https://osf.io/r6ejq/"
+    "slug": "a-hybrid-legal-digital-demand-aggregation-framework-for-co-optimised-procurement-hygiene-compliance-and-inter-city-logistics-in-pesisir-barat",
+    "title": "A Hybrid Legal-Digital Demand-Aggregation Framework for Co-Optimised Procurement, Hygiene Compliance, and Inter-City Logistics in Pesisir Barat",
+    "osfId": "ydm6r",
+    "osfUrl": "https://osf.io/ydm6r/",
+    "osfDoi": "10.17605/OSF.IO/YDM6R",
+    "zenodoDoi": "10.5281/zenodo.24201477",
+    "pdfFile": "a-hybrid-legal-digital-demand-aggregation-framework-for-co-optimised-procurement-hygiene-compliance-and-inter-city-logistics-in-pesisir-barat.pdf",
+    "pdfSize": 159848
   }
 }

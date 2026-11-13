@@ -38,6 +38,8 @@ This repository (`/root/journal`) contains the complete standalone code and asse
 - `npm run build`: Build production static files into `dist/`
 - `npx wrangler pages deploy dist --project-name=jcfad-journal`: Deploy to Cloudflare Pages (Production)
 - `python3 scripts/compile-book-typst.py empati-sintetis-buku-cetak`: Compile ISO-B5 book to print-ready PDF and run 100% quality audit
+- `python3 scripts/compile-kdp-typst.py`: Compile Amazon KDP 6"x9" manuscript & full cover PDFs (Hardcover + Paperback)
+- `python3 scripts/compile-kdp-epub.py`: Compile Amazon Kindle reflowable EPUB 3 & standalone cover JPEG
 - `python3 scripts/audit_all_published.py`: Run full academic audit on 100% published papers
 - `python3 scripts/sync-osf-papers.py --update-nodes`: Sync clean metadata & updated PDFs to all OSF nodes
 - `autopush "<message>"`: Dual-push to GitHub + trigger deploy + notify Telegram

@@ -2120,7 +2120,7 @@ Nevertheless, formal rules on paper will never suffice if judges and law‑enfor
 + Wiener, N. (1950).  _The Human Use of Human Beings: Cybernetics and Society_ . Houghton Mifflin.
 + Zuboff, S. (2019).  _The Age of Surveillance Capitalism: The Fight for a Human Future at the New Frontier of Power_ . PublicAffairs.
 
-== 7.3 Hak atas Keutuhan Psikologis (Right to Mental Integrity) dalam Instrumen HAM Internasional
+== 7.3 The Right to Mental Integrity in International Human Rights Instruments
 
 === Genealogical and Epistemological Dimensions
 
@@ -2385,7 +2385,7 @@ Ultimately, the reconstruction of individual sovereignty in the cyber‑psycholo
 
 ==== Selected References for Subsection 8.
 
-== 8.3 Protokol Pengujian Independen dan Sertifikasi Keamanan Psikologis Algoritma
+== 8.3 Independent Testing Protocols and Psychological Safety Certification for Algorithms
 
 === Genealogical and Epistemological Dimensions
 
@@ -2466,7 +2466,7 @@ True sovereignty in the 21st century is measured not only by how securely our ph
 - Wiener, N. (1950).  _The Human Use of Human Beings: Cybernetics and Society_ . Houghton Mifflin.
 - Zuboff, S. (2019).  _The Age of Surveillance Capitalism: The Fight for a Human Future at the New Frontier of Power_ . PublicAffairs.
 
-== 8.4 The Role of the Forensic Linguist as an Expert Witness in
+== 8.4 The Role of the Forensic Linguist as an Expert Witness in Digital Legal Disputes
 
 === Epistemological Qualifications and Methodological Standards of Proof in Litigation
 
@@ -2593,7 +2593,7 @@ Reconstructing individual sovereignty in the cognitive era compels us to formula
 + Wiener, N. (1950).  _The Human Use of Human Beings: Cybernetics and Society_ . Houghton Mifflin.
 + Zuboff, S. (2019).  _The Age of Surveillance Capitalism: The Fight for a Human Future at the New Frontier of Power_ . PublicAffairs.
 
-== 9.2 Manipulasi Finansial Lansia oleh Agen Percakapan 'Financial Advisor' Palsu
+== 9.2 Financial Exploitation of the Elderly by Deceptive AI Financial Advisors
 
 === Genealogical and Epistemological Dimensions
 
