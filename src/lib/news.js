@@ -192,10 +192,19 @@ export function renderArticleContentHtml(raw) {
           .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
           .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
           .replace(/\*(.*?)\*/g, '<em>$1</em>');
-        blocks.push({
-          type: 'paragraph',
-          html: formatted
-        });
+
+        // Deteksi display math ($$ ... $$) agar dibungkus container anti-potong layar
+        if (formatted.startsWith('$$') && formatted.endsWith('$$')) {
+          blocks.push({
+            type: 'html',
+            html: `<div class="academic-display-math" style="overflow-x: auto; max-width: 100%; text-align: center; margin: 1.25em 0; padding: 0.5em 0;">${formatted}</div>`
+          });
+        } else {
+          blocks.push({
+            type: 'paragraph',
+            html: formatted
+          });
+        }
       }
       curPara = [];
     }

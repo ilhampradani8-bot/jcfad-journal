@@ -299,6 +299,38 @@ const schemaData = isJournalContext
 
     <!-- Schema.org Structured Data for Google Rich Results & AI Search Engine Graph -->
     <script type="application/ld+json" set:html={JSON.stringify(extraSchema || schemaData)} />
+
+    <!-- KaTeX Mathematical Typography & Math Overflow Protection (JCFAD Scholarly Papers) -->
+    {isJournalContext && (
+      <>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous" />
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+          onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}], throwOnError: false});"
+        ></script>
+        <style is:inline>
+          .katex-display {
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            max-width: 100% !important;
+            padding: 0.6em 0 !important;
+            margin: 1em 0 !important;
+            -webkit-overflow-scrolling: touch;
+          }
+          .katex-display > .katex {
+            max-width: 100% !important;
+            text-align: center;
+          }
+          .academic-display-math {
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            max-width: 100% !important;
+            padding: 0.5em 0 !important;
+            -webkit-overflow-scrolling: touch;
+          }
+        </style>
+      </>
+    )}
   </head>
   <body>
     <slot />

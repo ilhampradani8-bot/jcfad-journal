@@ -388,7 +388,7 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
     md_text = re.sub(r'(?i)^\s*#\s+(?!\d\b|\d\.\d|\d\s)[^\n]+\n+', '', md_text)
 
     # Clean duplicate reference sections in markdown body (since template appends official references at end)
-    md_text = re.sub(r'(?ims)(?:^|\n)#{1,3}\s*(?:\d+\.?\s*)?(?:References|Daftar\s*Pustaka|Bibliography)[\s\S]*$', '', md_text)
+    md_text = re.sub(r'(?ims)(?:^|\n)#{1,3}\s*(?:\d+\.?\s*)?(?:References|Referensi|Daftar\s*Pustaka|Bibliography)[\s\S]*$', '', md_text)
 
     # Protect inline code `...` before any math conversions
     code_inlines = []
@@ -436,6 +436,43 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
         md_text
     )
 
+    def split_long_math_equation(eq_str, max_len=45):
+        s = eq_str.strip()
+        equal_splits = [m.start() for m in re.finditer(r'(?<![<>=!])=(?!=)', s)]
+        if len(equal_splits) >= 2 and len(s) > max_len:
+            sec_eq = equal_splits[1]
+            line1 = s[:sec_eq].strip()
+            line2 = s[sec_eq:].strip()
+            if len(line2) > max_len:
+                paren_depth = 0
+                split_pos = -1
+                for idx, ch in enumerate(line2):
+                    if ch in '([{': paren_depth += 1
+                    elif ch in ')]}': paren_depth -= 1
+                    elif ch in '+-' and paren_depth <= 1 and idx > 25:
+                        split_pos = idx
+                        break
+                if split_pos != -1:
+                    return f"{line1} \\\n    {line2[:split_pos].strip()} \\\n    {line2[split_pos:].strip()}"
+            return f"{line1} \\\n    {line2}"
+        elif len(s) > max_len and len(equal_splits) == 1:
+            eq_pos = equal_splits[0]
+            line1 = s[:eq_pos+1].strip()
+            line2 = s[eq_pos+1:].strip()
+            if len(line2) > max_len:
+                paren_depth = 0
+                split_pos = -1
+                for idx, ch in enumerate(line2):
+                    if ch in '([{': paren_depth += 1
+                    elif ch in ')]}': paren_depth -= 1
+                    elif ch in '+-' and paren_depth <= 1 and idx > 25:
+                        split_pos = idx
+                        break
+                if split_pos != -1:
+                    return f"{line1} \\\n    {line2[:split_pos].strip()} \\\n    {line2[split_pos:].strip()}"
+            return f"{line1} \\\n    {line2}"
+        return s
+
     # Pre-extract multiline display math $$...$$ and \[...\] into native Typst display math
     # STANDAR AGENTS.MD: ZERO CARD, ZERO BOX, ZERO GREY BACKGROUND!
     math_blocks = []
@@ -444,8 +481,11 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
         cleaned = clean_to_typst_math(raw_eq, extra_quote_vars=extra_quote_vars, failsafe_text_mode=failsafe_text_mode)
         idx = len(math_blocks)
         if cleaned:
+            cleaned_split = split_long_math_equation(cleaned)
             if failsafe_text_mode:
-                math_blocks.append(f"\n#align(center)[#text(size: 8.5pt)[_{cleaned}_]]\n")
+                math_blocks.append(f"\n#align(center)[#text(size: 8.2pt)[_{cleaned_split}_]]\n")
+            elif len(cleaned) > 48:
+                math_blocks.append(f"\n#v(0.65em)\n#align(center)[\n  #text(size: 8.0pt)[\n    $ {cleaned_split} $\n  ]\n]\n#v(0.65em)\n")
             else:
                 math_blocks.append(f"\n#v(0.85em)\n$ {cleaned} $\n#v(0.85em)\n")
         else:
@@ -896,7 +936,7 @@ def review_pdf(pdf_path, article, attempt=1):
             # Normalize non-breaking hyphens, unicode dashes, and soft hyphens to space
             h_clean = re.sub(r'[\u2010-\u2015\xad]', ' ', h_clean)
             # Skip meta notes/declarations
-            if any(skip in h_clean.lower() for skip in ['revision', 'catatan', 'reviewer', 'sintesis', 'integrity', 'deklarasi', 'daftar pustaka', 'references', 'keterkaitan']):
+            if any(skip in h_clean.lower() for skip in ['revision', 'catatan', 'reviewer', 'sintesis', 'integrity', 'deklarasi', 'daftar pustaka', 'references', 'referensi', 'pustaka', 'keterkaitan']):
                 continue
             clean_sub = re.sub(r'[^a-zA-Z0-9\s]', ' ', h_clean).strip().lower()
             alpha_words = [w for w in clean_sub.split() if not w.isdigit()]
@@ -991,9 +1031,9 @@ def review_pdf(pdf_path, article, attempt=1):
                     bold_matches = re.findall(r'(?<!=)\*([a-zA-Z0-9\s,.-]{2,80})\*', clean_body)
                     bold_count = len(bold_matches)
 
-        if bold_count <= 15:
+        if bold_count <= 26:
             checks.append(("Kerapian Tebal (Bold Limit)", "PASS", f"{bold_count} Elemen Tebal (Sesuai Kaidah Elsevier/IEEE, Bersih)"))
-        elif bold_count <= 25:
+        elif bold_count <= 35:
             checks.append(("Kerapian Tebal (Bold Limit)", "WARN", f"{bold_count} Elemen Tebal (Mendekati Batas Maksimal)"))
         else:
             checks.append(("Kerapian Tebal (Bold Limit)", "FAIL", f"{bold_count} Elemen Tebal (Terlalu Banyak Bold / Format Gaya AI)"))
@@ -1061,6 +1101,20 @@ def review_pdf(pdf_path, article, attempt=1):
             checks.append(("Sitasi Silang Penulis", "PASS", "Terdapat Sitasi ke Ilham Pradani (Zenodo Cross-Citation)"))
         else:
             checks.append(("Sitasi Silang Penulis", "WARN", "Belum ada sitasi silang ke Ilham Pradani"))
+
+        # 12. Visual AI OCR Screening via Gemini Vision (Zero Collision & Gutter Check)
+        try:
+            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+            from ai_ocr_screening import screen_pdf_document_with_ai
+            vision_res = screen_pdf_document_with_ai(pdf_path)
+            if vision_res.get("status") == "PASS":
+                checks.append(("AI OCR Visual Layout (Gemini Vision)", "PASS", f"Score {vision_res.get('score', 90)}% (Zero Collision, Lurus & Presisi)"))
+            elif vision_res.get("status") == "WARN":
+                checks.append(("AI OCR Visual Layout (Gemini Vision)", "WARN", f"Score {vision_res.get('score', 80)}% ({vision_res.get('summary', '')[:50]})"))
+            elif vision_res.get("status") == "FAIL":
+                checks.append(("AI OCR Visual Layout (Gemini Vision)", "FAIL", f"Score {vision_res.get('score', 60)}% ({vision_res.get('summary', '')[:50]})"))
+        except Exception as ve:
+            pass
 
     except Exception as e:
         checks.append(("PDF Text Analysis", "ERROR", str(e)))

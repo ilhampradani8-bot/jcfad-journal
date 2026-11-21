@@ -83,15 +83,16 @@ const articleDoi = v2Item?.doi || initialDoi;
 
 // Dokumen PDF Naskah Ilmiah (Sesuai dengan artikel yang sedang dilihat)
 const articlePdfFilename = `${article.slug}.pdf`;
-const articlePdfPath = `/docs/${articlePdfFilename}?v=20261107-v5`;
+const buildTimestamp = Date.now();
+const articlePdfPath = `/docs/${articlePdfFilename}?v=${buildTimestamp}`;
 
 // Helper untuk path PDF per versi
 const getVersionPdfPath = (vNum: string, isLatestVer: boolean) => {
-  if (isLatestVer) return `/docs/${article.slug}.pdf`;
+  if (isLatestVer) return `/docs/${article.slug}.pdf?v=${buildTimestamp}`;
   if (String(vNum) === '1') return (currentV1 && currentV1.pdfUrl) || `/docs/v1/${article.slug}.pdf`;
   if (String(vNum) === '2') return `/docs/v2/${article.slug}.pdf`;
   if (String(vNum) === '3') return `/docs/v3/${article.slug}.pdf`;
-  return `/docs/${article.slug}.pdf`;
+  return `/docs/${article.slug}.pdf?v=${buildTimestamp}`;
 };
 
 // Parse author(s) - mendukung single author maupun multi-penulis dipisahkan koma (membersihkan nama wakil & cand)
