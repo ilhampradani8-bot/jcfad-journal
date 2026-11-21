@@ -51,11 +51,12 @@ Proyek ini telah **dipisahkan secara permanen** dari repositori korporat `chaina
 │       └── sitemap.xml.js        # Dynamic scholarly sitemap generator
 ├── scripts/
 │   ├── generate-paper-pdf.py     # Engine kompilasi PDF naskah Typst 2-kolom berstandar IEEE/ACM (Self-Healing Loop)
+│   ├── ai_ocr_screening.py       # Engine AI OCR Vision Screening (Gemini Vision) untuk inspeksi layout & kelurusan garis PDF
 │   ├── audit_all_published.py    # Modul audit menyeluruh 100% naskah terbit (Geometri A4, 0 Sintaks Bocor, IMRAD)
-│   ├── auto-article-groq.mjs     # Mesin generator naskah & telaah AI Groq dengan live Telegram tracker
+│   ├── auto-article-groq.mjs     # Mesin generator naskah AI Groq dengan Real-Time CERN Zenodo DOI Reservation & live Telegram tracker
 │   ├── test-telegram.mjs         # Tool verifikasi koneksi Telegram Bot (@log_system_server_bot)
-│   ├── sync-osf-papers.py        # Script sinkronisasi & push revisi naskah ke OSF Storage (--update-nodes mode edit)
-│   └── zenodo-publisher.py       # Script deposit naskah ilmiah ke CERN Zenodo API
+│   ├── sync-osf-papers.py        # Script sinkronisasi & minting DOI OSF resmi (--update-nodes mode edit)
+│   └── zenodo-publisher.py       # Script deposit naskah ilmiah ke CERN Zenodo API (mendukung command reserve & --slug)
 ```
 
 ---
@@ -71,10 +72,14 @@ Jika Anda adalah AI Agent (Antigravity, Cursor, Claude Code, Gemini CLI) yang be
    - Saat mengompilasi naskah menjadi PDF, gunakan layout 2-kolom dengan Typst (font Libertinus Serif 9pt, leading rapat).
    - **Bulletproof Self-Healing Loop**: Gunakan loop umpan balik 4 lapis (AST Math Converter -> Compiler Error Feedback -> Quoting Map Injection -> Failsafe Text Mode) untuk menjamin kompilasi tidak pernah gagal (exit code 0 mutlak).
    - **Pencegahan Tabrakan Tabel (Adaptive Booktabs Density)**: Tabel 5+ kolom wajib memakai font `6.6pt`, inset padding `2.0pt` x `3.0pt`, leading `0.30em`, dan rasio kolom proporsional agar angka milyaran tidak tabrakan (*zero cell collision*).
-   - **Zero Code Leak**: Seluruh formula matematika LaTeX mentah (`\frac`, `\sum`, `\beta`, dll.) dan kurung siku mandiri `[` ... `]` wajib dinormalisasi menjadi native Typst math (`$eq$`).
+   - **Zero Code Leak**: Seluruh formula matematika LaTeX mentah (`\frac`, `\sum`, `\beta`, dll.), delimiter `\(` dan `\)`, serta kurung siku mandiri `[` ... `]` wajib dinormalisasi menjadi native Typst math (`$eq$`).
    - **Wajib menjalankan audit kelengkapan kata & sub-judul** (skrip memiliki auditor otomatis). Jangan izinkan pemotongan teks atau penghapusan bab apapun.
    - Naskah harus memiliki header resmi (OSF Preprints atau Zenodo Preprints) dengan DOI yang aktif.
-3. **Metadata Google Scholar & Indeksasi**:
+3. **Penerbitan DOI Real-Time & Pemblokiran ResearchGate Dummy DOI**:
+   - Seluruh paper yang diproses wajib mengunci nomor DOI resmi CERN Zenodo (`10.5281/zenodo.*`) secara *real-time* via API sebelum masuk ke database Cloudflare D1.
+   - Dilarang keras menggunakan dummy DOI ResearchGate (`10.13140/RG.*`).
+   - Setiap paper juga otomatis di-*dual-mint* dengan DOI OSF resmi (`10.17605/OSF.IO/*`) melalui `scripts/sync-osf-papers.py`.
+4. **Metadata Google Scholar & Indeksasi**:
    - File `src/layouts/Layout.astro` dan `src/pages/[slug].astro` menyematkan tag `<meta name="citation_*">` (Highwire Press / Google Scholar standard).
    - Jangan pernah merusak atau menghapus meta tag sitasi tersebut (`citation_title`, `citation_author`, `citation_publication_date`, `citation_pdf_url`, dll.).
 4. **Mesin & Backend Tetap di UTM**:
