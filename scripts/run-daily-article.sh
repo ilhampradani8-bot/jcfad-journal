@@ -33,6 +33,6 @@ echo "[$TODAY $(date '+%H:%M:%S')] Menjalankan Auto-Article Generator JCFAD..." 
 echo "=================================================================" >> "$LOG_FILE"
 
 cd /root/journal
-/usr/bin/node scripts/auto-article-groq.mjs >> "$LOG_FILE" 2>&1
+/usr/bin/node scripts/auto-article-hybrid.mjs >> "$LOG_FILE" 2>&1
 /usr/local/bin/autopush "auto: artikel riset harian $TODAY" >> "$LOG_FILE" 2>&1
 

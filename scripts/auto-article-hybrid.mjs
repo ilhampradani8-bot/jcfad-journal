@@ -183,6 +183,102 @@ function sanitizeUnicodeForAcademic(text) {
     .replace(/[—–]/g, '-');
 }
 
+// ── ANTI-REPETITION & TOPIC SELECTION ENGINE ────────────────────────────────
+function selectMostDiverseDomain(domains, existingHistory) {
+  const historyText = (existingHistory || []).map(h => (h.title || '').toLowerCase()).join(' ');
+
+  const scoredDomains = domains.map(d => {
+    let score = 0;
+    for (const kw of (d.keywords || [])) {
+      const regex = new RegExp(kw.toLowerCase(), 'g');
+      const matches = historyText.match(regex);
+      if (matches) score += matches.length;
+    }
+    return { domain: d, score };
+  });
+
+  // Urutkan dari skor frekuensi terkecil (paling jarang / belum pernah dibahas)
+  scoredDomains.sort((a, b) => a.score - b.score);
+
+  // Ambil semua kandidat dengan skor kemunculan terendah
+  const minScore = scoredDomains[0].score;
+  const leastUsedCandidates = scoredDomains.filter(d => d.score === minScore);
+
+  // Acak secara adil (random shuffle) di antara tema-tema yang paling minim dibahas
+  const chosen = leastUsedCandidates[Math.floor(Math.random() * leastUsedCandidates.length)].domain;
+  console.log(`🎲 Seleksi Anti-Duplikasi Pesisir Barat: Terpilih "${chosen.theme}" (Frekuensi Terdahulu: ${minScore})`);
+  return chosen;
+}
+
+async function fetchPublishedHistory() {
+  const history = new Map();
+
+  // A. Dari file registry lokal
+  if (fs.existsSync(REGISTRY_FILE)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(REGISTRY_FILE, 'utf-8'));
+      if (Array.isArray(data)) {
+        for (const item of data) {
+          if (item.title) history.set(item.title.toLowerCase().trim(), item);
+        }
+      }
+    } catch (e) {
+      console.warn('⚠️ Gagal membaca registry lokal:', e.message);
+    }
+  }
+
+  // B. Dari Cloudflare D1
+  if (CLOUDFLARE_API_TOKEN) {
+    try {
+      const d1Res = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/d1/database/${CLOUDFLARE_D1_DATABASE_ID}/query`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${CLOUDFLARE_API_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ sql: 'SELECT id, slug, title, doi FROM articles' })
+        }
+      );
+      const d1Json = await d1Res.json();
+      if (d1Json.success && d1Json.result?.[0]?.results) {
+        for (const row of d1Json.result[0].results) {
+          if (row.title) {
+            history.set(row.title.toLowerCase().trim(), {
+              title: row.title,
+              slug: row.slug,
+              doi: row.doi
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('⚠️ Gagal fetch dari D1:', e.message);
+    }
+  }
+
+  return Array.from(history.values());
+}
+
+function recordNewTitleToRegistry(entry) {
+  try {
+    let list = [];
+    if (fs.existsSync(REGISTRY_FILE)) {
+      list = JSON.parse(fs.readFileSync(REGISTRY_FILE, 'utf-8'));
+      if (!Array.isArray(list)) list = [];
+    }
+    const exists = list.some(i => i.slug === entry.slug || i.title.toLowerCase() === entry.title.toLowerCase());
+    if (!exists) {
+      list.unshift(entry);
+      fs.writeFileSync(REGISTRY_FILE, JSON.stringify(list, null, 2), 'utf-8');
+      console.log(`📝 Berhasil mencatat judul ke registry lokal: "${entry.title}"`);
+    }
+  } catch (e) {
+    console.warn('⚠️ Gagal menyimpan ke registry lokal:', e.message);
+  }
+}
+
 // ── REAL-TIME CERN ZENODO DOI RESERVATION ───────────────────────────────────
 async function reserveZenodoDraft() {
   if (!ZENODO_API_TOKEN) {
@@ -432,8 +528,26 @@ async function main() {
   console.log(`📌 Bahasa: ${TARGET_LANG === 'id' ? 'Bahasa Indonesia (Standar Akademik Baku SINTA 1)' : 'English (Scopus Q1 Standard)'}`);
   console.log('='.repeat(80));
 
-  // 1. Pilih Domain Riset
-  let selectedDomain = STRATEGIC_RESEARCH_DOMAINS[0];
+  // 0. Daily Gate: Pastikan HANYA 1 naskah per hari (1x sehari Asia/Jakarta WIB)
+  const isForce = process.argv.includes('--force');
+  const todayWib = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
+
+  if (!isForce && fs.existsSync(REGISTRY_FILE)) {
+    try {
+      const reg = JSON.parse(fs.readFileSync(REGISTRY_FILE, 'utf-8'));
+      const foundLocal = Array.isArray(reg) && reg.find(item => item.date === todayWib);
+      if (foundLocal) {
+        console.log(`⏩ [Daily Gate] Artikel ilmiah untuk hari ini (${todayWib} WIB) sudah terbit: "${foundLocal.title}".`);
+        console.log(`   Proses dilewati untuk menjaga integritas 1 hari 1x publikasi (gunakan --force untuk bypass).`);
+        process.exit(0);
+      }
+    } catch (err) {
+      console.warn('⚠️ Gagal membaca registry lokal untuk daily gate:', err.message);
+    }
+  }
+
+  // 1. Pilih Domain Riset (Anti-Perulangan dengan Algoritma Least-Frequency Shuffle)
+  let selectedDomain;
   if (CUSTOM_TOPIC) {
     selectedDomain = {
       theme: CUSTOM_TOPIC,
@@ -442,9 +556,12 @@ async function main() {
       keywords: ['pesisir barat', 'krui', 'optimasi', 'hukum perikatan', 'empiris']
     };
   } else {
-    selectedDomain = STRATEGIC_RESEARCH_DOMAINS[Math.floor(Math.random() * STRATEGIC_RESEARCH_DOMAINS.length)];
+    console.log(`\n📚 Mengambil riwayat publikasi terdahulu dari D1 & registry lokal...`);
+    const historyList = await fetchPublishedHistory();
+    console.log(`   📊 Ditemukan ${historyList.length} publikasi sebelumnya.`);
+    selectedDomain = selectMostDiverseDomain(STRATEGIC_RESEARCH_DOMAINS, historyList);
   }
-  console.log(`\n🎯 Tema Terpilih: "${selectedDomain.theme}"`);
+  console.log(`🎯 Tema Terpilih: "${selectedDomain.theme}"`);
   console.log(`🏷️ Sudut Pandang : "${selectedDomain.angle}"`);
 
   // 2. Real-Time CERN Zenodo DOI Reservation Gate
@@ -694,6 +811,15 @@ Output JSON WAJIB:
     final_references: finalRefs,
     confidence_score: finalized.confidence_score
   }, lockedDoi, selectedDomain);
+
+  // Catat ke Registry Lokal Anti-Perulangan
+  recordNewTitleToRegistry({
+    title: finalized.final_title || currentTitle,
+    slug: saveResult.slug,
+    doi: lockedDoi,
+    date: todayWib,
+    type: 'academic_preprint'
+  });
 
   // 8. Kompilasi PDF Typst 2-Kolom
   console.log(`\n📄 [Typst Compiler] Mengompilasi PDF naskah ilmiah via Typst...`);
