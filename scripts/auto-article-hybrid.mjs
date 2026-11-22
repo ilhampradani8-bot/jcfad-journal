@@ -599,6 +599,9 @@ Output JSON:
   "methodological_approach": "Pendekatan metodologi (misal MILP, Stochastics, CFD, Smart Contract)"
 }`;
   const plan = await callGroqAPI(MODEL_GROQ_NOVELTY, sys1, `Tema: ${selectedDomain.theme}\nAngle: ${selectedDomain.angle}`);
+  if (CUSTOM_TOPIC) {
+    plan.formal_title = CUSTOM_TOPIC;
+  }
   console.log(`   💡 Kebaruan: ${plan.novelty_statement.slice(0, 120)}...`);
   console.log(`   🎓 Judul Baku: "${plan.formal_title}"`);
 
