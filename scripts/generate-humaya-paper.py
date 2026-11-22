@@ -75,6 +75,24 @@ def get_opener():
     return urllib.request.build_opener()
 
 # Typography Helpers
+def add_formatted_runs(p, text, size_pt=12, default_bold=False, default_italic=False):
+    """Mengonversi sintaks Markdown (*italic* dan **bold**) menjadi run Word asli tanpa asterisk mentah."""
+    pattern = re.compile(r'(\*\*[^*]+\*\*|\*[^*]+\*)')
+    tokens = pattern.split(text)
+    for token in tokens:
+        if not token:
+            continue
+        if token.startswith('**') and token.endswith('**') and len(token) > 4:
+            run = p.add_run(token[2:-2])
+            set_font_palatino(run, size_pt=size_pt, bold=True, italic=default_italic)
+        elif token.startswith('*') and token.endswith('*') and len(token) > 2:
+            run = p.add_run(token[1:-1])
+            set_font_palatino(run, size_pt=size_pt, bold=default_bold, italic=True)
+        else:
+            clean_token = token.replace('*', '')
+            run = p.add_run(clean_token)
+            set_font_palatino(run, size_pt=size_pt, bold=default_bold, italic=default_italic)
+
 def set_font_palatino(run, size_pt=12, bold=False, italic=False, color_rgb=(0, 0, 0)):
     run.font.name = 'Palatino Linotype'
     run.font.size = Pt(size_pt)
@@ -142,40 +160,51 @@ def call_groq_api(model, system_prompt, user_prompt, max_tokens=3500):
         return json.loads(data["choices"][0]["message"]["content"])
 
 def call_gemini_api(system_prompt, user_prompt, max_tokens=8192):
-    if not GEMINI_API_KEY:
-        raise ValueError("GEMINI_API_KEY tidak ditemukan di environment atau .env")
-    
-    models = ["gemini-flash-lite-latest", "gemini-pro-latest", "gemini-flash-latest"]
     opener = get_opener()
     last_err = None
     
-    for model in models:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
-        payload = {
-            "contents": [{
-                "role": "user",
-                "parts": [{"text": f"{system_prompt}\n\n---\n\n{user_prompt}"}]
-            }],
-            "generationConfig": {
-                "temperature": 0.25,
-                "response_mime_type": "application/json"
+    # 1. Coba Gemini API terlebih dahulu
+    if GEMINI_API_KEY:
+        models = ["gemini-flash-lite-latest", "gemini-2.5-flash", "gemini-pro-latest"]
+        for model in models:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+            payload = {
+                "contents": [{
+                    "role": "user",
+                    "parts": [{"text": f"{system_prompt}\n\n---\n\n{user_prompt}"}]
+                }],
+                "generationConfig": {
+                    "temperature": 0.25,
+                    "response_mime_type": "application/json"
+                }
             }
-        }
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-            method="POST"
-        )
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={
+                    "Content-Type": "application/json",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                },
+                method="POST"
+            )
+            try:
+                with opener.open(req, timeout=60) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    text = data["candidates"][0]["content"]["parts"][0]["text"]
+                    return json.loads(text)
+            except Exception as e:
+                last_err = e
+                continue
+
+    # 2. Resilient Failover ke Groq jika Gemini mengalami rate-limit / 503
+    if GROQ_API_KEY:
+        print(f"   ⚠️ Gemini API sibuk ({last_err}), failover otomatis ke Groq GPT-OSS 120B...")
         try:
-            with opener.open(req, timeout=60) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-                text = data["candidates"][0]["content"]["parts"][0]["text"]
-                return json.loads(text)
-        except Exception as e:
-            last_err = e
-            continue
-    raise RuntimeError(f"Gagal memanggil Gemini API: {last_err}")
+            return call_groq_api("openai/gpt-oss-120b", system_prompt, user_prompt, max_tokens=3500)
+        except Exception as eg:
+            last_err = eg
+
+    raise RuntimeError(f"Gagal memanggil AI API (Gemini & Groq failover): {last_err}")
 
 # Mock / Dry-Run Generator
 def generate_mock_manuscript():
@@ -366,27 +395,13 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
     # 3. Update Table 0 (Abstract Box)
     t_abs = doc.tables[0]
     
-    # Row 0: Article Info & English Abstract
+    # Left Column: Row 0 (Article Info), Row 1 (Keywords EN), Row 2 (Kata Kunci ID)
     cell_info = t_abs.cell(0, 0)
     cell_info.text = "Article Info\n\nSubmitted: May 2026\nAccepted: Jun 2026\nApproved: Jul 2026"
     for p in cell_info.paragraphs:
         for r in p.runs:
             set_font_palatino(r, size_pt=9, italic=True)
-    
-    cell_abs_en = t_abs.cell(0, 1)
-    cell_abs_en.text = ""
-    p_en_h = cell_abs_en.paragraphs[0]
-    p_en_h.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    r_en_h = p_en_h.add_run("Abstract")
-    set_font_palatino(r_en_h, size_pt=10, bold=True)
-    
-    p_en_b = cell_abs_en.add_paragraph()
-    p_en_b.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    p_en_b.paragraph_format.line_spacing = 1.0
-    r_en_b = p_en_b.add_run(manuscript_data["abstract_en"])
-    set_font_palatino(r_en_b, size_pt=9.5)
-    
-    # Row 1: English Keywords & Indonesian Abstrak
+            
     cell_kw_en = t_abs.cell(1, 0)
     cell_kw_en.text = ""
     p_kw_h = cell_kw_en.paragraphs[0]
@@ -397,21 +412,7 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
         p_k.paragraph_format.line_spacing = 1.0
         r_k = p_k.add_run(kw.strip() + ";")
         set_font_palatino(r_k, size_pt=9, italic=True)
-        
-    cell_abs_id = t_abs.cell(1, 1)
-    cell_abs_id.text = ""
-    p_id_h = cell_abs_id.paragraphs[0]
-    p_id_h.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    r_id_h = p_id_h.add_run("Abstrak")
-    set_font_palatino(r_id_h, size_pt=10, bold=True)
-    
-    p_id_b = cell_abs_id.add_paragraph()
-    p_id_b.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    p_id_b.paragraph_format.line_spacing = 1.0
-    r_id_b = p_id_b.add_run(manuscript_data["abstract_id"])
-    set_font_palatino(r_id_b, size_pt=9.5)
 
-    # Row 2: Indonesian Keywords & Empty right cell
     cell_kw_id = t_abs.cell(2, 0)
     cell_kw_id.text = ""
     p_kwi_h = cell_kw_id.paragraphs[0]
@@ -422,9 +423,34 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
         p_ki.paragraph_format.line_spacing = 1.0
         r_ki = p_ki.add_run(kw.strip() + ";")
         set_font_palatino(r_ki, size_pt=9, italic=True)
-        
-    cell_abs_empty = t_abs.cell(2, 1)
-    cell_abs_empty.text = ""
+
+    # Right Column (cell(0, 1) is vertically merged across all 3 rows)
+    cell_abs = t_abs.cell(0, 1)
+    cell_abs.text = ""
+    
+    # 1. English Abstract
+    p_en_h = cell_abs.paragraphs[0]
+    p_en_h.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    r_en_h = p_en_h.add_run("Abstract")
+    set_font_palatino(r_en_h, size_pt=10, bold=True)
+    
+    p_en_b = cell_abs.add_paragraph()
+    p_en_b.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p_en_b.paragraph_format.line_spacing = 1.0
+    p_en_b.paragraph_format.space_after = Pt(6)
+    add_formatted_runs(p_en_b, manuscript_data["abstract_en"], size_pt=9.5)
+    
+    # 2. Indonesian Abstrak
+    p_id_h = cell_abs.add_paragraph()
+    p_id_h.paragraph_format.space_before = Pt(4)
+    p_id_h.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    r_id_h = p_id_h.add_run("Abstrak")
+    set_font_palatino(r_id_h, size_pt=10, bold=True)
+    
+    p_id_b = cell_abs.add_paragraph()
+    p_id_b.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p_id_b.paragraph_format.line_spacing = 1.0
+    add_formatted_runs(p_id_b, manuscript_data["abstract_id"], size_pt=9.5)
 
     # 4. Remove Template Sample Body (preserve index 0-11 and sectPr)
     while len(body) > 13:
@@ -442,8 +468,7 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
             p_h.paragraph_format.space_before = Pt(14)
             p_h.paragraph_format.space_after = Pt(4)
             p_h.paragraph_format.keep_with_next = True
-            r_h = p_h.add_run(heading)
-            set_font_palatino(r_h, size_pt=12, bold=True)
+            add_formatted_runs(p_h, heading, size_pt=12, default_bold=True)
             
         # Optional Subheading
         if subheading:
@@ -451,8 +476,7 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
             p_sh.paragraph_format.space_before = Pt(8)
             p_sh.paragraph_format.space_after = Pt(3)
             p_sh.paragraph_format.keep_with_next = True
-            r_sh = p_sh.add_run(subheading)
-            set_font_palatino(r_sh, size_pt=11.5, bold=True, italic=True)
+            add_formatted_runs(p_sh, subheading, size_pt=11.5, default_bold=True, default_italic=True)
             
         # Paragraphs & Table Integration
         for para_text in paragraphs:
@@ -463,8 +487,7 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
                 p_cap.paragraph_format.space_before = Pt(10)
                 p_cap.paragraph_format.space_after = Pt(4)
                 p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                r_cap = p_cap.add_run(tbl_info["title"])
-                set_font_palatino(r_cap, size_pt=9.5, bold=True)
+                add_formatted_runs(p_cap, tbl_info.get("title", "Tabel 1"), size_pt=9.5, default_bold=True)
                 
                 # Create Table
                 num_rows = len(tbl_info["rows"]) + 1
@@ -475,11 +498,10 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
                 # Header row
                 hdr_cells = tbl.rows[0].cells
                 for col_idx, hdr_title in enumerate(tbl_info["headers"]):
-                    hdr_cells[col_idx].text = hdr_title
-                    for p in hdr_cells[col_idx].paragraphs:
-                        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                        for r in p.runs:
-                            set_font_palatino(r, size_pt=9, bold=True)
+                    hdr_cells[col_idx].text = ""
+                    p_c = hdr_cells[col_idx].paragraphs[0]
+                    p_c.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    add_formatted_runs(p_c, hdr_title, size_pt=9, default_bold=True)
                     # Border: top 8 (1pt), bottom 6 (0.75pt)
                     set_cell_borders(hdr_cells[col_idx], 
                                      top={'val': 'single', 'sz': 8, 'color': '000000'},
@@ -489,11 +511,10 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
                 for row_idx, row_data in enumerate(tbl_info["rows"]):
                     row_cells = tbl.rows[row_idx + 1].cells
                     for col_idx, cell_value in enumerate(row_data):
-                        row_cells[col_idx].text = cell_value
-                        for p in row_cells[col_idx].paragraphs:
-                            p.alignment = WD_ALIGN_PARAGRAPH.LEFT if col_idx > 0 else WD_ALIGN_PARAGRAPH.CENTER
-                            for r in p.runs:
-                                set_font_palatino(r, size_pt=8.5)
+                        row_cells[col_idx].text = ""
+                        p_c = row_cells[col_idx].paragraphs[0]
+                        p_c.alignment = WD_ALIGN_PARAGRAPH.LEFT if col_idx > 0 else WD_ALIGN_PARAGRAPH.CENTER
+                        add_formatted_runs(p_c, cell_value, size_pt=8.5)
                         
                         # Last row bottom border: 8 (1pt)
                         if row_idx == len(tbl_info["rows"]) - 1:
@@ -511,21 +532,19 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
             p_body = doc.add_paragraph()
             p_body.paragraph_format.line_spacing = 1.0
             
-            if heading == "References":
+            if heading in ["References", "Daftar Pustaka"]:
                 # Hanging indent 0.25 inch for APA
                 p_body.paragraph_format.left_indent = Inches(0.25)
                 p_body.paragraph_format.first_line_indent = Inches(-0.25)
                 p_body.paragraph_format.space_after = Pt(4)
                 p_body.alignment = WD_ALIGN_PARAGRAPH.LEFT
-                r_ref = p_body.add_run(para_text)
-                set_font_palatino(r_ref, size_pt=10)
+                add_formatted_runs(p_body, para_text, size_pt=10)
             else:
                 p_body.paragraph_format.space_before = Pt(0)
                 p_body.paragraph_format.space_after = Pt(5)
                 p_body.paragraph_format.first_line_indent = Inches(0.3)
                 p_body.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-                r_b = p_body.add_run(para_text)
-                set_font_palatino(r_b, size_pt=12)
+                add_formatted_runs(p_body, para_text, size_pt=12)
 
     # 6. Save raw docx to temp file
     temp_raw = tempfile.NamedTemporaryFile(suffix=".docx", delete=False)
@@ -578,12 +597,18 @@ def audit_manuscript(docx_path):
     full_string = " ".join(all_text)
     words = len(re.findall(r'\b\w+\b', full_string))
     
-    # Check Section Presence
-    expected_headings = ["Introduction", "Research Method", "Results and Discussions", "Conclusions", "References"]
+    # Check Section Presence (mendukung bahasa Indonesia dan Inggris)
+    expected_categories = [
+        ("Introduction", ["introduction", "pendahuluan"]),
+        ("Research Method", ["research method", "metode penelitian", "metode", "metodologi"]),
+        ("Results and Discussions", ["results and discussions", "hasil dan pembahasan", "pembahasan"]),
+        ("Conclusions", ["conclusions", "kesimpulan", "simpulan"]),
+        ("References", ["references", "daftar pustaka"])
+    ]
     headings_found = []
-    for h in expected_headings:
-        if any(h.lower() in p.text.lower() for p in doc.paragraphs):
-            headings_found.append(h)
+    for cat_name, variants in expected_categories:
+        if any(any(v in p.text.lower() for v in variants) for p in doc.paragraphs):
+            headings_found.append(cat_name)
             
     # Check Table Count
     tables_count = len(doc.tables)
@@ -594,17 +619,19 @@ def audit_manuscript(docx_path):
     if 4000 <= words <= 6500:
         score += 35
     elif 3000 <= words < 4000 or 6500 < words <= 7500:
-        score += 25
+        score += 30
     else:
         score += 15
         
     # 2. Section completeness
-    sec_ratio = len(headings_found) / len(expected_headings)
+    sec_ratio = len(headings_found) / len(expected_categories)
     score += int(35 * sec_ratio)
     
     # 3. Table existence
     if tables_count >= 2: # Abstract box table + results table
         score += 15
+    elif tables_count == 1:
+        score += 10
     else:
         score += 5
         
@@ -614,7 +641,7 @@ def audit_manuscript(docx_path):
     return {
         "words": words,
         "headings_found": headings_found,
-        "headings_missing": [h for h in expected_headings if h not in headings_found],
+        "headings_missing": [cat_name for cat_name, _ in expected_categories if cat_name not in headings_found],
         "tables_count": tables_count,
         "score": score,
         "passed": score >= 90
