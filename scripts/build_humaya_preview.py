@@ -105,7 +105,7 @@ data = {
     'short_title': 'Pertanggungjawaban Hukum Perdata Transaksi Algoritma Cerdas',
     'author': 'Ilham Pradani',
     'affiliation': 'Fakultas Hukum, Ilmu Sosial, dan Ilmu Politik, Universitas Terbuka, Indonesia',
-    'email': 'ilham.pradani@chainasiaconnect.co.id',
+    'email': 'hello@ilhampradani.me',
     'abstract_en': abstract_en,
     'keywords_en': keywords_en,
     'abstract_id': abstract_id,
@@ -325,7 +325,7 @@ html_template = f'''<!DOCTYPE html>
       </h1>
       <div style="font-size: 11pt; font-weight: bold; margin-bottom: 4px; color: #1e293b;">Ilham Pradani</div>
       <div style="font-size: 9.5pt; color: #475569; margin-bottom: 4px;">Fakultas Hukum, Ilmu Sosial, dan Ilmu Politik, Universitas Terbuka, Indonesia</div>
-      <div style="font-size: 9pt; font-style: italic; color: #64748b;">*corresponding author e-mail: ilham.pradani@chainasiaconnect.co.id</div>
+      <div style="font-size: 9pt; font-style: italic; color: #64748b;">*corresponding author e-mail: hello@ilhampradani.me</div>
     </div>
 
     <!-- Abstract Box (Table 0) -->

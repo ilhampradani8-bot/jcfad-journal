@@ -213,7 +213,7 @@ def generate_mock_manuscript():
         "short_title": "Rekonstruksi Doktrin Pertanggungjawaban Hukum Keputusan Algoritmik",
         "author": "Ilham Pradani",
         "affiliation": "Fakultas Hukum, Ilmu Sosial, dan Ilmu Politik, Universitas Terbuka, Tangerang Selatan, Indonesia",
-        "email": "ilham.pradani@chainasiaconnect.co.id",
+        "email": "hello@ilhampradani.me",
         "abstract_en": (
             "The rapid integration of autonomous algorithmic systems in civil dispute administration poses unprecedented challenges to traditional legal doctrines of liability and due process. In Indonesia, the existing framework under the Civil Code (KUHPerdata) and Law No. 1 of 2024 (Second Amendment to the ITE Law) relies on anthropocentric fault-based or vicarious liability models, which fail to address the epistemic opacity of black-box judicial decision-support systems. This study critically analyzes the normative gaps in Indonesian civil procedural law regarding automated decision-making and formulates a reconstructed strict liability framework complemented by mandatory algorithmic transparency standards. Employing a normative juridical research method with statutory, comparative, and conceptual approaches, this paper synthesizes primary sources including Law No. 27 of 2022 on Personal Data Protection, European Union AI Act benchmarks, and pertinent Supreme Court jurisprudence. The findings reveal that attributing legal fault solely to human system operators disregards distributed technological agency, necessitating a transition toward strict enterprise liability coupled with an algorithmic duty of care. The proposed reform provides verifiable criteria for judicial evidentiary standards, ensuring substantive justice and safeguarding procedural fairness in modern court automation."
         ),
@@ -655,7 +655,7 @@ def main():
     parser.add_argument("--topic", type=str, help="Topik riset hukum / humaniora untuk diproses AI")
     parser.add_argument("--author", type=str, default="Ilham Pradani", help="Nama penulis utama")
     parser.add_argument("--affiliation", type=str, default="Fakultas Hukum, Ilmu Sosial, dan Ilmu Politik, Universitas Terbuka, Indonesia", help="Afiliasi resmi")
-    parser.add_argument("--email", type=str, default="ilham.pradani@chainasiaconnect.co.id", help="Email korespondensi")
+    parser.add_argument("--email", type=str, default="hello@ilhampradani.me", help="Email korespondensi")
     parser.add_argument("--input-md", type=str, help="Path ke naskah Markdown yang ingin dikonversi")
     parser.add_argument("--out", type=str, help="Path output berkas .docx")
     
