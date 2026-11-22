@@ -692,34 +692,49 @@ def main():
         
     elif args.topic:
         print(f"[MODE] GENERASI RISET AI: '{args.topic}'")
-        print("[1/3] Merumuskan Outline & Novelty Hukum via Groq LLM...")
+        print("[1/4] Merumuskan Outline & Novelty Hukum via Groq LLM...")
         sys_prompt_outline = (
             "Anda adalah Senior Legal Researcher dan Guru Besar Hukum Tata Negara/Hukum Siber. "
             "Rancang struktur artikel jurnal ilmiah bereputasi untuk Jurnal Humaya (FHISIP UT, SINTA 4). "
             "Kembalikan JSON valid dengan schema: { 'title': str, 'short_title': str, 'abstract_en': str, "
-            "'keywords_en': str, 'abstract_id': str, 'keywords_id': str, 'research_questions': list }"
+            "'keywords_en': str, 'abstract_id': str, 'keywords_id': str, 'research_questions': list, "
+            "'subheadings': [str] }"
         )
-        user_prompt_outline = f"Topik riset hukum: {args.topic}. Panjang abstrak 180-200 kata per bahasa."
+        user_prompt_outline = f"Topik riset hukum: {args.topic}. Panjang abstrak 180-200 kata per bahasa. Rancang 3 sub-pembahasan tajam."
         outline = call_groq_api("openai/gpt-oss-20b", sys_prompt_outline, user_prompt_outline)
         
-        print("[2/3] Menyusun Naskah Lengkap IMRAD via Gemini Flash...")
-        sys_prompt_draft = (
-            "Anda adalah Guru Besar Ilmu Hukum Indonesia. Tulis artikel jurnal ilmiah lengkap, mendalam, "
-            "dan berbahasa Indonesia akademis tanpa klise AI. "
-            "Kutipan doktrin hukum nyata, regulasi positif (KUHPerdata, UU ITE, UU PDP, KUHP UU 1/2023), "
-            "dan yurisprudensi. "
-            "Kembalikan JSON valid dengan schema: { 'sections': [ { 'heading': str, 'subheading': str|null, 'paragraphs': [str] } ], "
+        print("[2/4] Menyusun Pendahuluan & Metode Penelitian (Stage 1)... (Target: 1.200 - 1.500 kata)")
+        sys_prompt_part1 = (
+            "Anda adalah Guru Besar Ilmu Hukum Indonesia. Tulis Pendahuluan dan Metode Penelitian "
+            "yang sangat mendalam, mengutip doktrin hukum nyata, perundang-undangan nasional, dan literature gap. "
+            "Kembalikan JSON valid dengan schema: { 'sections': [ { 'heading': str, 'subheading': str|null, 'paragraphs': [str] } ] }"
+        )
+        user_prompt_part1 = f"Outline: {json.dumps(outline)}. Tulis bagian Introduction (minimal 5 paragraf panjang) dan Research Method (3 paragraf panjang). Hindari kalimat klise AI."
+        part1 = call_gemini_api(sys_prompt_part1, user_prompt_part1)
+        
+        print("[3/4] Menyusun Hasil dan Pembahasan & Tabel Booktabs (Stage 2)... (Target: 2.000 - 2.500 kata)")
+        sys_prompt_part2 = (
+            "Anda adalah Guru Besar Ilmu Hukum Indonesia. Tulis Hasil dan Pembahasan (Results and Discussions) "
+            "dalam 3 subbab substantif, menguraikan analisis yuridis, studi komparatif, dan tabel data perbandingan. "
+            "Sertakan [TABLE_1_PLACEHOLDER] di akhir subbab kedua. "
+            "Kembalikan JSON valid dengan schema: { 'sections': [ { 'heading': 'Results and Discussions', 'subheading': str, 'paragraphs': [str] } ], "
             "'table_1': { 'title': str, 'headers': [str], 'rows': [[str]] } }"
         )
-        user_prompt_draft = (
-            f"Susun naskah lengkap berdasarkan outline: {json.dumps(outline)}. "
-            "Format IMRAD: Introduction, Research Method, Results and Discussions, Conclusions, References. "
-            "Sertakan [TABLE_1_PLACEHOLDER] di bagian Results and Discussions. "
-            "Target total kata: 4.000–5.000 kata."
-        )
-        draft = call_gemini_api(sys_prompt_draft, user_prompt_draft)
+        user_prompt_part2 = f"Outline: {json.dumps(outline)}. Tulis 3 subbab pembahasan komprehensif. Total minimal 12-15 paragraf panjang berbobot doktrinal."
+        part2 = call_gemini_api(sys_prompt_part2, user_prompt_part2)
         
-        # Merge data
+        print("[4/4] Menyusun Simpulan & 25+ Referensi Standar APA 7th (Stage 3)... (Target: 800 - 1.000 kata)")
+        sys_prompt_part3 = (
+            "Anda adalah Guru Besar Ilmu Hukum Indonesia. Tulis Kesimpulan (Conclusions) dan Daftar Pustaka (References). "
+            "Daftar pustaka wajib minimal 25-30 referensi mutakhir (80% jurnal bereputasi 5-10 tahun terakhir) format APA 7th. "
+            "Kembalikan JSON valid dengan schema: { 'sections': [ { 'heading': 'Conclusions', 'subheading': null, 'paragraphs': [str] }, "
+            "{ 'heading': 'References', 'subheading': null, 'paragraphs': [str] } ] }"
+        )
+        user_prompt_part3 = f"Topik: {outline.get('title')}. Tulis simpulan tajam (3 paragraf) dan minimal 25 referensi APA lengkap dengan DOI/URL."
+        part3 = call_gemini_api(sys_prompt_part3, user_prompt_part3)
+        
+        # Merge all sections
+        combined_sections = part1.get("sections", []) + part2.get("sections", []) + part3.get("sections", [])
         data = {
             "title": outline.get("title", args.topic),
             "short_title": outline.get("short_title", args.topic[:50]),
@@ -730,8 +745,8 @@ def main():
             "keywords_en": outline.get("keywords_en", ""),
             "abstract_id": outline.get("abstract_id", ""),
             "keywords_id": outline.get("keywords_id", ""),
-            "sections": draft.get("sections", []),
-            "table_1": draft.get("table_1", {})
+            "sections": combined_sections,
+            "table_1": part2.get("table_1", {})
         }
         
         slug = re.sub(r'[^a-z0-9]+', '_', data['title'][:35].lower()).strip('_')
