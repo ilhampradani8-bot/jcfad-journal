@@ -628,7 +628,7 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
         paragraphs = sec.get("paragraphs", [])
         
         # Jika masuk ke Simpulan/Kesimpulan tetapi tabel belum masuk, masukkan tabel sekarang
-        if heading in ['Conclusions', 'Simpulan', 'Kesimpulan', 'References', 'Daftar Pustaka'] and not table_inserted and "table_1" in manuscript_data:
+        if heading in ['Conclusions', 'Simpulan', 'Kesimpulan', 'References', 'Daftar Pustaka', 'Daftar Rujukan'] and not table_inserted and "table_1" in manuscript_data:
             render_table_1_into_doc(doc, manuscript_data["table_1"])
             table_inserted = True
             
@@ -661,7 +661,7 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
             p_body = doc.add_paragraph()
             p_body.paragraph_format.line_spacing = 1.0
             
-            if heading in ["References", "Daftar Pustaka"]:
+            if heading in ["References", "Daftar Pustaka", "Daftar Rujukan"]:
                 # Hanging indent 0.25 inch for APA
                 p_body.paragraph_format.left_indent = Inches(0.25)
                 p_body.paragraph_format.first_line_indent = Inches(-0.25)
@@ -732,7 +732,7 @@ def audit_manuscript(docx_path):
         ("Research Method", ["research method", "metode penelitian", "metode", "metodologi"]),
         ("Results and Discussions", ["results and discussions", "hasil dan pembahasan", "pembahasan"]),
         ("Conclusions", ["conclusions", "kesimpulan", "simpulan"]),
-        ("References", ["references", "daftar pustaka"])
+        ("References", ["references", "daftar pustaka", "daftar rujukan"])
     ]
     headings_found = []
     for cat_name, variants in expected_categories:
@@ -1046,14 +1046,34 @@ def main():
         sections_assembled.extend(part3.get("sections", []))
         time.sleep(2)
 
-        # Bersihkan subheadings dari nomor
+        # Standarisasi Heading Bahasa Indonesia & Bersihkan subheadings dari nomor
+        HEADING_MAP = {
+            "introduction": "Pendahuluan",
+            "pendahuluan": "Pendahuluan",
+            "research method": "Metode Penelitian",
+            "methods": "Metode Penelitian",
+            "metode penelitian": "Metode Penelitian",
+            "results and discussions": "Hasil dan Pembahasan",
+            "results and discussion": "Hasil dan Pembahasan",
+            "hasil dan pembahasan": "Hasil dan Pembahasan",
+            "conclusions": "Simpulan",
+            "conclusion": "Simpulan",
+            "simpulan": "Simpulan",
+            "kesimpulan": "Simpulan",
+            "references": "Daftar Rujukan",
+            "daftar pustaka": "Daftar Rujukan",
+            "daftar rujukan": "Daftar Rujukan"
+        }
         for s in sections_assembled:
+            h_raw = s.get("heading", "").strip().lower()
+            if h_raw in HEADING_MAP:
+                s["heading"] = HEADING_MAP[h_raw]
             if s.get("subheading"):
                 s["subheading"] = re.sub(r'^[0-9A-Za-z]+[\.\:\)]\s*', '', s["subheading"]).strip()
 
-        # Tambahkan References Section
+        # Tambahkan References Section resmi dengan tajuk 'Daftar Rujukan'
         sections_assembled.append({
-            "heading": "References",
+            "heading": "Daftar Rujukan",
             "subheading": None,
             "paragraphs": all_refs
         })
@@ -1084,7 +1104,9 @@ def main():
         try:
             polished = call_groq_api("openai/gpt-oss-120b", sys_prompt_polish, user_prompt_polish, max_tokens=2500)
             if polished.get("sections") and len(polished["sections"]) > 0:
-                sections_assembled[0] = polished["sections"][0]
+                p_sec = polished["sections"][0]
+                p_sec["heading"] = "Pendahuluan"
+                sections_assembled[0] = p_sec
         except Exception as ep:
             print(f"   ⚠️ Polish notice: {ep}")
 
