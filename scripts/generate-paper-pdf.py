@@ -1014,6 +1014,15 @@ def review_pdf(pdf_path, article, attempt=1):
         else:
             checks.append(("Pembersihan Teks Dummy", "FAIL", f"Ditemukan placeholder: {', '.join(found_placeholders)}"))
 
+        # 8c. Analisa Kebocoran Residu Meta-Reviewer & Percakapan AI (Strict Deterministic Blocker)
+        meta_reviewer_regex = re.compile(r'\b(reviewer\s*\d+|menjawab\s+kritik|kritik\s+reviewer|tuntutan\s+reviewer|menjembatani\s+kritik|in\s+response\s+to\s+reviewer|identified\s+by\s+reviewer)\b', re.IGNORECASE)
+        found_meta_reviewers = meta_reviewer_regex.findall(all_text)
+        if not found_meta_reviewers:
+            checks.append(("Kebersihan Meta-Reviewer", "PASS", "0 Residu Percakapan Reviewer (Murni Publikasi Ilmiah)"))
+        else:
+            unique_leaks = list(set(found_meta_reviewers))
+            checks.append(("Kebersihan Meta-Reviewer", "FAIL", f"BOCOR RESIDU REVIEWER: {', '.join(unique_leaks)} (DILARANG TERBIT)"))
+
         # 8b. Analisa Tipografi & Kebersihan Bold (Bebas Gaya AI Chat / Blog Spam)
         temp_typ_path = f"/tmp/{slug}.typ"
         bold_count = 0

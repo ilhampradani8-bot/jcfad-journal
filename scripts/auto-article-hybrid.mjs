@@ -841,6 +841,12 @@ Output JSON WAJIB:
     finalRefs.unshift(CANONICAL_PRADANI_SISTER_PAPERS[0]);
   }
 
+  // 6b. Hard Deterministic Meta-Reviewer & Prompt Leak Blocker
+  const metaReviewerLeak = finalContent.match(/\b(reviewer\s*\d+|menjawab\s+kritik|kritik\s+reviewer|tuntutan\s+reviewer|in\s+response\s+to\s+reviewer|identified\s+by\s+reviewer)\b/i);
+  if (metaReviewerLeak) {
+    throw new Error(`CRITICAL QUALITY GATE VIOLATION: Ditemukan residu percakapan reviewer '${metaReviewerLeak[0]}' di dalam teks naskah! Penyimpanan ke Cloudflare D1 dibatalkan demi menjaga integritas akademik.`);
+  }
+
   // 7. Simpan ke Cloudflare D1
   let saveResult = { slug: slugify(finalized.final_title || currentTitle), url: `https://journal.chainasiaconnect.co.id/${slugify(finalized.final_title || currentTitle)}` };
   if (!IS_DRY_RUN) {

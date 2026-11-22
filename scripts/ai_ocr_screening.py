@@ -52,12 +52,14 @@ Audit this academic journal PDF directly as a complete document (ISO A4 2-column
 3. Uncompiled Math / Code Leaks: Are there uncompiled LaTeX strings, missing fraction backslashes (e.g. 'rac{d}{s}'), concatenated operators ('xcdot'), or raw brackets?
 4. Typography & Formatting: Are tables in clean Booktabs three-line style without vertical lines? Are running headers and footers single-line and unclipped?
 5. Document Flow: Do tables or sections break awkwardly across pages or columns?
+6. Meta-Prompts & Reviewer Rebuttal Leaks: Are there any leaked meta-prompts, AI conversational greetings, or reviewer rebuttal statements (e.g. 'Reviewer 1', 'Untuk menjawab kritik Reviewer', 'In response to Reviewer') anywhere in the visible text? If any exist, status MUST be FAIL and score must be <= 50.
 
 Return ONLY valid JSON matching this schema:
 {
   "status": "PASS" or "FAIL",
   "score": <integer from 0 to 100>,
   "collision_detected": <true or false>,
+  "meta_reviewer_leak_detected": <true or false>,
   "uncompiled_math_detected": <true or false>,
   "lines_straight_and_aligned": <true or false>,
   "geometric_integrity_notes": "<concise analysis of lines, borders, column gutters, and alignment straightness>",
