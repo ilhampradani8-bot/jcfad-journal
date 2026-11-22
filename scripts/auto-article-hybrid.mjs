@@ -341,25 +341,38 @@ async function callGroqAPI(model, systemPrompt, userPrompt, maxTokens = 4000, re
 
     if (!res.ok) {
       const errText = await res.text();
-      if ((res.status === 429 || res.status === 413) && retryCount < 4) {
-        console.warn(`⏳ [Groq Rate Limit ${res.status}] pada ${model}. Menunggu 15 detik...`);
-        await sleep(15000);
+      if (res.status === 413) {
+        console.warn(`⚠️ [Groq 413 Payload Limit] Input ${model} melebihi batas token Groq (7.000 TPM limit). Beralih secara otomatis ke Gemini Evaluator...`);
+        return callGeminiAPI(systemPrompt, userPrompt, 0.2);
+      }
+      if (res.status === 429 && retryCount >= 2) {
+        console.warn(`⚠️ [Groq 429 Rate Limit] Groq sibuk. Beralih secara otomatis ke Gemini Evaluator...`);
+        return callGeminiAPI(systemPrompt, userPrompt, 0.2);
+      }
+      if ((res.status === 429 || res.status === 503) && retryCount < 2) {
+        console.warn(`⏳ [Groq Rate Limit ${res.status}] pada ${model}. Menunggu 12 detik...`);
+        await sleep(12000);
         return callGroqAPI(model, systemPrompt, userPrompt, Math.floor(maxTokens * 0.9), retryCount + 1);
       }
-      throw new Error(`Groq ${model} error (${res.status}): ${errText}`);
+      console.warn(`⚠️ [Groq Error ${res.status}] Menggunakan fail-safe Gemini Evaluator...`);
+      return callGeminiAPI(systemPrompt, userPrompt, 0.2);
     }
 
     const data = await res.json();
     const content = data.choices[0]?.message?.content;
     const parsed = extractJsonObject(content);
-    if (!parsed) throw new Error(`Gagal parse JSON Groq ${model}`);
+    if (!parsed) {
+      console.warn(`⚠️ Gagal parse JSON Groq ${model}. Beralih ke Gemini...`);
+      return callGeminiAPI(systemPrompt, userPrompt, 0.2);
+    }
     return parsed;
   } catch (err) {
-    if (retryCount < 3) {
-      await sleep(6000);
+    if (retryCount < 1) {
+      await sleep(5000);
       return callGroqAPI(model, systemPrompt, userPrompt, maxTokens, retryCount + 1);
     }
-    throw err;
+    console.warn(`⚠️ [Groq Exception] ${err.message}. Mengalihkan secara aman ke Gemini...`);
+    return callGeminiAPI(systemPrompt, userPrompt, 0.2);
   }
 }
 
@@ -529,7 +542,7 @@ async function main() {
   console.log('='.repeat(80));
 
   // 0. Daily Gate: Pastikan HANYA 1 naskah per hari (1x sehari Asia/Jakarta WIB)
-  const isForce = process.argv.includes('--force');
+  const isForce = process.argv.includes('--force') || IS_DRY_RUN;
   const todayWib = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
 
   if (!isForce && fs.existsSync(REGISTRY_FILE)) {
@@ -565,8 +578,13 @@ async function main() {
   console.log(`🏷️ Sudut Pandang : "${selectedDomain.angle}"`);
 
   // 2. Real-Time CERN Zenodo DOI Reservation Gate
-  const reservedZenodo = await reserveZenodoDraft();
-  const lockedDoi = reservedZenodo.doi;
+  let lockedDoi = '10.5281/zenodo.preview';
+  if (!IS_DRY_RUN) {
+    const reservedZenodo = await reserveZenodoDraft();
+    lockedDoi = reservedZenodo.doi;
+  } else {
+    console.log(`🧪 [DRY RUN] Mode simulasi aktif - Menggunakan DOI uji coba: ${lockedDoi}`);
+  }
 
   // 3. Stage 1: Fast Novelty Discovery via Groq
   console.log(`\n🔍 [Stage 1: Groq] Eksplorasi Celah Riset (Research Gap) & Kebaruan Ilmiah...`);
@@ -804,44 +822,51 @@ Output JSON WAJIB:
   }
 
   // 7. Simpan ke Cloudflare D1
-  const saveResult = await saveToCloudflareD1({
-    final_title: finalized.final_title || currentTitle,
-    final_excerpt: finalized.final_excerpt || currentExcerpt,
-    final_content: finalized.final_content || currentContent,
-    final_references: finalRefs,
-    confidence_score: finalized.confidence_score
-  }, lockedDoi, selectedDomain);
+  let saveResult = { slug: slugify(finalized.final_title || currentTitle), url: `https://journal.chainasiaconnect.co.id/${slugify(finalized.final_title || currentTitle)}` };
+  if (!IS_DRY_RUN) {
+    saveResult = await saveToCloudflareD1({
+      final_title: finalized.final_title || currentTitle,
+      final_excerpt: finalized.final_excerpt || currentExcerpt,
+      final_content: finalized.final_content || currentContent,
+      final_references: finalRefs,
+      confidence_score: finalized.confidence_score
+    }, lockedDoi, selectedDomain);
 
-  // Catat ke Registry Lokal Anti-Perulangan
-  recordNewTitleToRegistry({
-    title: finalized.final_title || currentTitle,
-    slug: saveResult.slug,
-    doi: lockedDoi,
-    date: todayWib,
-    type: 'academic_preprint'
-  });
-
-  // 8. Kompilasi PDF Typst 2-Kolom
-  console.log(`\n📄 [Typst Compiler] Mengompilasi PDF naskah ilmiah via Typst...`);
-  try {
-    execSync(`python3 scripts/generate-paper-pdf.py --slug ${saveResult.slug} --osf`, { cwd: rootDir, stdio: 'inherit' });
-  } catch (pdfErr) {
-    console.warn(`⚠️ Peringatan kompilasi PDF: ${pdfErr.message}`);
+    // Catat ke Registry Lokal Anti-Perulangan
+    recordNewTitleToRegistry({
+      title: finalized.final_title || currentTitle,
+      slug: saveResult.slug,
+      doi: lockedDoi,
+      date: todayWib,
+      type: 'academic_preprint'
+    });
+  } else {
+    console.log(`\n🧪 [DRY RUN] Melewati penyimpanan Cloudflare D1 dan registri lokal.`);
   }
 
-  // 9. Multimodal Visual AI OCR Screening via Gemini Vision
-  const pdfPath = path.join(rootDir, `public/docs/${saveResult.slug}.pdf`);
-  if (fs.existsSync(pdfPath)) {
-    console.log(`\n🤖 [Visual Quality Gate] Mengaudit Tata Letak Visual PDF via Gemini Vision API...`);
+  // 8. Kompilasi PDF Typst 2-Kolom
+  if (!IS_DRY_RUN) {
+    console.log(`\n📄 [Typst Compiler] Mengompilasi PDF naskah ilmiah via Typst...`);
     try {
-      execSync(`python3 scripts/ai_ocr_screening.py "${pdfPath}"`, { cwd: rootDir, stdio: 'inherit' });
-    } catch (visionErr) {
-      console.warn(`⚠️ Catatan AI OCR Screening: ${visionErr.message}`);
+      execSync(`python3 scripts/generate-paper-pdf.py --slug ${saveResult.slug} --osf`, { cwd: rootDir, stdio: 'inherit' });
+    } catch (pdfErr) {
+      console.warn(`⚠️ Peringatan kompilasi PDF: ${pdfErr.message}`);
+    }
+
+    // 9. Multimodal Visual AI OCR Screening via Gemini Vision
+    const pdfPath = path.join(rootDir, `public/docs/${saveResult.slug}.pdf`);
+    if (fs.existsSync(pdfPath)) {
+      console.log(`\n🤖 [Visual Quality Gate] Mengaudit Tata Letak Visual PDF via Gemini Vision API...`);
+      try {
+        execSync(`python3 scripts/ai_ocr_screening.py "${pdfPath}"`, { cwd: rootDir, stdio: 'inherit' });
+      } catch (visionErr) {
+        console.warn(`⚠️ Catatan AI OCR Screening: ${visionErr.message}`);
+      }
     }
   }
 
   // 10. Build & Deploy ke Cloudflare Pages
-  if (!SKIP_DEPLOY) {
+  if (!SKIP_DEPLOY && !IS_DRY_RUN) {
     console.log(`\n🚀 [Cloudflare Pages] Membangun & Menerbitkan Portal Jurnal ke Edge (jcfad-journal)...`);
     try {
       execSync('npm run build && npx wrangler pages deploy dist --project-name jcfad-journal --commit-dirty=true', { cwd: rootDir, stdio: 'inherit' });
