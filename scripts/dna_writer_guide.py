@@ -25,18 +25,30 @@ BANNED_AI_CLICHES = [
 def get_dna_system_prompt() -> str:
     """Returns the prompt instruction to inject into LLMs (Groq, Gemini, etc.)"""
     return (
-        "GAYA PENULISAN WAJIB (DNA ILHAM PRADANI - HUMAN AUTHENTIC):\n"
-        "1. Tulis dengan gaya bertutur intelektual pragmatis-solutif khas Ilham Pradani (lugas, berani, menginjak bumi).\n"
-        "2. Awali pembahasan dari KONTRAKDIKSI NYATA DI LAPANGAN (studi kasus faktual e-commerce Indonesia, sengketa kerugian nyata, klausula eksonerasi).\n"
-        "3. Gunakan pola kalimat majemuk mengalir alami: 'di mana...', 'hal ini penting untuk...', 'namun kita memiliki masalah yang cukup penting di sini...', 'oleh karena itu saya berinisiatif...'.\n"
-        "4. Terapkan variasi panjang kalimat yang tinggi (High Burstiness): padukan kalimat pendek tajam dengan elaborasi logis panjang.\n"
-        "5. DILARANG KERAS menggunakan kata transisi klise AI: 'Selain itu', 'Penting untuk dicatat bahwa', 'Secara komprehensif', 'Hal ini menunjukkan bahwa', 'Di sisi lain'.\n"
-        "6. Rancang solusi secara bertahap (skema berjenjang/MVP): Tahap 1 (Pintu Masuk Pembuktian Terbalik), Tahap 2 (Tanggung Jawab Mutlak Berjenjang Platform & Vendor).\n"
-        "7. Sajikan visualisasi konkret (Bagan 1 Diagram Alur Resmi dan Tabel 1 Matriks Perbandingan Sistem)."
+        "GAYA PENULISAN WAJIB (DNA ILHAM PRADANI - HUMAN DYNAMIC & CONTENT-DRIVEN):\n"
+        "1. KEBEBASAN DINAMIS & KEDALAMAN ORGANIK (ZERO ARTIFICIAL RESTRICTIONS): "
+        "DILARANG MEMBATASI ATAU MEMATOK PANJANG PARAGRAF SECARA KAKU. Setiap paragraf harus murni mengalir "
+        "sesuai kebutuhan pembahasan substansi. Kembangkan pembahasan secara leluasa, mendalam, dan panjang bila topik "
+        "memerlukan telaah doktriner/empiris komprehensif, dan gunakan paragraf pendek menusuk saat menegaskan prinsip atau premis inti.\n"
+        "2. KEACAKAN ALAMI (ORGANIC DYNAMIC RANDOMNESS): Biarkan panjang paragraf bervariasi secara alami dan organik "
+        "mengikuti intensitas dialektika pemikiran (narasi studi kasus bisa panjang dan hidup, diselingi paragraf penegasan singkat, "
+        "lalu poin-poin operasional teknis 1, 2, 3, 4).\n"
+        "3. PRAGMATIS-SOLUTIF & MENGINJAK BUMI: Awali pembahasan dari KONTRAKDIKSI NYATA DI LAPANGAN "
+        "(studi kasus faktual e-commerce Indonesia, sengketa kerugian nyata konsumen, klausula eksonerasi platform).\n"
+        "4. KALIMAT MAJEMUK MENGALIR: Gunakan kata hubung alami bahasa Indonesia: 'di mana...', 'hal ini penting untuk...', "
+        "'namun kita memiliki masalah yang cukup penting di sini...', 'oleh karena itu saya berinisiatif...'.\n"
+        "5. ZERO TOLERANCE KATA KLISE AI: DILARANG KERAS menggunakan 'Selain itu', 'Penting untuk dicatat bahwa', "
+        "'Secara komprehensif', 'Hal ini menunjukkan bahwa', 'Di sisi lain'.\n"
+        "6. SOLUSI BERTAHAP (SKEMA BERJENJANG / MVP): Uraikan tahapan operasional bernomor (1, 2, 3, 4) dengan rincian praktis "
+        "yang bisa langsung dieksekusi tanpa menunggu revisi undang-undang.\n"
+        "7. VISUALISASI FORMAL: Sertakan Bagan 1 Alur Logika Resmi dan Tabel 1 Matriks Perbandingan."
     )
 
 def audit_text_dna(text: str) -> dict:
-    """Audits a text against banned AI clichés and checks burstiness."""
+    """
+    Audits a text against banned AI clichés and checks burstiness.
+    Does NOT restrict maximum paragraph length, ensuring true dynamic human freedom.
+    """
     lower_text = text.lower()
     violations = []
     
@@ -56,7 +68,7 @@ def audit_text_dna(text: str) -> dict:
         avg_len, std_dev = 0, 0
         
     score = 100.0 - (len(violations) * 15.0)
-    if std_dev < 5.0: # Low burstiness (too uniform)
+    if std_dev < 5.0: # Low burstiness (monotonous sentence length)
         score -= 20.0
         violations.append(f"Variasi kalimat terlalu seragam/monoton (Std Dev: {std_dev:.1f} kata). Perlu lebih acak.")
         
@@ -71,12 +83,5 @@ def audit_text_dna(text: str) -> dict:
     }
 
 if __name__ == "__main__":
-    import sys
-    test_text = (
-        "Perkembangan teknologi transaksi elektronik saat ini sudah bergerak sangat jauh melampaui "
-        "apa yang dibayangkan oleh para perancang KUHPerdata. Namun kita memiliki masalah hukum yang sangat "
-        "penting di sini, karena hukum perdata Indonesia belum siap menghadapi situasi ketika mesin cerdas "
-        "tersebut membuat keputusan yang keliru. Oleh karena itu saya berinisiatif merumuskan skema baru."
-    )
-    res = audit_text_dna(test_text)
-    print("Test Audit Result:", res)
+    prompt = get_dna_system_prompt()
+    print("DNA Prompt Guide:\n", prompt)
