@@ -7,4 +7,6 @@ dist/
 .wrangler/
 .DS_Store
 *.log
+output/
+
 

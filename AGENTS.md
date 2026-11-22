@@ -57,4 +57,5 @@ This repository (`/root/journal`) contains the complete standalone code and asse
 - `python3 scripts/compile-kdp-epub.py`: Compile Amazon Kindle reflowable EPUB 3 & standalone cover JPEG
 - `python3 scripts/audit_all_published.py`: Run full academic audit on 100% published papers
 - `python3 scripts/sync-osf-papers.py --update-nodes`: Sync clean metadata & updated PDFs to all OSF nodes
+- `python3 scripts/generate-humaya-paper.py --dry-run`: Generate on-demand camera-ready Word paper for Jurnal Humaya (FHISIP UT SINTA 4) with 100% audit
 - `autopush "<message>"`: Dual-push to GitHub + trigger deploy + notify Telegram
