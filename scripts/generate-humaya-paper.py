@@ -370,12 +370,15 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
     run_t = p_title.add_run(manuscript_data["title"])
     set_font_palatino(run_t, size_pt=16, bold=True)
     
+    # Bersihkan instruksi template di Paragraph 4
+    doc.paragraphs[4].text = ""
+    
     # 2. Update Authors & Affiliation (Paragraph 5 to 8)
     p_author = doc.paragraphs[5]
     p_author.text = ""
     p_author.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run_a = p_author.add_run(f"{manuscript_data['author']}1*")
-    set_font_palatino(run_a, size_pt=12, bold=True)
+    run_a = p_author.add_run(f"{manuscript_data['author']}*")
+    set_font_palatino(run_a, size_pt=12, bold=False)
     
     p_aff1 = doc.paragraphs[6]
     p_aff1.text = ""
@@ -397,10 +400,10 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
     
     # Left Column: Row 0 (Article Info), Row 1 (Keywords EN), Row 2 (Kata Kunci ID)
     cell_info = t_abs.cell(0, 0)
-    cell_info.text = "Article Info\n\nSubmitted: May 2026\nAccepted: Jun 2026\nApproved: Jul 2026"
+    cell_info.text = "Article Info"
     for p in cell_info.paragraphs:
         for r in p.runs:
-            set_font_palatino(r, size_pt=9, italic=True)
+            set_font_palatino(r, size_pt=10, bold=True)
             
     cell_kw_en = t_abs.cell(1, 0)
     cell_kw_en.text = ""
@@ -457,18 +460,67 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
         body.remove(body[12])
         
     # 5. Inject Structured Body Sections
+    last_heading = None
+    table_inserted = False
+
+    def render_table_1_into_doc(doc, tbl_info):
+        p_cap = doc.add_paragraph()
+        p_cap.paragraph_format.space_before = Pt(10)
+        p_cap.paragraph_format.space_after = Pt(4)
+        p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        add_formatted_runs(p_cap, tbl_info.get("title", "Tabel 1"), size_pt=9.5, default_bold=True)
+        
+        num_rows = len(tbl_info["rows"]) + 1
+        num_cols = len(tbl_info["headers"])
+        tbl = doc.add_table(rows=num_rows, cols=num_cols)
+        tbl.alignment = docx.enum.table.WD_TABLE_ALIGNMENT.CENTER
+        
+        hdr_cells = tbl.rows[0].cells
+        for col_idx, hdr_title in enumerate(tbl_info["headers"]):
+            hdr_cells[col_idx].text = ""
+            p_c = hdr_cells[col_idx].paragraphs[0]
+            p_c.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            add_formatted_runs(p_c, hdr_title, size_pt=9, default_bold=True)
+            set_cell_borders(hdr_cells[col_idx], 
+                             top={'val': 'single', 'sz': 8, 'color': '000000'},
+                             bottom={'val': 'single', 'sz': 6, 'color': '000000'})
+        
+        for row_idx, row_data in enumerate(tbl_info["rows"]):
+            row_cells = tbl.rows[row_idx + 1].cells
+            for col_idx, cell_value in enumerate(row_data):
+                row_cells[col_idx].text = ""
+                p_c = row_cells[col_idx].paragraphs[0]
+                p_c.alignment = WD_ALIGN_PARAGRAPH.LEFT if col_idx > 0 else WD_ALIGN_PARAGRAPH.CENTER
+                add_formatted_runs(p_c, cell_value, size_pt=8.5)
+                if row_idx == len(tbl_info["rows"]) - 1:
+                    set_cell_borders(row_cells[col_idx], bottom={'val': 'single', 'sz': 8, 'color': '000000'})
+                else:
+                    set_cell_borders(row_cells[col_idx])
+        
+        p_src = doc.add_paragraph()
+        p_src.paragraph_format.space_before = Pt(2)
+        p_src.paragraph_format.space_after = Pt(8)
+        p_src.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        add_formatted_runs(p_src, "Sumber: Hasil Analisis Peneliti (2026)", size_pt=10)
+
     for sec in manuscript_data["sections"]:
         heading = sec.get("heading")
         subheading = sec.get("subheading")
         paragraphs = sec.get("paragraphs", [])
         
-        # Section Heading
-        if heading:
+        # Jika masuk ke Simpulan/Kesimpulan tetapi tabel belum masuk, masukkan tabel sekarang
+        if heading in ['Conclusions', 'Simpulan', 'Kesimpulan', 'References', 'Daftar Pustaka'] and not table_inserted and "table_1" in manuscript_data:
+            render_table_1_into_doc(doc, manuscript_data["table_1"])
+            table_inserted = True
+            
+        # Section Heading (hanya dicetak sekali jika baru/berubah)
+        if heading and heading != last_heading:
             p_h = doc.add_paragraph()
             p_h.paragraph_format.space_before = Pt(14)
             p_h.paragraph_format.space_after = Pt(4)
             p_h.paragraph_format.keep_with_next = True
             add_formatted_runs(p_h, heading, size_pt=12, default_bold=True)
+            last_heading = heading
             
         # Optional Subheading
         if subheading:
@@ -481,51 +533,9 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
         # Paragraphs & Table Integration
         for para_text in paragraphs:
             if para_text.strip() == "[TABLE_1_PLACEHOLDER]" and "table_1" in manuscript_data:
-                # Add Booktabs Table
-                tbl_info = manuscript_data["table_1"]
-                p_cap = doc.add_paragraph()
-                p_cap.paragraph_format.space_before = Pt(10)
-                p_cap.paragraph_format.space_after = Pt(4)
-                p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                add_formatted_runs(p_cap, tbl_info.get("title", "Tabel 1"), size_pt=9.5, default_bold=True)
-                
-                # Create Table
-                num_rows = len(tbl_info["rows"]) + 1
-                num_cols = len(tbl_info["headers"])
-                tbl = doc.add_table(rows=num_rows, cols=num_cols)
-                tbl.alignment = docx.enum.table.WD_TABLE_ALIGNMENT.CENTER
-                
-                # Header row
-                hdr_cells = tbl.rows[0].cells
-                for col_idx, hdr_title in enumerate(tbl_info["headers"]):
-                    hdr_cells[col_idx].text = ""
-                    p_c = hdr_cells[col_idx].paragraphs[0]
-                    p_c.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                    add_formatted_runs(p_c, hdr_title, size_pt=9, default_bold=True)
-                    # Border: top 8 (1pt), bottom 6 (0.75pt)
-                    set_cell_borders(hdr_cells[col_idx], 
-                                     top={'val': 'single', 'sz': 8, 'color': '000000'},
-                                     bottom={'val': 'single', 'sz': 6, 'color': '000000'})
-                
-                # Data rows
-                for row_idx, row_data in enumerate(tbl_info["rows"]):
-                    row_cells = tbl.rows[row_idx + 1].cells
-                    for col_idx, cell_value in enumerate(row_data):
-                        row_cells[col_idx].text = ""
-                        p_c = row_cells[col_idx].paragraphs[0]
-                        p_c.alignment = WD_ALIGN_PARAGRAPH.LEFT if col_idx > 0 else WD_ALIGN_PARAGRAPH.CENTER
-                        add_formatted_runs(p_c, cell_value, size_pt=8.5)
-                        
-                        # Last row bottom border: 8 (1pt)
-                        if row_idx == len(tbl_info["rows"]) - 1:
-                            set_cell_borders(row_cells[col_idx], bottom={'val': 'single', 'sz': 8, 'color': '000000'})
-                        else:
-                            set_cell_borders(row_cells[col_idx])
-                
-                # Spacing after table
-                p_sp = doc.add_paragraph()
-                p_sp.paragraph_format.space_before = Pt(4)
-                p_sp.paragraph_format.space_after = Pt(6)
+                if not table_inserted:
+                    render_table_1_into_doc(doc, manuscript_data["table_1"])
+                    table_inserted = True
                 continue
                 
             # Regular text paragraph or APA Reference entry

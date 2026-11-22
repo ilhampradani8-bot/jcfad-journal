@@ -43,7 +43,10 @@ for p in body_paras:
     elif p.startswith(('1. ', '2. ', '3. ', 'A. ', 'B. ', 'C. ')):
         if current_sec['paragraphs']:
             sections.append(current_sec)
-        current_sec = {'heading': 'Hasil dan Pembahasan', 'subheading': p, 'paragraphs': []}
+        sub_title = re.sub(r'^[0-9A-Z]\.\s*', '', p)
+        current_sec = {'heading': 'Hasil dan Pembahasan', 'subheading': sub_title, 'paragraphs': []}
+    elif p.startswith(('Tabel 1', 'Table 1', 'Sumber:', 'Source:')):
+        continue
     else:
         current_sec['paragraphs'].append(p)
 
@@ -95,7 +98,7 @@ table_1 = {
 
 # Tempatkan Tabel 1 tepat di akhir Subbab 1 Hasil dan Pembahasan
 for s in sections:
-    if s.get('subheading') and '1.' in s.get('subheading'):
+    if s.get('subheading') and ('Kerangka' in s.get('subheading') or '1.' in s.get('subheading')):
         if not any('[TABLE_1_PLACEHOLDER]' in p for p in s['paragraphs']):
             s['paragraphs'].append('[TABLE_1_PLACEHOLDER]')
         break
@@ -177,20 +180,34 @@ t1_html = '''
       </tr>
     </tbody>
   </table>
+  <p style="font-size: 9pt; color: #475569; margin-top: 6px; margin-bottom: 24px; text-align: left;">
+    Sumber: Hasil Analisis Peneliti (2026)
+  </p>
 </div>
 '''
 
 body_html_parts = []
+last_h = None
 for sec in sections:
     h = sec.get('heading')
     sh = sec.get('subheading')
     
-    if h:
+    # Normalisasi nama bab bahasa Indonesia baku
+    if h in ['Results and Discussions', 'Hasil dan Pembahasan']:
+        h = 'Hasil dan Pembahasan'
+    elif h in ['Conclusions', 'Kesimpulan', 'Simpulan']:
+        h = 'Simpulan'
+    elif h in ['References', 'Daftar Pustaka']:
+        h = 'Daftar Pustaka'
+        
+    if h and h != last_h:
         h_clean = clean_markdown_html(h)
         body_html_parts.append(f'<h2 style="font-size: 13pt; font-weight: bold; margin-top: 32px; margin-bottom: 10px; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 5px; color: #0f172a;">{h_clean}</h2>')
+        last_h = h
         
     if sh:
         sh_clean = clean_markdown_html(sh)
+        sh_clean = re.sub(r'^[0-9A-Z]\.\s*', '', sh_clean)
         body_html_parts.append(f'<h3 style="font-size: 11.5pt; font-weight: bold; font-style: italic; margin-top: 20px; margin-bottom: 8px; color: #1e293b;">{sh_clean}</h3>')
         
     for p in sec.get('paragraphs', []):
@@ -332,19 +349,24 @@ html_template = f'''<!DOCTYPE html>
     <table class="abs-table">
       <tr>
         <td class="abs-col-left">
-          <div style="font-size: 8.5pt; font-style: italic; color: #475569; margin-bottom: 16px;">
-            <b>Article Info</b><br><br>
-            Submitted: May 2026<br>
-            Accepted: Jun 2026<br>
-            Approved: Jul 2026
+          <div style="font-size: 10pt; font-weight: bold; color: #0f172a; margin-bottom: 16px;">
+            Article Info
           </div>
-          <div style="margin-bottom: 16px;">
+          <div style="margin-bottom: 16px; font-size: 9.5pt; line-height: 1.45;">
             <b>Keywords:</b><br>
-            <i>Autonomous Electronic Transactions;<br>Intelligent Algorithms;<br>Civil Liability;<br>Strict Liability;<br>Consumer Protection</i>
+            Autonomous Electronic Transactions;<br>
+            Intelligent Algorithms;<br>
+            Civil Liability;<br>
+            Strict Liability;<br>
+            Consumer Protection
           </div>
-          <div>
+          <div style="font-size: 9.5pt; line-height: 1.45;">
             <b>Kata Kunci:</b><br>
-            <i>Transaksi Elektronik Otonom;<br>Algoritma Cerdas;<br>Pertanggungjawaban Perdata;<br>Tanggung Jawab Mutlak;<br>Perlindungan Konsumen</i>
+            Transaksi Elektronik Otonom;<br>
+            Algoritma Cerdas;<br>
+            Pertanggungjawaban Perdata;<br>
+            Tanggung Jawab Mutlak;<br>
+            Perlindungan Konsumen
           </div>
         </td>
         <td class="abs-col-right">
