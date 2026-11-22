@@ -769,7 +769,9 @@ ${lineageList}
 5. Structured Abstract (ResearchGate & Indexing Limits):
    - Structured Abstract in English (Background, Objectives, Methods, Results, Conclusion), strictly 150-200 words (maximum 1,650 characters).
 6. Real-World Grounding Citations (Crossref / OpenAlex Grounding):
-${realWorldGroundingList ? `   - Ground literature review in these verified real-world empirical works:\n${realWorldGroundingList}\n` : ''}7. Turnitin & AI Detector Evasion (High Burstiness & Human Stylometrics):
+${realWorldGroundingList ? `   - Ground literature review in these verified real-world empirical works:\n${realWorldGroundingList}\n` : ''}7. Turnitin & AI Detector Evasion (Ilham Pradani Writing DNA - High Burstiness & Dynamic Asymmetry):
+   - Zero Artificial Constraints: Do NOT artificially cap or equalize paragraph lengths. Let paragraphs expand naturally and deeply during doctrinal, mathematical, or empirical discussions, and use sharp punchy paragraphs (15-35 words) for core axioms or premises.
+   - Dynamic Paragraph Asymmetry: Strictly avoid uniform AI block paragraphs (~70-90 words). Enforce high variance: short principles (15-35 words), focused transitions (45-80 words), and extensive analytical depths (100-190 words).
    - Human academic writing style: dynamic mix of concise sentences (6-12 words) with complex argumentative reasoning (25-35 words).
    - STRICTLY FORBIDDEN AI clichés: "it is undeniable that", "stands as a pivotal milestone", "in today's fast-paced digital era", "two sides of the same coin", "delve into", "pivotal role", "tapestry", "crucial landscape", "in conclusion it is evident".
    - Empirical specificity: Include exact local empirical parameters of Pesisir Barat (e.g., Kuala Stabas jukung fuel costs, intermediary margin spreads of 35-40%, Repong Dammar resin moisture gradients, Krui Pro WSL occupancy rates, Articles 1320, 1338, 1243 of the Indonesian Civil Code).
@@ -870,7 +872,9 @@ REVISION REQUIREMENTS:
 4. If flawed/hallucinated citations were identified, rewrite the corresponding literature review and discussion sections to reflect the real verified grounding literature.
 5. Maintain IMRAD structure, Academic Three-Line Tables, and zero colloquial language.
 6. Author remains strictly Solo Author: Ilham Pradani (PT CHAIN ASIA CONECT R&D).
-7. Human Academic Stylometrics (Burstiness & Anti-AI Detector):
+7. Human Academic Stylometrics (Ilham Pradani Writing DNA - Burstiness & Anti-AI Detector):
+   - Zero Artificial Constraints: Let paragraphs expand organically based on topic depth with zero robotic uniform blocks.
+   - Enforce dynamic paragraph asymmetry: punchy short paragraphs (15-35 words) interspersed with deep substantive paragraphs (100-190 words).
    - Eliminate AI clichés ("delve into", "pivotal", "in conclusion it is evident", "tapestry").
    - Mix short concise sentences with compound argumentative reasoning.
 

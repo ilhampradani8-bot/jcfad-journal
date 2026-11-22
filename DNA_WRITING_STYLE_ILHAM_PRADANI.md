@@ -117,3 +117,23 @@ graph TD
 * **Afiliasi**: `Fakultas Hukum, Ilmu Sosial, dan Ilmu Politik, Universitas Terbuka, Indonesia`
 * **Email Korespondensi**: `hello@ilhampradani.me`
 * **Font Resmi Dokumen**: `Palatino Linotype` (14pt Bold Judul, 12pt Bold Subbab, 12pt Reguler Badan Teks, 10pt Abstrak/Tabel).
+
+---
+
+## 7. Penerapan Mutlak pada Seluruh Mesin Generator & Repositori
+
+Seluruh mesin generasi teks di repositori ini telah dikonfigurasi dan diverifikasi mematuhi DNA ini secara mutlak:
+
+1. **`scripts/auto-article-hybrid.mjs` (Mesin Harian JCFAD - Gemini 2.5 + Groq)**:
+   - Terintegrasi dengan `scripts/dna-writer-guide.mjs`.
+   - Menginjeksikan `DNA_SYSTEM_PROMPT` ke tahap Drafting, Revisi Penulis, dan Evaluasi Editor-in-Chief.
+   - Mengharuskan asimetri paragraf acak dinamis tinggi (*Std Dev > 15 kata*, rasio paragraf pendek 15-35 kata vs panjang mendalam 100-190 kata).
+   - Menjalankan *self-healing sanitizer* (`sanitizeDnaViolations`) dan audit kepatuhan (`auditTextDna`) sebelum naskah disimpan ke Cloudflare D1 dan dikompilasi ke Typst PDF.
+2. **`scripts/auto-article-groq.mjs` (Mesin Jurnal Alternatif Groq)**:
+   - Mengintegrasikan aturan burstiness asimetris, anti-klise, dan nol pembatasan artifisial pada prompt Drafter dan Reviewer.
+3. **`scripts/generate-humaya-paper.py` (Mesin Naskah Kamera-Siap Humaya Word SINTA 4)**:
+   - Terintegrasi dengan `scripts/dna_writer_guide.py`.
+   - Menjalankan audit otomatis DNA kepatuhan kata klise AI dan variasi kalimat/paragraf pada fungsi `audit_manuscript()`.
+4. **`scripts/track_humaya_submission.py` (Pemantau Editorial OJS Real-Time & Telegram Watchdog)**:
+   - Memantau pergerakan naskah ID #16291 di OJS UT setiap 30 menit (07:00 - 22:00 WIB) dan mengirim alert instan ke Telegram saat editor beraktivitas.
+

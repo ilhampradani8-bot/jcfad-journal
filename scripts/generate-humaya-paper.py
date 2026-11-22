@@ -53,6 +53,16 @@ except ImportError:
     print("[ERROR] Library 'python-docx' belum terpasang. Jalankan: pip install python-docx")
     sys.exit(1)
 
+# Import DNA Writer Guide
+try:
+    from scripts.dna_writer_guide import audit_text_dna, get_dna_system_prompt
+except ImportError:
+    try:
+        from dna_writer_guide import audit_text_dna, get_dna_system_prompt
+    except ImportError:
+        audit_text_dna = None
+        get_dna_system_prompt = None
+
 # Base Paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_PATH = BASE_DIR / "template_humaya.docx"
@@ -839,12 +849,22 @@ def audit_manuscript(docx_path):
     # 4. Palatino Linotype font verify
     score += 15
     
+    # 5. DNA Ilham Pradani Audit (Burstiness & Banned AI Clichés)
+    dna_result = None
+    if audit_text_dna:
+        dna_result = audit_text_dna(full_string)
+        if dna_result:
+            print(f"   🧬 [DNA Audit] Skor Kepatuhan DNA Ilham Pradani: {dna_result['score']}/100 (Burstiness: {dna_result['burstiness_std_dev']} kata)")
+            if not dna_result['passed'] and dna_result['violations']:
+                print(f"   ⚠️ [DNA Warning] Catatan: {'; '.join(dna_result['violations'])}")
+    
     return {
         "words": words,
         "headings_found": headings_found,
         "headings_missing": [cat_name for cat_name, _ in expected_categories if cat_name not in headings_found],
         "tables_count": tables_count,
         "score": score,
+        "dna_result": dna_result,
         "passed": score >= 90
     }
 

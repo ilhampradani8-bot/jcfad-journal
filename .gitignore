@@ -10,3 +10,5 @@ dist/
 output/
 
 
+data/humaya_submission_state.json
+__pycache__/

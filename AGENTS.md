@@ -44,13 +44,16 @@ This repository (`/root/journal`) contains the complete standalone code and asse
 12. **LaTeX Inline & Nested Math Parsing Guardrail**:
     - Parser Typst `scripts/generate-paper-pdf.py` WAJIB mengonversi seluruh delimiter LaTeX `\(` dan `\)` menjadi `$expr$` sebelum `replace_paren_math` dieksekusi, serta menormalkan fungsi bersarang seperti `(\exp(-G\times t_{store}/Q))` menjadi `$exp(-G times t_("store")/Q)$` guna mencegah pecahan sintaks mentah bocor ke badan naskah PDF.
 13. **Mandatory Ilham Pradani Writing DNA Guide (`DNA_WRITING_STYLE_ILHAM_PRADANI.md`)**:
-    - Seluruh generator naskah, auto-article, dan monograf WAJIB menerapkan DNA penulisan asli Ilham Pradani (berdasarkan korpus primer esai Sekpol 2026): pendekatan pragmatis-solutif, studi kasus lapangan Indonesia yang konkret, kalimat majemuk mengalir alami (*high burstiness*), solusi bertingkat (MVP/skema berjenjang), wajib visualisasi (Bagan 1 formal & Tabel 1 Booktabs), serta ZERO TOLERANCE terhadap kata transisi klise AI (*"Selain itu"*, *"Penting untuk dicatat bahwa"*, *"Secara komprehensif"*).
-    - **Prinsip Nol Pembatasan Artifisial**: DILARANG KERAS membatasi atau mematok panjang dan jumlah paragraf secara kaku/artifisial. Setiap paragraf wajib mengalir murni secara dinamis dan organik: bebas memanjang dan mendalam saat membedah doktrin/kasus substantif, dan bebas pendek menusuk saat menegaskan prinsip. Rujukan lengkap tersimpan di `DNA_WRITING_STYLE_ILHAM_PRADANI.md`.
+    - Seluruh generator naskah (`auto-article-hybrid.mjs`, `auto-article-groq.mjs`, `generate-humaya-paper.py`), auto-article harian, dan monograf WAJIB menerapkan DNA penulisan asli Ilham Pradani (berdasarkan korpus primer esai Sekpol 2026): pendekatan pragmatis-solutif, studi kasus lapangan Indonesia yang konkret, kalimat majemuk mengalir alami (*high burstiness*), solusi bertingkat (MVP/skema berjenjang), wajib visualisasi (Bagan 1 formal & Tabel 1 Booktabs), serta ZERO TOLERANCE terhadap kata transisi klise AI (*"Selain itu"*, *"Penting untuk dicatat bahwa"*, *"Secara komprehensif"*).
+    - **Prinsip Nol Pembatasan Artifisial & Keacakan Paragraf Alami (Extreme Asymmetry)**: DILARANG KERAS membatasi atau mematok panjang dan jumlah paragraf secara kaku/artifisial. Paragraf wajib acak dan bervariasi dinamis: ada yang sangat pendek dan menusuk (15–35 kata) untuk menegaskan prinsip, sedang (45–80 kata) untuk transisi data, dan panjang mendalam (100–190 kata) untuk membedah doktrin atau formula substantif. Modul audit `scripts/dna_writer_guide.py` dan `scripts/dna-writer-guide.mjs` wajib mengaudit dan membersihkan naskah sebelum disimpan ke Cloudflare D1 atau dikompilasi ke PDF. Rujukan lengkap tersimpan di `DNA_WRITING_STYLE_ILHAM_PRADANI.md`.
 
 ## 🛠 Commands
 - `npm run dev`: Start local Astro dev server
 - `npm run build`: Build production static files into `dist/`
 - `npx wrangler pages deploy dist --project-name=jcfad-journal`: Deploy to Cloudflare Pages (Production)
+- `python3 scripts/track_humaya_submission.py`: Check Humaya OJS submission status and editorial activity
+- `python3 scripts/track_humaya_submission.py --notify`: Force send real-time status summary to Telegram
+- `python3 scripts/track_humaya_submission.py --auto`: Automated watchdog check (sends Telegram alert on state changes)
 - `python3 scripts/generate-paper-pdf.py --slug <slug> --osf`: Compile 2-column academic PDF with self-healing loop & audit
 - `python3 scripts/ai_ocr_screening.py <path-to-pdf>`: Run Gemini Vision AI OCR layout, gutter & line straightness screening
 - `python3 scripts/zenodo-publisher.py reserve`: Reserve a real-time CERN Zenodo deposition draft & guaranteed DOI

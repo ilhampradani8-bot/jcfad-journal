@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
+import { DNA_SYSTEM_PROMPT, auditTextDna, sanitizeDnaViolations } from './dna-writer-guide.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -614,8 +615,10 @@ Profil Penulis:
 - Jurnal: Journal of Coastal Frontiers & Applied Development (JCFAD).
 - DOI Terkunci: ${lockedDoi}
 
+${DNA_SYSTEM_PROMPT}
+
 PEDOMAN MUTLAK PENULISAN:
-1. BAHASA NASKAH: 100% BAHASA INDONESIA AKADEMIK BAKU TINGKAT TINGGI (Gramatika formal, istilah keilmuan presisi, mengalir, tanpa kalimat klise).
+1. BAHASA NASKAH: 100% BAHASA INDONESIA AKADEMIK BAKU TINGKAT TINGGI (Gramatika formal, istilah keilmuan presisi, mengalir alami, asimetri paragraf dinamis tinggi, TANPA kalimat klise robotik AI).
 2. KEDALAMAN & PANJANG NASKAH: Naskah WAJIB PANJANG, SUBSTANTIF, DAN MENDALAM (Target: 3.200 – 4.200 kata). DILARANG membuat ringkasan singkat!
 3. STRUKTUR LENGKAP IMRAD:
    - 1. Pendahuluan (Latar Belakang Empiris Pesisir Barat, Tinjauan Pustaka Terkini, Identifikasi Celah Riset, Landasan Teori, Pernyataan Kebaruan Ilmiah).
@@ -638,7 +641,7 @@ Output WAJIB JSON:
   "title": "${plan.formal_title}",
   "excerpt": "Abstrak terstruktur dwibahasa (Latar Belakang, Tujuan, Metode, Hasil, Kesimpulan), 180-220 kata",
   "keywords": "5 kata kunci dipisahkan koma",
-  "content": "Isi lengkap naskah ilmiah dalam format Markdown standar dengan tabel three-line table dan display math",
+  "content": "Isi lengkap naskah ilmiah dalam format Markdown standar dengan tabel three-line table, display math, dan asimetri paragraf acak dinamis sesuai DNA Ilham Pradani",
   "references": [
     "Daftar lengkap 14-18 sitasi APA 7th dengan DOI"
   ]
@@ -753,12 +756,16 @@ Output JSON WAJIB:
       console.log(`\n🔧 [Author Revision Phase] Penulis (Gemini) Menanggapi Kritik & Merevisi Naskah...`);
       const sysAuthorReviser = `Anda adalah Penulis Naskah Ilmiah Utama (Ilham Pradani).
 Anda menerima Laporan Hasil Review Kritis (Round ${round}) dari Reviewer 1 (Ahli Kuantitatif) dan Reviewer 2 (Ahli Hukum).
+
+${DNA_SYSTEM_PROMPT}
+
 Tugas Anda:
 1. Susun "Point-by-Point Author Rebuttal Matrix": Jawab secara spesifik setiap poin kritik Reviewer 1 dan Reviewer 2, jelaskan di mana dan bagaimana naskah telah diperbaiki.
 2. Tuliskan naskah lengkap yang SUDAH DIREVISI TOTAL (Revised Full Manuscript). Perbaiki seluruh kelemahan:
    - Sempurnakan formulasi matematika, perjelas satuan variabel, perkuat tabel sensitivitas numerik.
    - Operasionalkan pasal KUHPerdata (Pasal 1243, 1244-1245, 1338(3)) ke dalam mekanisme kontrak kemitraan nyata.
    - Pertahankan dan pertebal naskah (3.200 - 4.200 kata). DILARANG memotong atau meringkas naskah!
+   - Wajib pertahankan DNA Ilham Pradani: variasi asimetri paragraf dinamis tinggi (ada paragraf pendek 15-35 kata, sedang, dan panjang 100-190 kata), nol pembatasan artifisial, dan 100% bebas kata klise robotik AI.
 
 Output JSON WAJIB:
 {
@@ -768,7 +775,7 @@ Output JSON WAJIB:
   ],
   "revised_title": "${currentTitle}",
   "revised_excerpt": "${currentExcerpt}",
-  "revised_content": "Naskah ilmiah lengkap hasil revisi yang telah mengakomodasi seluruh catatan reviewer",
+  "revised_content": "Naskah ilmiah lengkap hasil revisi yang telah mengakomodasi seluruh catatan reviewer dengan asimetri paragraf dinamis",
   "revised_references": [ ...daftar referensi lengkap ]
 }`;
 
@@ -800,6 +807,7 @@ Pastikan:
 3. Tabel menggunakan format Tiga Garis (Three-Line Table).
 4. Volume naskah padat dan substantif (3.200 - 4.200 kata).
 5. Referensi primer lengkap (14-18 referensi) dengan DOI nyata.
+6. Mematuhi 100% DNA Penulisan Ilham Pradani: asimetri paragraf acak dinamis tinggi (ada paragraf pendek 15-35 kata, sedang, dan panjang mendalam 100-190 kata), dan 100% bebas kata klise robotik AI.
 
 Output JSON WAJIB:
 {
@@ -812,7 +820,15 @@ Output JSON WAJIB:
 }`;
 
   const finalized = await callGeminiAPI(sysEditor, `Naskah Hasil Re-Audit Final:\n${currentContent}\n\nReferensi:\n${JSON.stringify(currentRefs)}`, 0.2);
-  const finalWordCount = (finalized.final_content || '').split(/\s+/).length;
+  let finalRawContent = finalized.final_content || currentContent || '';
+  let finalContent = sanitizeDnaViolations(finalRawContent);
+  const dnaAudit = auditTextDna(finalContent);
+  console.log(`   🧬 [DNA Audit] Skor Kepatuhan DNA Ilham Pradani: ${dnaAudit.score}/100 (Burstiness Std Dev: ${dnaAudit.paragraphStdDev} kata, Min: ${dnaAudit.minParagraphWords}, Max: ${dnaAudit.maxParagraphWords})`);
+  if (!dnaAudit.passed && dnaAudit.violations.length > 0) {
+    console.log(`   ⚠️ [DNA Audit Notes]: ${dnaAudit.violations.join('; ')}`);
+  }
+
+  const finalWordCount = finalContent.split(/\s+/).length;
   console.log(`   🎯 Naskah Final Camera-Ready: ${finalWordCount} kata (Skor Mutu: ${finalized.confidence_score}/100 - ${finalized.editor_verdict})`);
 
   // Pastikan Sitasi Silang Ilham Pradani Terjaga
@@ -827,7 +843,7 @@ Output JSON WAJIB:
     saveResult = await saveToCloudflareD1({
       final_title: finalized.final_title || currentTitle,
       final_excerpt: finalized.final_excerpt || currentExcerpt,
-      final_content: finalized.final_content || currentContent,
+      final_content: finalContent,
       final_references: finalRefs,
       confidence_score: finalized.confidence_score
     }, lockedDoi, selectedDomain);

@@ -46,7 +46,7 @@ def get_dna_system_prompt() -> str:
 
 def audit_text_dna(text: str) -> dict:
     """
-    Audits a text against banned AI clichés and checks burstiness.
+    Audits a text against banned AI clichés, sentence burstiness, and paragraph asymmetry.
     Does NOT restrict maximum paragraph length, ensuring true dynamic human freedom.
     """
     lower_text = text.lower()
@@ -57,7 +57,7 @@ def audit_text_dna(text: str) -> dict:
         if matches:
             violations.append(f"Ditemukan {len(matches)}x kata klise AI: '{matches[0]}'")
             
-    # Measure sentence length variation (Burstiness)
+    # 1. Measure sentence length variation (Burstiness)
     sentences = [s.strip() for s in re.split(r'[.!?]+', text) if len(s.strip()) > 5]
     if sentences:
         lengths = [len(s.split()) for s in sentences]
@@ -67,10 +67,27 @@ def audit_text_dna(text: str) -> dict:
     else:
         avg_len, std_dev = 0, 0
         
+    # 2. Measure paragraph asymmetry & dynamic randomness
+    raw_paras = [p.strip() for p in text.split("\n") if len(p.strip()) > 20 and not p.strip().startswith(("#", "|", "$"))]
+    p_std_dev = 0
+    min_p_words = 0
+    max_p_words = 0
+    if len(raw_paras) >= 3:
+        p_lengths = [len(p.split()) for p in raw_paras]
+        min_p_words = min(p_lengths)
+        max_p_words = max(p_lengths)
+        p_avg = sum(p_lengths) / len(p_lengths)
+        p_var = sum((l - p_avg) ** 2 for l in p_lengths) / len(p_lengths)
+        p_std_dev = p_var ** 0.5
+        
     score = 100.0 - (len(violations) * 15.0)
-    if std_dev < 5.0: # Low burstiness (monotonous sentence length)
-        score -= 20.0
+    if std_dev < 5.0 and len(sentences) > 5:
+        score -= 15.0
         violations.append(f"Variasi kalimat terlalu seragam/monoton (Std Dev: {std_dev:.1f} kata). Perlu lebih acak.")
+        
+    if p_std_dev < 15.0 and len(raw_paras) >= 5:
+        score -= 15.0
+        violations.append(f"Paragraf terlalu seragam (Std Dev: {p_std_dev:.1f} kata). Wajib lebih acak dan asimetris!")
         
     passed = len(violations) == 0 and score >= 85.0
     return {
@@ -79,8 +96,32 @@ def audit_text_dna(text: str) -> dict:
         "sentence_count": len(sentences),
         "avg_words_per_sentence": round(avg_len, 1),
         "burstiness_std_dev": round(std_dev, 1),
+        "paragraph_count": len(raw_paras),
+        "min_paragraph_words": min_p_words,
+        "max_paragraph_words": max_p_words,
+        "paragraph_std_dev": round(p_std_dev, 1),
         "violations": violations
     }
+
+def sanitize_dna_violations(text: str) -> str:
+    """Membersihkan kata-kata klise AI secara otomatis (Self-Healing)."""
+    replacements = [
+        (r"\bselain itu\b", "di samping hal tersebut"),
+        (r"\bpenting untuk dicatat bahwa\b", "perlu disadari bahwa"),
+        (r"\bsecara garis besar\b", "pada tataran praktis"),
+        (r"\bsecara komprehensif\b", "secara mendalam dan menyeluruh"),
+        (r"\bhal ini menunjukkan bahwa\b", "fakta ini menegaskan bahwa"),
+        (r"\bdi sisi lain\b", "sementara itu"),
+        (r"\bdalam era globalisasi saat ini\b", "dalam dinamika pasar saat ini"),
+        (r"\bdapat dipahami bahwa terdapat urgensi\b", "urgensi nyata terlihat dari"),
+        (r"\bsebagai kesimpulan, dapat disimpulkan bahwa\b", "pada akhirnya"),
+        (r"\bsecara keseluruhan\b", "secara praktis"),
+        (r"\btentunya kita perlu menyadari\b", "kita perlu melihat bahwa")
+    ]
+    sanitized = text
+    for pat, rep in replacements:
+        sanitized = re.sub(pat, rep, sanitized, flags=re.IGNORECASE)
+    return sanitized
 
 if __name__ == "__main__":
     prompt = get_dna_system_prompt()
