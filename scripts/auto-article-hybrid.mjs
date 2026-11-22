@@ -769,6 +769,7 @@ Tugas Anda:
    - Operasionalkan pasal KUHPerdata (Pasal 1243, 1244-1245, 1338(3)) ke dalam mekanisme kontrak kemitraan nyata.
    - Pertahankan dan pertebal naskah (3.200 - 4.200 kata). DILARANG memotong atau meringkas naskah!
    - Wajib pertahankan DNA Ilham Pradani: variasi asimetri paragraf dinamis tinggi (ada paragraf pendek 15-35 kata, sedang, dan panjang 100-190 kata), nol pembatasan artifisial, dan 100% bebas kata klise robotik AI.
+   - PERINGATAN MUTLAK ANTI-BOCOR: DILARANG KERAS MENULIS KATA 'REVIEWER', 'KRITIK REVIEWER', ATAU 'UNTUK MENJAWAB REVIEWER' DI DALAM BADAN TEKS 'revised_content'! Jawaban kepada reviewer HANYA boleh ada di dalam 'author_rebuttal_matrix'. Teks artikel harus 100% formal siap cetak publik.
 
 Output JSON WAJIB:
 {
@@ -788,7 +789,7 @@ Output JSON WAJIB:
       authorRebuttal = revisionOutput.author_rebuttal_matrix || [];
       currentTitle = revisionOutput.revised_title || currentTitle;
       currentExcerpt = revisionOutput.revised_excerpt || currentExcerpt;
-      currentContent = revisionOutput.revised_content || currentContent;
+      currentContent = sanitizeDnaViolations(revisionOutput.revised_content || currentContent);
       currentRefs = revisionOutput.revised_references || currentRefs;
       currentWordCount = currentContent.split(/\s+/).length;
 
@@ -810,7 +811,7 @@ Pastikan:
 3. Tabel menggunakan format Tiga Garis (Three-Line Table).
 4. Volume naskah padat dan substantif (3.200 - 4.200 kata).
 5. Referensi primer lengkap (14-18 referensi) dengan DOI nyata.
-6. Mematuhi 100% DNA Penulisan Ilham Pradani: asimetri paragraf acak dinamis tinggi (ada paragraf pendek 15-35 kata, sedang, dan panjang mendalam 100-190 kata), dan 100% bebas kata klise robotik AI.
+6. Mematuhi 100% DNA Penulisan Ilham Pradani: asimetri paragraf acak dinamis tinggi (ada paragraf pendek 15-35 kata, sedang, dan panjang mendalam 100-190 kata), 100% bebas kata klise robotik AI, dan DILARANG KERAS memuat kata 'Reviewer' atau kalimat 'untuk menjawab reviewer' di dalam 'final_content'. Naskah harus murni publikasi ilmiah baku.
 
 Output JSON WAJIB:
 {

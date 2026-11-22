@@ -60,6 +60,9 @@ Naskah WAJIB ditulis dengan meniru gaya berpikir dan karakter tulisan tangan asl
 
 7. KEWAJIBAN VISUALISASI:
    Naskah wajib dilengkapi minimal Tabel 1 Format Tiga Garis (Three-Line Table Booktabs) dan bagan alur konseptual yang kokoh.
+
+8. ZERO TOLERANCE BOCORAN META-REVIEWER (100% BANNED):
+   DILARANG KERAS MENULIS KATA 'REVIEWER', 'KRITIK REVIEWER', 'TUNTUTAN REVIEWER', ATAU 'UNTUK MENJAWAB REVIEWER' DI DALAM BADAN NASKAH ('content')! Tanggapan kepada reviewer HANYA boleh ada di dalam 'author_rebuttal_matrix', bukan di dalam teks artikel publikasi. Naskah kamera-siap harus bersih seolah-olah tidak pernah ada interaksi reviewer di baliknya.
 ================================================================================
 `;
 
@@ -79,6 +82,12 @@ export function auditTextDna(text) {
     if (matches && matches.length > 0) {
       violations.push(`Ditemukan ${matches.length}x kata klise AI: '${matches[0]}'`);
     }
+  }
+
+  // Deteksi kebocoran meta-reviewer
+  const reviewerMatches = lower.match(/\breviewer\s*\d+\b/gi);
+  if (reviewerMatches && reviewerMatches.length > 0) {
+    violations.push(`Ditemukan ${reviewerMatches.length}x kebocoran meta-reviewer ('${reviewerMatches[0]}'). Dilarang keras dalam teks naskah!`);
   }
 
   // Hitung variasi panjang paragraf (Asymmetry test)
@@ -122,9 +131,21 @@ export function sanitizeDnaViolations(text) {
   if (!text || typeof text !== 'string') return text;
   let sanitized = text;
 
+  // 1. Sanitasi Bocoran Meta-Reviewer & Prompts
+  sanitized = sanitized.replace(/untuk (menjawab|menjembatani|mengakomodasi|merespons)\s+(kritik|tuntutan|catatan|masukan)\s+reviewer\s*\d*[^,\.]*[,:]?\s*/gi, '');
+  sanitized = sanitized.replace(/in response to reviewer\s*\d*[^,\.]*[,:]?\s*/gi, '');
+  sanitized = sanitized.replace(/to address (reviewer|the reviewer)['’]?s?\s*\d*\s*(feedback|critique|comment)[^,\.]*[,:]?\s*/gi, '');
+  sanitized = sanitized.replace(/\b(corrects the mathematical flaw identified by|addresses the critical gaps identified by)\s+reviewer\s*\d*\b/gi, 'resolves the structural operational gaps');
+  sanitized = sanitized.replace(/\bidentified by reviewer\s*\d*\b/gi, 'identified in empirical observations');
+  sanitized = sanitized.replace(/\breviewer\s*\d+\b/gi, 'analis akademik');
+
+  // 2. Sanitasi Kata Klise AI
   for (const item of BANNED_AI_CLICHES) {
     sanitized = sanitized.replace(item.pattern, item.replacement);
   }
+
+  // Rapikan kapitalisasi awal kalimat jika ada pemotongan di awal kalimat
+  sanitized = sanitized.replace(/(\n\s*)([a-z])/g, (m, p1, p2) => p1 + p2.toUpperCase());
 
   return sanitized;
 }

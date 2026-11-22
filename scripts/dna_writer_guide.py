@@ -46,7 +46,7 @@ def get_dna_system_prompt() -> str:
 
 def audit_text_dna(text: str) -> dict:
     """
-    Audits a text against banned AI clichés, sentence burstiness, and paragraph asymmetry.
+    Audits a text against banned AI clichés, meta-reviewer leaks, sentence burstiness, and paragraph asymmetry.
     Does NOT restrict maximum paragraph length, ensuring true dynamic human freedom.
     """
     lower_text = text.lower()
@@ -56,6 +56,11 @@ def audit_text_dna(text: str) -> dict:
         matches = re.findall(pat, lower_text)
         if matches:
             violations.append(f"Ditemukan {len(matches)}x kata klise AI: '{matches[0]}'")
+            
+    # Meta-reviewer leak check
+    rev_matches = re.findall(r"\breviewer\s*\d+\b", lower_text)
+    if rev_matches:
+        violations.append(f"Ditemukan {len(rev_matches)}x kebocoran meta-reviewer ('{rev_matches[0]}'). Dilarang dalam badan naskah!")
             
     # 1. Measure sentence length variation (Burstiness)
     sentences = [s.strip() for s in re.split(r'[.!?]+', text) if len(s.strip()) > 5]
@@ -104,7 +109,24 @@ def audit_text_dna(text: str) -> dict:
     }
 
 def sanitize_dna_violations(text: str) -> str:
-    """Membersihkan kata-kata klise AI secara otomatis (Self-Healing)."""
+    """Membersihkan kata-kata klise AI dan bocoran meta-reviewer secara otomatis (Self-Healing)."""
+    if not text:
+        return text
+    sanitized = text
+
+    # 1. Hapus bocoran meta-reviewer
+    meta_patterns = [
+        (r"untuk (menjawab|menjembatani|mengakomodasi|merespons)\s+(kritik|tuntutan|catatan|masukan)\s+reviewer\s*\d*[^,\.]*[,:]?\s*", ""),
+        (r"in response to reviewer\s*\d*[^,\.]*[,:]?\s*", ""),
+        (r"to address (reviewer|the reviewer)['’]?s?\s*\d*\s*(feedback|critique|comment)[^,\.]*[,:]?\s*", ""),
+        (r"\b(corrects the mathematical flaw identified by|addresses the critical gaps identified by)\s+reviewer\s*\d*\b", "resolves the structural operational gaps"),
+        (r"\bidentified by reviewer\s*\d*\b", "identified in empirical observations"),
+        (r"\breviewer\s*\d+\b", "analis akademik")
+    ]
+    for pat, rep in meta_patterns:
+        sanitized = re.sub(pat, rep, sanitized, flags=re.IGNORECASE)
+
+    # 2. Hapus kata klise AI
     replacements = [
         (r"\bselain itu\b", "di samping hal tersebut"),
         (r"\bpenting untuk dicatat bahwa\b", "perlu disadari bahwa"),
@@ -118,9 +140,11 @@ def sanitize_dna_violations(text: str) -> str:
         (r"\bsecara keseluruhan\b", "secara praktis"),
         (r"\btentunya kita perlu menyadari\b", "kita perlu melihat bahwa")
     ]
-    sanitized = text
     for pat, rep in replacements:
         sanitized = re.sub(pat, rep, sanitized, flags=re.IGNORECASE)
+
+    # Rapikan huruf kapital awal kalimat
+    sanitized = re.sub(r"(\n\s*)([a-z])", lambda m: m.group(1) + m.group(2).upper(), sanitized)
     return sanitized
 
 if __name__ == "__main__":

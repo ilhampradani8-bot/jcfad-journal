@@ -877,6 +877,7 @@ REVISION REQUIREMENTS:
    - Enforce dynamic paragraph asymmetry: punchy short paragraphs (15-35 words) interspersed with deep substantive paragraphs (100-190 words).
    - Eliminate AI clichés ("delve into", "pivotal", "in conclusion it is evident", "tapestry").
    - Mix short concise sentences with compound argumentative reasoning.
+   - STRICT BAN ON META-REVIEWER LEAKS: NEVER write 'To address Reviewer 1' or 'In response to Reviewer 2' inside the manuscript body ('content')! All responses must be integrated seamlessly as pure academic prose.
 
 Output JSON:
 {

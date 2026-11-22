@@ -75,6 +75,7 @@ Mesin dilarang keras memproduksi kata, frasa transisi, atau pola kalimat berikut
 | **"Di sisi lain,"** (sebagai transisi otomatis) | *"Sebaliknya, pihak..."* / *"Sementara itu bagi platform marketplace..."* |
 | **"Dalam era globalisasi / digitalisasi saat ini"** | *"Perkembangan teknologi transaksi saat ini sudah bergerak jauh melampaui..."* |
 | **"Sebagai kesimpulan, dapat disimpulkan bahwa"** | *"Berdasarkan seluruh uraian di atas, dapat ditarik simpulan tegas bahwa..."* |
+| **"Untuk menjawab kritik/tuntutan Reviewer X"** | **DIHARAMKAN TOTAL (100% BANNED)** - Draf publikasi dilarang memuat sisa percakapan/meta-rebuttal reviewer! |
 
 ---
 
