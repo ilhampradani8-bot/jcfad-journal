@@ -180,8 +180,8 @@ t1_html = '''
       </tr>
     </tbody>
   </table>
-  <p style="font-size: 9pt; color: #475569; margin-top: 6px; margin-bottom: 24px; text-align: left;">
-    Sumber: Hasil Analisis Peneliti (2026)
+  <p style="font-size: 9.5pt; color: #334155; margin-top: 6px; margin-bottom: 24px; text-align: left;">
+    Source: Hasil Analisis Peneliti (2026)
   </p>
 </div>
 '''
@@ -192,13 +192,17 @@ for sec in sections:
     h = sec.get('heading')
     sh = sec.get('subheading')
     
-    # Normalisasi nama bab bahasa Indonesia baku
-    if h in ['Results and Discussions', 'Hasil dan Pembahasan']:
-        h = 'Hasil dan Pembahasan'
-    elif h in ['Conclusions', 'Kesimpulan', 'Simpulan']:
-        h = 'Simpulan'
-    elif h in ['References', 'Daftar Pustaka']:
-        h = 'Daftar Pustaka'
+    # Normalisasi nama bab sesuai master template_humaya.docx
+    if h in ['Pendahuluan', 'Introduction']:
+        h = 'Introduction'
+    elif h in ['Metode Penelitian', 'Research Method', 'Research Methods', 'Methods']:
+        h = 'Research Method'
+    elif h in ['Hasil dan Pembahasan', 'Results and Discussions', 'Results and Discussion']:
+        h = 'Results and Discussions'
+    elif h in ['Simpulan', 'Kesimpulan', 'Conclusions', 'Conclusion']:
+        h = 'Conclusions'
+    elif h in ['Daftar Pustaka', 'References']:
+        h = 'References'
         
     if h and h != last_h:
         h_clean = clean_markdown_html(h)
@@ -294,24 +298,32 @@ html_template = f'''<!DOCTYPE html>
     .abs-table {{
       width: 100%;
       border-collapse: collapse;
-      border: 1px solid #cbd5e1;
+      border-top: 1.5px solid #000000;
+      border-bottom: 1.5px solid #000000;
+      border-left: none;
+      border-right: none;
       margin: 25px 0;
       font-size: 9.5pt;
+      background: #ffffff;
     }}
     .abs-table td {{
       padding: 14px 16px;
       vertical-align: top;
-      border: 1px solid #cbd5e1;
+      border-left: none;
+      border-right: none;
     }}
     .abs-col-left {{
       width: 32%;
-      background: #f8fafc;
-      line-height: 1.45;
+      background: #ffffff;
+      line-height: 1.5;
+      border-right: 1px solid #000000 !important;
+      padding-right: 14px;
     }}
     .abs-col-right {{
       width: 68%;
       background: #ffffff;
       line-height: 1.5;
+      padding-left: 20px;
     }}
     @media (max-width: 700px) {{
       .sheet {{ padding: 25px 20px; }}
@@ -345,39 +357,36 @@ html_template = f'''<!DOCTYPE html>
       <div style="font-size: 9pt; font-style: italic; color: #64748b;">*corresponding author e-mail: hello@ilhampradani.me</div>
     </div>
 
-    <!-- Abstract Box (Table 0) -->
+    <!-- Abstract Box (Table 0) - 100% Faithful to template_humaya.docx -->
     <table class="abs-table">
       <tr>
         <td class="abs-col-left">
-          <div style="font-size: 10pt; font-weight: bold; color: #0f172a; margin-bottom: 16px;">
+          <div style="font-size: 11pt; color: #000000; padding-bottom: 8px; border-bottom: 1px solid #000000; margin-bottom: 12px;">
             Article Info
           </div>
-          <div style="margin-bottom: 16px; font-size: 9.5pt; line-height: 1.45;">
-            <b>Keywords:</b><br>
+          <div style="font-size: 10pt; font-style: italic; color: #000000; margin-bottom: 6px;">
+            Keywords:
+          </div>
+          <div style="font-size: 9.5pt; line-height: 1.5; color: #000000;">
             Autonomous Electronic Transactions;<br>
             Intelligent Algorithms;<br>
             Civil Liability;<br>
             Strict Liability;<br>
             Consumer Protection
           </div>
-          <div style="font-size: 9.5pt; line-height: 1.45;">
-            <b>Kata Kunci:</b><br>
-            Transaksi Elektronik Otonom;<br>
-            Algoritma Cerdas;<br>
-            Pertanggungjawaban Perdata;<br>
-            Tanggung Jawab Mutlak;<br>
-            Perlindungan Konsumen
-          </div>
         </td>
         <td class="abs-col-right">
-          <h4 style="margin: 0 0 6px 0; font-size: 10.5pt; font-weight: bold; color: #0f172a;">Abstract</h4>
-          <p style="margin: 0 0 14px 0; text-align: justify; font-size: 9.5pt; line-height: 1.45; color: #334155;">
+          <h4 style="margin: 0 0 6px 0; font-size: 11pt; font-weight: bold; color: #000000;">Abstract</h4>
+          <p style="margin: 0 0 14px 0; text-align: justify; font-size: 9.5pt; line-height: 1.5; color: #1e293b;">
             {clean_markdown_html(abstract_en)}
           </p>
-          <h4 style="margin: 10px 0 6px 0; font-size: 10.5pt; font-weight: bold; color: #0f172a;">Abstrak</h4>
-          <p style="margin: 0; text-align: justify; font-size: 9.5pt; line-height: 1.45; color: #334155;">
+          <h4 style="margin: 10px 0 6px 0; font-size: 10.5pt; font-weight: bold; color: #000000;">Abstrak</h4>
+          <p style="margin: 0 0 10px 0; text-align: justify; font-size: 9.5pt; line-height: 1.5; color: #1e293b;">
             {clean_markdown_html(abstract_id)}
           </p>
+          <div style="font-size: 9pt; font-style: italic; color: #334155; line-height: 1.45;">
+            <b>Kata Kunci:</b> Transaksi Elektronik Otonom; Algoritma Cerdas; Pertanggungjawaban Perdata; Tanggung Jawab Mutlak; Perlindungan Konsumen
+          </div>
         </td>
       </tr>
     </table>

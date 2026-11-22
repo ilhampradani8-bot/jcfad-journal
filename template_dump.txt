@@ -1,0 +1,460 @@
+=== SECTIONS & MARGINS ===
+Page size: 21.00086111111111cm x 29.70036111111111cm
+Margins: Top=2.700513888888889cm, Bottom=2.5011944444444443cm, Left=2.00025cm, Right=2.00025cm
+
+=== BODY ELEMENTS ===
+[P000] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P001] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P002] align=CENTER (1) style=Normal
+   RUN: font=Palatino Linotype, size=16.0pt, bold=True, italic=None | text='Article Title (Palatino Linotype, Font Size 16 point, bold, centered, max 15 words)'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P003] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P004] align=CENTER (1) style=Normal
+   RUN: font=Palatino Linotype, size=16.0pt, bold=True, italic=True | text='(one blank single space line, 16 pt)'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P005] align=CENTER (1) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='First Author'
+   RUN: font=Palatino Linotype, size=16.0pt, bold=None, italic=None | text='1.2 *'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=', Second Author'
+   RUN: font=Palatino Linotype, size=16.0pt, bold=None, italic=None | text='1'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=', Third Author'
+   RUN: font=Palatino Linotype, size=16.0pt, bold=None, italic=None | text='2'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=' (12 pt)'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P006] align=CENTER (1) style=Normal
+   RUN: font=Palatino Linotype, size=10.0pt, bold=None, italic=None | text='1. Department, Faculty, University, Country (10 pt)'
+[P007] align=CENTER (1) style=Normal
+   RUN: font=Palatino Linotype, size=10.0pt, bold=None, italic=None | text='2. Research Group, Institution, Country (10 pt)'
+[P008] align=CENTER (1) style=Normal
+   RUN: font=Palatino Linotype, size=10.0pt, bold=None, italic=None | text='*corresponding author e-mail : name@ institution address.com (10 pt)'
+[P009] align=CENTER (1) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P010] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[TBL011] 3 rows x 2 cols
+   CELL R0 C0 (w=Nonecm):
+      P0 align=LEFT (0) style=Normal
+         RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Article Info'
+   CELL R0 C1 (w=Nonecm):
+      P0 align=LEFT (0) style=Normal
+         RUN: font=Palatino Linotype, size=Nonept, bold=None, italic=None | text='Abstract'
+      P1 align=None style=Normal
+         RUN: font=Palatino Linotype, size=Nonept, bold=False, italic=None | text='Written in English. Using type abstract one paragraph unstructured, A4 11 point, single spacing, right-left flat, the number of words does not exceed 200 words, there are no quotes and abbreviations/acronyms. The abstract must contain an introduction or the problem under study including the purpose of the study if possible, make it in one sentence. Research design, the method of taking and sample size, methods and data collection, and data analysis. '
+         RUN: font=Palatino Linotype, size=Nonept, bold=None, italic=None | text='Findings'
+         RUN: font=Palatino Linotype, size=Nonept, bold=False, italic=None | text='. (OR / RR, CI or theme in qualitative research). Write one or two sentences to discuss the results and conclusions. The recommendations and implications of the research results are clearly written.'
+         RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+   CELL R1 C0 (w=Nonecm):
+      P0 align=LEFT (0) style=Normal
+         RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+      P1 align=LEFT (0) style=Normal
+         RUN: font=Palatino Linotype, size=Nonept, bold=None, italic=True | text='Keywords:'
+      P2 align=LEFT (0) style=Normal
+         RUN: font=Palatino Linotype, size=Nonept, bold=False, italic=None | text='Culture;'
+      P3 align=LEFT (0) style=Normal
+         RUN: font=Palatino Linotype, size=Nonept, bold=False, italic=None | text='Genre;'
+      P4 align=LEFT (0) style=Normal
+         RUN: font=Palatino Linotype, size=Nonept, bold=False, italic=None | text='Translation'
+      P5 align=LEFT (0) style=Normal
+         RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+   CELL R1 C1 (w=Nonecm):
+      P0 align=LEFT (0) style=Normal
+         RUN: font=Palatino Linotype, size=Nonept, bold=None, italic=None | text='Abstract'
+      P1 align=None style=Normal
+         RUN: font=Palatino Linotype, size=Nonept, bold=False, italic=None | text='Written in English. Using type abstract one paragraph unstructured, A4 11 point, single spacing, right-left flat, the number of words does not exceed 200 words, there are no quotes and abbreviations/acronyms. The abstract must contain an introduction or the problem under study including the purpose of the study if possible, make it in one sentence. Research design, the method of taking and sample size, methods and data collection, and data analysis. '
+         RUN: font=Palatino Linotype, size=Nonept, bold=None, italic=None | text='Findings'
+         RUN: font=Palatino Linotype, size=Nonept, bold=False, italic=None | text='. (OR / RR, CI or theme in qualitative research). Write one or two sentences to discuss the results and conclusions. The recommendations and implications of the research results are clearly written.'
+         RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+   CELL R2 C0 (w=Nonecm):
+      P0 align=LEFT (0) style=Normal
+         RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+      P1 align=LEFT (0) style=Normal
+         RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+   CELL R2 C1 (w=Nonecm):
+      P0 align=LEFT (0) style=Normal
+         RUN: font=Palatino Linotype, size=Nonept, bold=None, italic=None | text='Abstract'
+      P1 align=None style=Normal
+         RUN: font=Palatino Linotype, size=Nonept, bold=False, italic=None | text='Written in English. Using type abstract one paragraph unstructured, A4 11 point, single spacing, right-left flat, the number of words does not exceed 200 words, there are no quotes and abbreviations/acronyms. The abstract must contain an introduction or the problem under study including the purpose of the study if possible, make it in one sentence. Research design, the method of taking and sample size, methods and data collection, and data analysis. '
+         RUN: font=Palatino Linotype, size=Nonept, bold=None, italic=None | text='Findings'
+         RUN: font=Palatino Linotype, size=Nonept, bold=False, italic=None | text='. (OR / RR, CI or theme in qualitative research). Write one or two sentences to discuss the results and conclusions. The recommendations and implications of the research results are clearly written.'
+         RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P012] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P013] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='Introduction (12 pt., bold, sentence case) '
+[P014] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='The script is written in Palatino Linotype size 12, single spacing, flat left and right, single-sided pages, made in one column with A4 paper (210 mm x 297 mm) with a margin of 2,7 cm, bottom 2.5 cm, left and right respectively 2 cm. Manuscripts including graphic content and tables must consist of (4000–6000 words), preferably an even number of pages. If it exceeds the specified length, it is recommended to divide it into two separate texts. Grammar must be correct.'
+[P015] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Abstract is written in English followed by Indonesian. Using type abstract one paragraph unstructured, letters 10 pt., single spacing, right-left flat, the number of words does not exceed 200 words. There are no quotes and abbreviations/acronyms. The abstract must contain an introduction, or the problem studied including the purpose of the study; if possible, make it in one sentence. Research design must contain sampling techniques, methods and data collection, and data analysis. As for main findings (OR / RR, CI or theme in qualitative research), write one or two sentences to discuss the results and conclusions. The recommendations and implications of the research results are clearly written.'
+[P016] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Abstract is written in English followed by Indonesian. Using type abstract one paragraph unstructured, letters 10 pt., single spacing, right-left flat, the number of words does not exceed 200 words. There are no quotes and abbreviations/acronyms. The abstract must contain an introduction, or the problem studied including the purpose of the study; if possible, make it in one sentence. Research design must contain sampling techniques, methods and data collection, and data analysis. As for main findings (OR / RR, CI or theme in qualitative research), write one or two sentences to discuss the results and conclusions. The recommendations and implications of the research results are clearly written.'
+[P017] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='The script is written in New Times Roman size 12, single spacing, flat left and right, single-sided pages, made in one column with A4 paper (210 mm x 297 mm) with a margin of 2,7 cm, bottom 2.5 cm, left and right respectively 2 cm. Manuscripts including graphic content and tables must consist of (4000–6000 words), preferably an even number of pages. If it exceeds the specified length, it is recommended to divide it into two separate texts. Grammar must be correct.'
+[P018] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Titles must contain the main keywords and do not use abbreviations, with a number of approximately 20 words. The author needs to write a short title written as a header page on each journal page. The author should not only write words.'
+[P019] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='The use of abbreviations is allowed but must be written in a full and complete version as mentioned for the first time and must be written between parentheses. Foreign terms/words or regional words must be in italics. Notation must be concise and clear and written according to the standard writing style. Symbols/signs must be clear and distinguishable, such as the use of numbers 1 and letter l (also numbers 0 and letter O). Avoid using parentheses to clarify or explain definitions. The composition of the text includes Introduction, Methods, Results and Discussion, Conclusions and References (if any) written afterwards, not numbered.'
+[P020] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='This text uses the style of the American Psychological Association (APA) manual as a reference quote. As using the APA format, follow the method of quotation in the text written by the author. This means that the author’s last name and year of publication for the source must appear in the text, for example, (Jones, 1998) and complete references will appear in the reference list at the end of the text. Quotes can be placed at the beginning of a sentence, for example, Johnson (2005) states that ... or the source is placed at the end of the sentence for an example ... (Mardoni, 2004). '
+[P021] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=' '
+[P022] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='It is recommended that the author uses the '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='manager references'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=' (Mendeley, endnote, etc.)'
+[P023] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P024] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='      The introduction contains justifications about the importance of the research conducted. The novelty generated from this study comparing the results of previous studies or existing umbrella knowledge needs to be clearly displayed. Complete with the main reference used. State in one research question or research problem that needs to be answered by all research activities. Show the method used and the purpose or research hypothesis. The introduction does not exceed 1000 words. '
+[P025] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P026] align=CENTER (1) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='Table 1. '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Characteristics of Research Subjects'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text=' '
+[P027] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[TBL028] 4 rows x 3 cols
+   CELL R0 C0 (w=Nonecm):
+      P0 align=None style=Normal
+         RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='Characteristics'
+         RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+   CELL R0 C1 (w=Nonecm):
+      P0 align=CENTER (1) style=Normal
+         RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='N'
+         RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+   CELL R0 C2 (w=Nonecm):
+      P0 align=CENTER (1) style=Normal
+         RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='Percentage (%)'
+         RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+   CELL R1 C0 (w=Nonecm):
+      P0 align=None style=Normal
+         RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Age'
+   CELL R1 C1 (w=Nonecm):
+      P0 align=CENTER (1) style=Normal
+         RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='0'
+   CELL R1 C2 (w=Nonecm):
+      P0 align=CENTER (1) style=Normal
+         RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='0.00'
+   CELL R2 C0 (w=Nonecm):
+      P0 align=None style=Normal
+         RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Type Gender'
+   CELL R2 C1 (w=Nonecm):
+      P0 align=CENTER (1) style=Normal
+         RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='0'
+   CELL R2 C2 (w=Nonecm):
+      P0 align=CENTER (1) style=Normal
+         RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='0.00'
+   CELL R3 C0 (w=Nonecm):
+      P0 align=None style=Normal
+         RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Number of children'
+   CELL R3 C1 (w=Nonecm):
+      P0 align=CENTER (1) style=Normal
+         RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='0'
+   CELL R3 C2 (w=Nonecm):
+      P0 align=CENTER (1) style=Normal
+         RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='0.00'
+[P029] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='(one single-spaced line, 10 pt.)'
+[P030] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Source: ……………….'
+[P031] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P032] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Images are placed symmetrically in columns in one paragraph space. Images are placed in the top or bottom position of each page and are not flanked by sentences. If the image size exceeds the column width, the image can be placed in one column format. Images are placed immediately after the description in the manuscript. Images are numbered and sorted by Arabic numerals. Information is placed under the image and in one single space of the image. The description is written using a 10pt font size, bold letters, uppercase letters at the beginning of the word, and placed as in the example. The distance between the description and paragraph is two single spaces.'
+[P033] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Images that have been published by other authors must obtain written permission from the author and publisher. Include good quality printed images on one full page or scan with good resolution in the format {filename} .jpeg or {filename}. have a fight. When the image is in a photo format, include the original photo. The image will be printed in black and white unless it needs to be displayed in color. The author will incur additional costs for printing colors if more than one page. Fonts used in images or graphics must be owned in general by every word processor and the operating system such as Symbol, Times New Roman, and Arial with a size of not less than 9 pt. Image files originating from applications such as Corel Draw, Adobe Illustrator, and Aldus Freehand can provide better results and can be reduced without changing the resolution.'
+[P034] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P035] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='The following are examples of images included in the manuscript.'
+[P036] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P037] align=CENTER (1) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=''
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P038] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P039] align=CENTER (1) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='Figure 1.'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=' Theory of planned behavior (Ajzen, 1991)'
+[P040] align=CENTER (1) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='(Capital letters in the beginning of the word, bold, 10 pt.)'
+[P041] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P042] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='For qualitative studies, findings are usually written in the form of quotations from research informants. The table format is rarely used except to describe the characteristics of participants or recapitulate themes or categories. If the quote is no more than 40 words, then use quotation marks (“”) at the beginning and at the end of the sentence and include informants who give statements without the need to make separate paragraphs. Ellipsis (...) is only used to change words that are not displayed, not stop/pause.'
+[P043] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P044] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='Research Method '
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P045] align=None style=Normal
+   RUN: font=Palatino Linotype, size=Nonept, bold=None, italic=None | text='      '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Methods contain the design, size, criteria, and method of sampling, instruments used and collection procedures, processing, and data analysis. When using a questionnaire as an instrument, explain the contents briefly and to measure which variables. The validity and reliability of the instrument must also be explained. In experimental research or interventions, it is necessary to explain the intervention procedure or treatment provided. In this section, it must explain how research ethics approval is obtained and the protection of the rights of the respondents imposed. Data analysis using a computer program does not necessarily mention details of the software if it is not original software. For qualitative research, this section needs to explain how research safeguards the validity of the data obtained. The method section is written briefly in two to three paragraphs with a maximum of 600 words.'
+[P046] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P047] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='Results and Discussions '
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P048] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='      The findings are sorted by research objectives or research hypotheses. The results do not display the same data in two forms, namely tables/images/graphics and narration. There is no quote in the results section.'
+[P049] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='      This section explains the results of the study. It must be presented clearly and concisely. The author must explore the novelty or contribution of the work to economic literature. Clearly show the results of the analysis and the discussion by using the relevant and updating references.'
+[P050] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='      Tables only use 3 (three) rows (do not use column lines), row headings, and end tables (see examples). Tables are written with Times New Roman size of 10 pt. and placed in one space under the title table. The table title is written in 9 pt. bold, uppercase letters at the beginning of the word and placed on a table in the format shown in the example that does not use column lines. Numbering tables use Arabic numerals. The distance between a table and a paragraph is a single space. The table is placed immediately after its appointment in the manuscript. The table frame uses a line size of 1 pt. If the table has many columns, it can use one column format in half or full pages. If the title in each table column is long and complicated, the column is numbered, and the description is given at the bottom of the table. The table is placed at the top or bottom of each page and is not flanked by sentences. Avoid interrupting table by page.'
+[P051] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P052] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='Conclusions'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P053] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='      A section is written in narrative. Conclusions are answers to hypotheses that lead to the main purpose of the research. In this section, it is not permissible to cite the work of other authors and new information or terms that did not previously exist. Further information can be written in this section.'
+[P054] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P055] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='References '
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P056] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='References are written in Times New Roman font size 12-point, line space at least 15 pt. for the distance between references included. References use a hanging pattern, which is the second row protrudes by 0.25". References only contain articles that have been published and are selected that are most relevant to the text. The reference format follows the style of the" name-year "quote (reference APA 6'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='th'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=' edition). All sources in the reference must be referenced in the text and what is in the text must be in this reference. The author must write the name of the author’s last name and the year of publication in the use of parentheses, for example (Potter & Perry, 2006) or Potter and Perry (2006) Write the name of the first author and “et al.”, if there are more than six authors, for example (Potter, et al., 2006) or Potter et al. (2006).'
+[P057] align=None style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P058] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='Journal '
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P059] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P060] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Author, AA, Author, BB, & Author, CC (year). Article title: Sub-title. '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='Journal Title'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=', '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='volume'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='(issue number), page numbers'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P061] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P062] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Altman, EI, & Kuehne, BI, (2016) Credit markets and bubbles: Is the credit cycle over Economics and Business Review, '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='16'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='(3), 20-31. Doi: 10.18559 / ebr .2016.3.3'
+[P063] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P064] align=None style=Normal
+   RUN: font=Palatino Linotype, size=11.5pt, bold=None, italic=None | text='Huda, N., Rini, N., Mardoni, Y., Hudori, K., & Anggraini, D. (2017). lems, Solutions and Strategies Priority for Waqf in Indonesia. Journal of Economic Cooperation & Development, '
+   RUN: font=Palatino Linotype, size=11.5pt, bold=None, italic=True | text='38'
+   RUN: font=Palatino Linotype, size=11.5pt, bold=None, italic=None | text='(1), 29.'
+[P065] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P066] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='Proceedings of the conference'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P067] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P068] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text="Schnase, JL, & Cunnius, EL (Eds.). (1995). Proceedings from CSCL '95: "
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='The First'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='International Conference on Computer Support for Collaborative Learning'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='. Mahwah, NJ:'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Erlbaum.'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P069] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P070] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='Book'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P071] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P072] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Author, AA (Year). '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='Source title: Capital letter at'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='the beginning of the subtitle'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='. Location / City:'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Publisher.'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P073] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P074] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Borner, S., Brunetti, A., & Weder, B. (1995).'
+   RUN: font=Palatino Linotype, size=10.0pt, bold=None, italic=None | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='Political credibility and economic development.'
+   RUN: font=Palatino Linotype, size=10.0pt, bold=None, italic=None | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='New York, NY: Macmillan.'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P075] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P076] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Chapter in the'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P077] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P078] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Author, AA (Year) book. Chapter title'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text=': Capital'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='letter at the beginning of the subtitle. '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='In Initial,'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text="Surname (Author's name/book editor) (eds). "
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='Book title'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='. Location / City: Publisher.'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P079] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P080] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Daszkiewicz, N., & Olczyk, M. (2014). Competitiveness of the Visegrad countries - Paths for competitiveness growth. In D, Kiendl-Wendner, K. Wach (Eds.), International competitiveness in Visegrad countries: Macro and micro perspectives (pp. 33-52). Graz: Fachhochschule Joanneum.'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P081] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P082] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Book translation of'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P083] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P084] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Ganong, WF (2008). '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='Medical Physiology ('
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Ed 22nd). (Peter A., trans). New York: McGraw Hill Medical. (Original book published 2005).'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P085] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P086] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='Thesis / Dissertation'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P087] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='If available in the '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='database'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P088] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P089] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Gilliland, AL ('
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='2010). A grounded theory model'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='of effective labor support by doulas '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='(Doctoral'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Dissertation). Obtained from '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='ProQuest'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='Dissertations and Theses. (UMI No 3437269)'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P090] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P091] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='If not published'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P092] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Last-name, AA (year). Dissertation/thesis title'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='.'
+   RUN: font=Palatino Linotype, size=10.0pt, bold=None, italic=None | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='(Unpublished doctoral dissertation/master thesis). Institution Name, Location.'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P093] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Considine, M. (1986). '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='Australian insurance'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='politics in the 1970s: Two case studies'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='.'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='(Unpublished doctoral dissertation). The University of Melbourne, Melbourne, Australia.'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P094] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P095] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='Database Article'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P096] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P097] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Author, A. A., Author, B. B., & Author, C. C. (Year pub). Title of the article. '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='Title of Journal'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=", Volume (Issue), pp-pp. doi: xx.xxxxxxxxx [OR] Retrieved from URL of publication's home page"
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P098] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Borman, WC, Hanson, MA, Oppler, SH, Pulakos, ED, & White, LA (1993). Role of early'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P099] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P100] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='supervisory experience in supervisor performance. '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='Journal of Applied Psychology,'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P101] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P102] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='78'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='(8), 443-449. Obtained from'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='http://www.eric.com/jdlsiejls/'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='supervisor /'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='early937d%'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P103] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P104] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Database article with DOI (Digital Object Identifier)'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P105] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P106] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Brownlie, D. (2007). Toward effective poster presentations: An annotated bibliography. '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='European Journal of Marketing, 41'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='(11/12),'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='1245-1283. doi: 10.1108 / 03090560710821161'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P107] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P108] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=True, italic=None | text='Other online sources are'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P109] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P110] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text="Author, AA (year). Title of source. Retrieved from URL of publication's home page"
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P111] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P112] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Article from website'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P113] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Exploring\tLinguistics.\t(1999,\tAugust\t9).'
+   RUN: font=Palatino Linotype, size=10.0pt, bold=None, italic=None | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Retrieved from '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='http://logos.uoregon.edu/explore/'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='orthography /'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='chinese.html # tsang'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P114] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P115] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Electronic article'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P116] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P117] align=None style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='Becker, E. (2001, August 27). Prairie Farmers reap conservation’s rewards. '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='The New York'
+   RUN: font=Palatino Linotype, size=10.0pt, bold=None, italic=None | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text='Times'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text=', pp. 12-90. Retrieved from'
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=True | text=' '
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='http://www.nytimes.com'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P118] align=LEFT (0) style=Normal
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''
+[P119] align=LEFT (0) style=Normal
+   RUN: font=Palatino Linotype, size=12.0pt, bold=None, italic=None | text='(One blank single space line, 12 pt.)'
+   RUN: font=None, size=Nonept, bold=None, italic=None | text=''

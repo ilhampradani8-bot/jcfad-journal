@@ -395,39 +395,42 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
     run_em = p_email.add_run(f"*corresponding author e-mail : {manuscript_data['email']}")
     set_font_palatino(run_em, size_pt=10, italic=True)
     
-    # 3. Update Table 0 (Abstract Box)
+    # 3. Update Table 0 (Abstract Box) - 100% Match with template_humaya.docx
     t_abs = doc.tables[0]
     
-    # Left Column: Row 0 (Article Info), Row 1 (Keywords EN), Row 2 (Kata Kunci ID)
+    # Left Column:
+    # Row 0, Col 0: ONLY "Article Info" (Palatino Linotype 12pt regular - NO dummy review dates before publication!)
     cell_info = t_abs.cell(0, 0)
     cell_info.text = "Article Info"
     for p in cell_info.paragraphs:
+        p.alignment = WD_ALIGN_PARAGRAPH.LEFT
         for r in p.runs:
-            set_font_palatino(r, size_pt=10, bold=True)
+            set_font_palatino(r, size_pt=12, bold=False)
             
+    # Row 1, Col 0: ONLY "Keywords:" (italic) followed by English keywords on separate lines with semicolons
     cell_kw_en = t_abs.cell(1, 0)
     cell_kw_en.text = ""
     p_kw_h = cell_kw_en.paragraphs[0]
+    p_kw_h.alignment = WD_ALIGN_PARAGRAPH.LEFT
     r_kw_h = p_kw_h.add_run("Keywords:\n")
-    set_font_palatino(r_kw_h, size_pt=9, bold=True)
-    for kw in manuscript_data["keywords_en"].split(";"):
+    set_font_palatino(r_kw_h, size_pt=11, italic=True)
+    
+    kw_list = [k.strip() for k in manuscript_data["keywords_en"].split(";") if k.strip()]
+    for idx, kw in enumerate(kw_list):
         p_k = cell_kw_en.add_paragraph()
         p_k.paragraph_format.line_spacing = 1.0
-        r_k = p_k.add_run(kw.strip() + ";")
-        set_font_palatino(r_k, size_pt=9, italic=True)
+        p_k.paragraph_format.space_after = Pt(2)
+        p_k.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        terminator = ";" if idx < len(kw_list) - 1 else ""
+        r_k = p_k.add_run(f"{kw}{terminator}")
+        set_font_palatino(r_k, size_pt=10, bold=False, italic=False)
 
+    # Row 2, Col 0: Left empty as clean spacer matching master template
     cell_kw_id = t_abs.cell(2, 0)
     cell_kw_id.text = ""
-    p_kwi_h = cell_kw_id.paragraphs[0]
-    r_kwi_h = p_kwi_h.add_run("Kata Kunci:\n")
-    set_font_palatino(r_kwi_h, size_pt=9, bold=True)
-    for kw in manuscript_data["keywords_id"].split(";"):
-        p_ki = cell_kw_id.add_paragraph()
-        p_ki.paragraph_format.line_spacing = 1.0
-        r_ki = p_ki.add_run(kw.strip() + ";")
-        set_font_palatino(r_ki, size_pt=9, italic=True)
 
-    # Right Column (cell(0, 1) is vertically merged across all 3 rows)
+    # Right Column (cell(0, 1) is vertically merged across rows 0, 1, 2):
+    # Contains English Abstract followed by Indonesian Abstrak per author guidelines
     cell_abs = t_abs.cell(0, 1)
     cell_abs.text = ""
     
@@ -435,25 +438,35 @@ def inject_manuscript_into_template(manuscript_data, output_docx_path):
     p_en_h = cell_abs.paragraphs[0]
     p_en_h.alignment = WD_ALIGN_PARAGRAPH.LEFT
     r_en_h = p_en_h.add_run("Abstract")
-    set_font_palatino(r_en_h, size_pt=10, bold=True)
+    set_font_palatino(r_en_h, size_pt=11, bold=True)
     
     p_en_b = cell_abs.add_paragraph()
     p_en_b.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     p_en_b.paragraph_format.line_spacing = 1.0
-    p_en_b.paragraph_format.space_after = Pt(6)
-    add_formatted_runs(p_en_b, manuscript_data["abstract_en"], size_pt=9.5)
+    p_en_b.paragraph_format.space_after = Pt(8)
+    add_formatted_runs(p_en_b, manuscript_data["abstract_en"], size_pt=10)
     
     # 2. Indonesian Abstrak
     p_id_h = cell_abs.add_paragraph()
-    p_id_h.paragraph_format.space_before = Pt(4)
+    p_id_h.paragraph_format.space_before = Pt(6)
+    p_id_h.paragraph_format.space_after = Pt(2)
     p_id_h.alignment = WD_ALIGN_PARAGRAPH.LEFT
     r_id_h = p_id_h.add_run("Abstrak")
-    set_font_palatino(r_id_h, size_pt=10, bold=True)
+    set_font_palatino(r_id_h, size_pt=10.5, bold=True)
     
     p_id_b = cell_abs.add_paragraph()
     p_id_b.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     p_id_b.paragraph_format.line_spacing = 1.0
-    add_formatted_runs(p_id_b, manuscript_data["abstract_id"], size_pt=9.5)
+    p_id_b.paragraph_format.space_after = Pt(4)
+    add_formatted_runs(p_id_b, manuscript_data["abstract_id"], size_pt=10)
+
+    p_id_kw = cell_abs.add_paragraph()
+    p_id_kw.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    p_id_kw.paragraph_format.line_spacing = 1.0
+    r_id_kwh = p_id_kw.add_run("Kata Kunci: ")
+    set_font_palatino(r_id_kwh, size_pt=9.5, italic=True, bold=True)
+    r_id_kwt = p_id_kw.add_run(manuscript_data.get("keywords_id", "").replace(";\n", "; "))
+    set_font_palatino(r_id_kwt, size_pt=9.5, italic=True)
 
     # 4. Remove Template Sample Body (preserve index 0-11 and sectPr)
     while len(body) > 13:
