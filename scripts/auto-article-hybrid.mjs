@@ -292,7 +292,8 @@ async function reserveZenodoDraft() {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${ZENODO_API_TOKEN}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) JCFAD-Engine/1.0'
       },
       body: JSON.stringify({})
     });
