@@ -288,6 +288,29 @@ async function reserveZenodoDraft() {
     return { depId: null, doi: '10.5281/zenodo.pending' };
   }
   try {
+    // 1. Cek apakah ada draft kosong sebelumnya (mencegah akumulasi draft kosong jika run sebelumnya gagal/dibatalkan)
+    try {
+      const checkRes = await fetch('https://zenodo.org/api/deposit/depositions?status=draft&size=10', {
+        headers: {
+          'Authorization': `Bearer ${ZENODO_API_TOKEN}`,
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) JCFAD-Engine/1.0'
+        }
+      });
+      if (checkRes.ok) {
+        const existingList = await checkRes.json();
+        const emptyDraft = existingList.find(d => !d.submitted && (!d.files || d.files.length === 0));
+        if (emptyDraft) {
+          const depId = emptyDraft.id;
+          const reservedDoi = `10.5281/zenodo.${depId}`;
+          console.log(`♻️ [Real-Time DOI Gate] Menggunakan kembali Draft Kosong Zenodo sebelumnya: ${reservedDoi} (Draft ID: ${depId})`);
+          return { depId, doi: reservedDoi };
+        }
+      }
+    } catch (checkErr) {
+      console.warn('⚠️ Gagal memeriksa draft Zenodo sebelumnya:', checkErr.message);
+    }
+
+    // 2. Jika tidak ada draft kosong, buat reservasi baru via API
     console.log('⚡ [Real-Time DOI Gate] Melakukan reservasi DOI resmi CERN Zenodo secara realtime via API...');
     const res = await fetch('https://zenodo.org/api/deposit/depositions', {
       method: 'POST',

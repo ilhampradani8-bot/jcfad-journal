@@ -94,6 +94,28 @@ def send_telegram_zenodo_notification(title, doi, slug, dep_id):
 
 def reserve_zenodo_deposition():
     """Membuat draft deposition di Zenodo dan mengembalikan dep_id serta DOI yang terjamin."""
+    # 1. Cek apakah ada draft kosong sebelumnya (mencegah akumulasi draft kosong jika run sebelumnya gagal/dibatalkan)
+    try:
+        check_req = urllib.request.Request(
+            "https://zenodo.org/api/deposit/depositions?status=draft&size=10",
+            headers={"Authorization": f"Bearer {ZENODO_TOKEN}"}
+        )
+        with urllib.request.urlopen(check_req, timeout=10) as resp:
+            drafts = json.loads(resp.read().decode())
+        for d in drafts:
+            if not d.get("submitted", False) and len(d.get("files", [])) == 0:
+                dep_id = d["id"]
+                doi = f"10.5281/zenodo.{dep_id}"
+                print(f"♻️ Menggunakan kembali Draft Kosong Zenodo sebelumnya: {doi} (ID: {dep_id})")
+                return {
+                    "id": dep_id,
+                    "doi": doi,
+                    "bucket_url": d.get("links", {}).get("bucket")
+                }
+    except Exception as e:
+        pass
+
+    # 2. Jika tidak ada draft kosong, buat reservasi baru via API
     req = urllib.request.Request(
         "https://zenodo.org/api/deposit/depositions",
         headers={
@@ -112,6 +134,30 @@ def reserve_zenodo_deposition():
         "doi": doi,
         "bucket_url": dep.get("links", {}).get("bucket")
     }
+
+def cleanup_empty_drafts():
+    """Menghapus seluruh draft kosong (unsubmitted & 0 files) dari repositori Zenodo."""
+    print("🧹 [Zenodo Cleanup] Memindai dan membersihkan draft kosong yang tertinggal...")
+    req = urllib.request.Request(
+        "https://zenodo.org/api/deposit/depositions?status=draft&size=50",
+        headers={"Authorization": f"Bearer {ZENODO_TOKEN}"}
+    )
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        drafts = json.loads(resp.read().decode())
+    deleted_count = 0
+    for d in drafts:
+        if not d.get("submitted", False) and len(d.get("files", [])) == 0:
+            dep_id = d["id"]
+            del_req = urllib.request.Request(
+                f"https://zenodo.org/api/deposit/depositions/{dep_id}",
+                headers={"Authorization": f"Bearer {ZENODO_TOKEN}"},
+                method="DELETE"
+            )
+            with urllib.request.urlopen(del_req, timeout=10) as del_resp:
+                if del_resp.status in (200, 204):
+                    print(f"   🗑️ Berhasil menghapus draft kosong ID: {dep_id}")
+                    deleted_count += 1
+    print(f"✨ Selesai. {deleted_count} draft kosong berhasil dibersihkan dari akun Zenodo.")
 
 def publish_paper_to_zenodo(slug, title, abstract, keywords, pdf_filename, dep_id=None):
     pdf_path = os.path.join(DOCS_DIR, pdf_filename)
@@ -275,6 +321,10 @@ if __name__ == "__main__":
     if "reserve" in sys.argv:
         res = reserve_zenodo_deposition()
         print(json.dumps(res))
+        sys.exit(0)
+
+    if "--cleanup-drafts" in sys.argv or "cleanup" in sys.argv:
+        cleanup_empty_drafts()
         sys.exit(0)
 
     if "--slug" in sys.argv:
