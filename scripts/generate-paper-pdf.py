@@ -420,6 +420,15 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
     # Clean duplicate reference sections in markdown body (since template appends official references at end)
     md_text = re.sub(r'(?ims)(?:^|\n)#{1,3}\s*(?:\d+\.?\s*)?(?:References|Referensi|Daftar\s*Pustaka|Bibliography)[\s\S]*$', '', md_text)
 
+    # 0b. Strict Meta-Prompt, AI Greeting, and Reviewer Sanitizer (Double Shield)
+    # Menghapus seluruh residu percakapan AI, sapaan LLM, dan jejak revisi reviewer
+    md_text = re.sub(r'(?im)^(?:\s*[-*•]?\s*)?(?:Berikut\s+adalah|Tentu,\s*berikut|Berikut\s+ini|Di\s+bawah\s+ini|Here\s+is|Certainly,\s*here|Below\s+is).*$', '', md_text)
+    md_text = re.sub(r'(?i)\b(?:sebagai\s+model\s+AI|sebagai\s+asisten\s+AI|as\s+an\s+AI|as\s+a\s+large\s+language\s+model)[^,\.\n]*[,:]?\s*', '', md_text)
+    md_text = re.sub(r'(?i)\b(?:untuk|guna|sebagai\s+upaya)\s+(?:menjawab|menjembatani|mengakomodasi|merespons)\s+(?:kritik|tuntutan|catatan|masukan)\s+reviewer\s*\d*[^,\.\n]*[,:]?\s*', '', md_text)
+    md_text = re.sub(r'(?i)\b(?:in\s+response\s+to|to\s+address|as\s+requested\s+by)\s+(?:reviewer|the\s+reviewer)[\'’]?s?\s*\d*\s*(?:feedback|critique|comments?|critiques?)[^,\.\n]*[,:]?\s*', '', md_text)
+    md_text = re.sub(r'(?i)\b(?:menjawab\s+kritik|kritik\s+reviewer|catatan\s+revisi|tuntutan\s+reviewer)\b', '', md_text)
+    md_text = re.sub(r'(?i)\breviewer\s*\d+\b', 'analis akademik', md_text)
+
     # 0a. Protect multi-line fenced code blocks ```...``` before any table or math conversion
     fenced_blocks = []
     def stash_fenced_block(m):
@@ -678,6 +687,12 @@ def build_article_pdf(article, out_pdf_path, max_attempts=4, header_mode="univer
     doi = article.get('doi') or '10.5281/zenodo.14022601'
     slug = article.get('slug', 'paper')
     raw_content = article.get('content', '') or abstract
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from dna_writer_guide import sanitize_dna_violations
+        raw_content = sanitize_dna_violations(raw_content)
+    except Exception:
+        pass
 
     # Check for linked OSF identifier
     osf_id = ""
