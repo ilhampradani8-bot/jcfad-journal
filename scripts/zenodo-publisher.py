@@ -182,20 +182,10 @@ def publish_paper_to_zenodo(slug, title, abstract, keywords, pdf_filename, dep_i
             dep_id = None
 
     if not dep_id or not bucket_url:
-        req = urllib.request.Request(
-            "https://zenodo.org/api/deposit/depositions",
-            headers={
-                "Authorization": f"Bearer {ZENODO_TOKEN}",
-                "Content-Type": "application/json"
-            },
-            data=b"{}",
-            method="POST"
-        )
-        with urllib.request.urlopen(req) as resp:
-            dep = json.loads(resp.read().decode())
-        dep_id = dep["id"]
-        bucket_url = dep["links"]["bucket"]
-        print(f"📦 Draft Deposition Created: ID {dep_id}")
+        reserved = reserve_zenodo_deposition()
+        dep_id = reserved["id"]
+        bucket_url = reserved["bucket_url"]
+        print(f"📦 Draft Deposition Allocated/Reused: ID {dep_id}")
 
     # 2. Upload PDF File to Bucket
     upload_url = f"{bucket_url}/{pdf_filename}"
@@ -352,23 +342,60 @@ if __name__ == "__main__":
             print(f"❌ Article slug not found in D1: {slug}")
         sys.exit(0)
 
-    if "pending" in sys.argv:
+    if "pending" in sys.argv or "--pending" in sys.argv:
         req = urllib.request.Request('https://api.chainasiaconnect.co.id/', headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req) as resp:
             data = json.loads(resp.read().decode())
         articles = data.get('articles', [])
-        pending_list = [a for a in articles if not a.get('doi', '').startswith('10.5281/zenodo.')]
+        pending_list = [
+            a for a in articles
+            if not a.get('doi', '').startswith('10.5281/zenodo.')
+            or 'pending' in a.get('doi', '').lower()
+            or not a.get('doi', '').replace('10.5281/zenodo.', '').isdigit()
+        ]
         print(f"🔍 Found {len(pending_list)} pending articles needing official Zenodo DOI...")
         for target in pending_list:
             slug = target.get('slug')
             title = target.get('title')
             abstract = target.get('excerpt')
             keywords = [k.strip() for k in target.get('keywords', '').split(',') if k.strip()]
+            if "Preprint" not in keywords: keywords.append("Preprint")
+            if "JCFAD" not in keywords: keywords.append("JCFAD")
+
+            print(f"\n🚀 Memproses artikel pending [{slug}]...")
+            # 1. Reservasi Zenodo deposition & DOI resmi terlebih dahulu (reuse draft jika ada)
+            reserved = reserve_zenodo_deposition()
+            dep_id = reserved["id"]
+            reserved_doi = reserved["doi"]
+            print(f"🔒 Alokasi DOI Resmi Zenodo: {reserved_doi} (Deposition ID: {dep_id})")
+            update_d1_doi(slug, reserved_doi)
+
+            # 2. Kompilasi PDF resmi dengan badge DOI baru
+            print(f"🔨 Mengompilasi PDF resmi naskah {slug}...")
+            subprocess.run(["python3", GENERATE_PDF_SCRIPT, "--slug", slug, "--osf"], check=True)
+
             pdf_file = f"{slug}.pdf"
             try:
-                res = publish_paper_to_zenodo(slug, title, abstract, keywords, pdf_file)
-                update_d1_doi(slug, res["doi"])
+                res = publish_paper_to_zenodo(slug, title, abstract, keywords, pdf_file, dep_id=dep_id)
                 print(f"🎉 Successfully published [{slug}] to Zenodo: {res['doi']}")
+
+                # Update published_topics.json
+                for path_candidate in [TOPICS_JSON_PATH, "/root/chainasiaweb/scripts/published_topics.json"]:
+                    if os.path.exists(path_candidate):
+                        try:
+                            with open(path_candidate, "r", encoding="utf-8") as f:
+                                topics = json.load(f)
+                            updated = False
+                            for t in topics:
+                                if t.get("slug") == slug:
+                                    t["doi"] = res["doi"]
+                                    updated = True
+                            if updated:
+                                with open(path_candidate, "w", encoding="utf-8") as f:
+                                    json.dump(topics, f, indent=2, ensure_ascii=False)
+                                print(f"📋 Berhasil memperbarui DOI di {path_candidate}")
+                        except Exception as err:
+                            print(f"⚠️ Gagal update {path_candidate}: {err}")
             except Exception as e:
                 print(f"⚠️ Error publishing {slug}: {e}")
         sys.exit(0)
@@ -546,7 +573,7 @@ if __name__ == "__main__":
             d1_url,
             headers={"Authorization": f"Bearer {CLOUDFLARE_API_TOKEN}", "Content-Type": "application/json"},
             data=json.dumps({
-                "sql": "SELECT id, title, excerpt, content, slug, keywords, doi FROM articles WHERE (doi IS NULL OR doi NOT LIKE '10.5281/zenodo%') AND id >= 3 ORDER BY id ASC"
+                "sql": "SELECT id, title, excerpt, content, slug, keywords, doi FROM articles WHERE (doi IS NULL OR doi LIKE '%pending%' OR doi NOT GLOB '10.5281/zenodo.[0-9]*') AND id >= 3 ORDER BY id ASC"
             }).encode("utf-8")
         )
         with urllib.request.urlopen(fetch_req) as resp:
@@ -569,6 +596,13 @@ if __name__ == "__main__":
 
             print(f"\n🚀 Menerbitkan Paper ID {paper_id} ke Zenodo: {title[:60]}...")
 
+            # 1. Reservasi Zenodo Deposition & DOI resmi terlebih dahulu (reuse draft jika ada)
+            reserved = reserve_zenodo_deposition()
+            dep_id = reserved["id"]
+            reserved_doi = reserved["doi"]
+            print(f"🔒 Alokasi DOI Resmi Zenodo: {reserved_doi} (Deposition ID: {dep_id})")
+            update_d1_doi(slug, reserved_doi)
+
             # Injeksi sitasi silang ke paper dasar Krui jika belum ada
             if "23979190" not in content:
                 citation_inject = (
@@ -586,12 +620,12 @@ if __name__ == "__main__":
                 ))
                 print(f"📝 Berhasil menginjeksi sitasi silang ke Paper {paper_id} di Cloudflare D1.")
 
-            # Pastikan PDF terkompilasi sebelum upload
-            subprocess.run(["python3", GENERATE_PDF_SCRIPT], check=True)
+            # 2. Kompilasi PDF resmi dengan badge DOI Zenodo yang baru dialokasikan
+            print(f"🔨 Mengompilasi PDF resmi naskah {slug}...")
+            subprocess.run(["python3", GENERATE_PDF_SCRIPT, "--slug", slug, "--osf"], check=True)
 
             pdf_file = f"{slug}.pdf"
-            res = publish_paper_to_zenodo(slug, title, excerpt, keywords, pdf_file)
-            update_d1_doi(slug, res["doi"])
+            res = publish_paper_to_zenodo(slug, title, excerpt, keywords, pdf_file, dep_id=dep_id)
 
             # Update published_topics.json (baik di journal maupun mirror jika ada)
             for path_candidate in [TOPICS_JSON_PATH, "/root/chainasiaweb/scripts/published_topics.json"]:
@@ -611,9 +645,6 @@ if __name__ == "__main__":
                     except Exception as e:
                         print(f"⚠️ Gagal update {path_candidate}: {e}")
 
-        # Final re-compile PDF dengan badge DOI Zenodo yang baru
-        print("🔨 Mengompilasi ulang PDF dengan badge resmi Zenodo...")
-        subprocess.run(["python3", GENERATE_PDF_SCRIPT], check=True)
         print("\n" + "=" * 70)
         print("🎉 BERHASIL MENERBITKAN PAPER PENDING KE ZENODO DENGAN DOI RESMI!")
         print("=" * 70)

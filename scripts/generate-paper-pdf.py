@@ -108,9 +108,9 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
     s = s.replace('\x08eta', ' beta ')
 
     # Calligraphic, Blackboard, and Bold
-    s = re.sub(r"\\mathcal\{([^{}]+)\}", r"cal(\1)", s)
-    s = re.sub(r"\\mathbb\{([^{}]+)\}", r"bb(\1)", s)
-    s = re.sub(r"\\mathbf\{([^{}]+)\}", r"bold(\1)", s)
+    s = re.sub(r"\\?mathcal\{([^{}]+)\}", r"cal(\1)", s)
+    s = re.sub(r"\\?mathbb\{([^{}]+)\}", r"bb(\1)", s)
+    s = re.sub(r"\\?mathbf\{([^{}]+)\}", r"bold(\1)", s)
 
     # Inequalities & Relations (Urutan penting: terpanjang dulu!)
     s = re.sub(r"\\geq\b|\\geq(?=[^a-zA-Z]|$)", " >= ", s)
@@ -119,7 +119,8 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
     s = re.sub(r"\\le\b|\\le(?=[^a-zA-Z]|$)", " <= ", s)
     s = s.replace(r"\neq", " != ").replace(r"\ne ", " != ")
     s = s.replace(r"\approx", " approx ")
-    s = s.replace(r"\sim", " ~ ")
+    s = re.sub(r"\\?sim\b", " ~ ", s)
+    s = re.sub(r"\\?q?quad\b", " ", s)
     s = s.replace(r"\cdot", " dot ")
     s = s.replace(r"\times", " times ")
     s = s.replace(r"\in", " in ").replace(r"\notin", " not in ")
@@ -251,7 +252,8 @@ def clean_inline(text, is_body=False, aggressive_unbold=False, extra_quote_vars=
         idx = len(math_inlines)
         if cleaned:
             if failsafe_text_mode:
-                math_inlines.append(cleaned)
+                cleaned_text = cleaned.replace('<', '\\<').replace('>', '\\>').replace('_', '\\_')
+                math_inlines.append(cleaned_text)
             else:
                 # Inline math Typst: WAJIB tanpa spasi di tepi dalam ($expr$)
                 math_inlines.append(f"${cleaned}$")
@@ -562,7 +564,8 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
         if cleaned:
             cleaned_split = split_long_math_equation(cleaned)
             if failsafe_text_mode:
-                math_blocks.append(f"\n#align(center)[#text(size: 8.2pt, style: \"italic\")[{cleaned_split}]]\n")
+                cleaned_text = cleaned_split.replace('<', '\\<').replace('>', '\\>').replace('_', '\\_')
+                math_blocks.append(f"\n#align(center)[#text(size: 8.2pt, style: \"italic\")[{cleaned_text}]]\n")
             elif len(cleaned) > 48:
                 math_blocks.append(f"\n#v(0.65em)\n#align(center)[\n  #text(size: 8.0pt)[\n    $ {cleaned_split} $\n  ]\n]\n#v(0.65em)\n")
             else:
