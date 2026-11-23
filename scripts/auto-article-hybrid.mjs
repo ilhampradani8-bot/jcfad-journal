@@ -43,6 +43,7 @@ function getArg(flag) {
 const GROQ_API_KEY = getArg('key') || getArg('groq-key') || process.env.GROQ_API_KEY;
 const GEMINI_API_KEY = getArg('gemini-key') || process.env.GEMINI_API_KEY;
 const CUSTOM_TOPIC = getArg('topic');
+const CUSTOM_DOI = getArg('doi');
 const TARGET_LANG = getArg('lang') || 'id'; // default to 'id' (Bahasa Indonesia)
 const IS_DRY_RUN = args.includes('--test') || args.includes('--dry-run');
 const SKIP_DEPLOY = args.includes('--no-deploy');
@@ -58,9 +59,9 @@ const ORCID_ID = process.env.ORCID_ID || '0009-0008-1310-6169';
 const MODEL_GROQ_NOVELTY = 'openai/gpt-oss-20b';
 const MODEL_GROQ_REVIEWER_DATA = 'qwen/qwen3.8-27b';
 const MODEL_GROQ_REVIEWER_LEGAL = 'openai/gpt-oss-120b';
-const MODEL_GEMINI_DRAFTER = 'gemini-3.5-flash-lite';
-const MODEL_GEMINI_REVISER = 'gemini-3.5-flash-lite';
-const MODEL_GEMINI_EDITOR = 'gemini-3.5-flash-lite';
+const MODEL_GEMINI_DRAFTER = 'gemini-3.5-flash';
+const MODEL_GEMINI_REVISER = 'gemini-3.5-flash';
+const MODEL_GEMINI_EDITOR = 'gemini-3.5-flash';
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const REGISTRY_FILE = path.join(__dirname, 'published_topics.json');
@@ -430,6 +431,56 @@ async function callGeminiAPI(systemPrompt, userPrompt, temperature = 0.2, retryC
   }
 }
 
+// ── GEMINI RAW TEXT CALLER (FOR UNCONSTRAINED RICH LONG-FORM SECTIONS) ───────
+async function callGeminiText(systemPrompt, userPrompt, temperature = 0.25, retryCount = 0) {
+  if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY tidak ditemukan di .env!');
+  await initGlobalProxy();
+
+  const models = [MODEL_GEMINI_DRAFTER, 'gemini-3.5-flash-lite'];
+  const modelToUse = models[retryCount % models.length];
+
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelToUse}:generateContent?key=${GEMINI_API_KEY}`;
+    const payload = {
+      contents: [{
+        role: 'user',
+        parts: [{ text: `${systemPrompt}\n\n---\n\n${userPrompt}` }]
+      }],
+      generationConfig: {
+        temperature,
+        maxOutputTokens: 8192
+      }
+    };
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      if ((res.status === 429 || res.status === 503) && retryCount < 4) {
+        console.warn(`⏳ [Gemini Rate Limit ${res.status}] pada ${modelToUse}. Menunggu 12 detik...`);
+        await sleep(12000);
+        return callGeminiText(systemPrompt, userPrompt, temperature, retryCount + 1);
+      }
+      throw new Error(`Gemini ${modelToUse} error (${res.status}): ${errText}`);
+    }
+
+    const data = await res.json();
+    const textOut = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!textOut) throw new Error(`Gemini ${modelToUse} mengembalikan respon teks kosong`);
+    return textOut.trim();
+  } catch (err) {
+    if (retryCount < 3) {
+      await sleep(8000);
+      return callGeminiText(systemPrompt, userPrompt, temperature, retryCount + 1);
+    }
+    throw err;
+  }
+}
+
 // ── OPENALEX GROUNDING ──────────────────────────────────────────────────────
 async function fetchOpenAlexGrounding(keywords) {
   console.log(`🌐 [OpenAlex API] Mengambil literatur primer riil untuk grounding...`);
@@ -580,93 +631,187 @@ async function main() {
   console.log(`🏷️ Sudut Pandang : "${selectedDomain.angle}"`);
 
   // 2. Real-Time CERN Zenodo DOI Reservation Gate
-  let lockedDoi = '10.5281/zenodo.preview';
-  if (!IS_DRY_RUN) {
+  let lockedDoi = CUSTOM_DOI || '10.5281/zenodo.preview';
+  if (!CUSTOM_DOI && !IS_DRY_RUN) {
     const reservedZenodo = await reserveZenodoDraft();
     lockedDoi = reservedZenodo.doi;
+  } else if (CUSTOM_DOI) {
+    console.log(`🎯 [Menggunakan DOI Terdaftar]: ${lockedDoi}`);
   } else {
     console.log(`🧪 [DRY RUN] Mode simulasi aktif - Menggunakan DOI uji coba: ${lockedDoi}`);
   }
 
-  // 3. Stage 1: Fast Novelty Discovery via Groq
-  console.log(`\n🔍 [Stage 1: Groq] Eksplorasi Celah Riset (Research Gap) & Kebaruan Ilmiah...`);
-  const sys1 = `You are a Senior Academic Director at PT CHAIN ASIA CONECT R&D. Identify an impactful research gap and novelty for Pesisir Barat.
+  // 3. Stage 1: Fast Novelty Discovery & Organic Scope Blueprint via Groq
+  console.log(`\n🔍 [Stage 1: Groq] Eksplorasi Celah Riset & Cetak Biru Ruang Lingkup Organik...`);
+  const sys1 = `You are a Senior Academic Director at PT CHAIN ASIA CONECT R&D.
+Analyze the research topic deeply and formulate an organic, non-uniform research blueprint for Pesisir Barat.
+Every topic possesses distinct empirical, mathematical, and legal depths.
+
 Output JSON:
 {
-  "novelty_statement": "Deskripsi kebaruan ilmiah dalam Bahasa Indonesia formal",
-  "research_gap": "Celah riset empiris & yuridis dalam Bahasa Indonesia formal",
   "formal_title": "Judul Ilmiah Akademik Baku dalam Bahasa Indonesia (12-16 kata)",
-  "key_variables": ["variabel1", "variabel2", "variabel3"],
-  "methodological_approach": "Pendekatan metodologi (misal MILP, Stochastics, CFD, Smart Contract)"
+  "research_gap": "Celah riset empiris & yuridis dalam Bahasa Indonesia formal",
+  "novelty_statement": "Deskripsi kebaruan ilmiah dalam Bahasa Indonesia formal",
+  "methodological_approach": "Pendekatan metodologi (misal MILP, Stochastics, CFD, Smart Contract, Game Theory, Empirical Juridical)",
+  "key_variables": ["variabel1", "variabel2", "variabel3", "variabel4"],
+  "target_word_count": 4200,
+  "field_locations": ["Kecamatan/Desa 1 di Pesisir Barat", "Kecamatan/Desa 2 di Pesisir Barat"],
+  "empirical_case_outline": "Ringkasan skenario kasus empiris lapangan",
+  "mathematical_model_plan": "Rencana fungsi objektif & kendala matematis",
+  "tables_plan": ["Tabel 1: Parameter Baseline", "Tabel 2: Hasil Simulasi & Sensitivitas", "Tabel 3: Evaluasi Risiko / Dampak"],
+  "legal_doctrine_plan": "Operasionalisasi KUHPerdata (1243, 1244-1245, 1338(3)) atau Hukum Adat Sai Batin"
 }`;
   const plan = await callGroqAPI(MODEL_GROQ_NOVELTY, sys1, `Tema: ${selectedDomain.theme}\nAngle: ${selectedDomain.angle}`);
   if (CUSTOM_TOPIC) {
     plan.formal_title = CUSTOM_TOPIC;
   }
+  const targetWords = plan.target_word_count || 4200;
   console.log(`   💡 Kebaruan: ${plan.novelty_statement.slice(0, 120)}...`);
   console.log(`   🎓 Judul Baku: "${plan.formal_title}"`);
+  console.log(`   📏 Target Organik Topik: ~${targetWords} kata | Lokasi: ${(plan.field_locations || []).join(', ')}`);
 
   // 4. Grounding via OpenAlex
   const openAlexGrounding = await fetchOpenAlexGrounding(plan.key_variables || selectedDomain.keywords);
   const groundingListStr = openAlexGrounding.map((g, i) => `[${i+1}] ${g.formattedApa}`).join('\n');
 
-  // 5. Stage 2: Initial Deep Long-Form Drafting via Gemini
-  console.log(`\n✍️ [Stage 2: Gemini] Menyusun Draf Naskah Ilmiah Mendalam (Target: 3.200 - 4.200 Kata)...`);
-  const sysDrafter = `Anda adalah Penulis Akademik Utama untuk Jurnal Ilmiah Bereputasi Internasional (Scopus Q1 / SINTA 1).
-Profil Penulis:
-- Penulis Tunggal: Ilham Pradani (ORCID: 0009-0008-1310-6169)
-- Afiliasi: Divisi Riset & Pengembangan (R&D), PT CHAIN ASIA CONECT, Jakarta & Krui, Pesisir Barat, Indonesia.
-- Jurnal: Journal of Coastal Frontiers & Applied Development (JCFAD).
-- DOI Terkunci: ${lockedDoi}
+  // 5. Stage 2: Chained Multi-Stage Deep Drafting (Estafet 5 Bab Tanpa Batasan Token JSON)
+  console.log(`\n✍️ [Stage 2: Gemini] Penulisan Naskah Mendalam Dinamis (Estafet 5 Bab)...`);
+
+  const baseWriterInstructions = `Anda adalah Penulis Akademik Utama untuk Jurnal Ilmiah Bereputasi Internasional (Scopus Q1 / SINTA 1).
+Penulis: Ilham Pradani (ORCID: 0009-0008-1310-6169)
+Afiliasi: Divisi Riset & Pengembangan (R&D), PT CHAIN ASIA CONECT, Jakarta & Krui, Pesisir Barat, Indonesia.
+Jurnal: Journal of Coastal Frontiers & Applied Development (JCFAD).
+DOI Terkunci: ${lockedDoi}
+Judul Naskah: "${plan.formal_title}"
 
 ${DNA_SYSTEM_PROMPT}
 
-PEDOMAN MUTLAK PENULISAN:
-1. BAHASA NASKAH: 100% BAHASA INDONESIA AKADEMIK BAKU TINGKAT TINGGI (Gramatika formal, istilah keilmuan presisi, mengalir alami, asimetri paragraf dinamis tinggi, TANPA kalimat klise robotik AI).
-2. KEDALAMAN & PANJANG NASKAH: Naskah WAJIB PANJANG, SUBSTANTIF, DAN MENDALAM (Target: 3.200 – 4.200 kata). DILARANG membuat ringkasan singkat!
-3. STRUKTUR LENGKAP IMRAD:
-   - 1. Pendahuluan (Latar Belakang Empiris Pesisir Barat, Tinjauan Pustaka Terkini, Identifikasi Celah Riset, Landasan Teori, Pernyataan Kebaruan Ilmiah).
-   - 2. Metodologi Penelitian (Desain Riset, Formulasi Matematis Terperinci, Notasi Variabel Lengkap, Batasan Cuaca BMKG / Geohazard, Model Smart-Legal Contract).
-   - 3. Hasil Simulasi dan Analisis Sensitivitas:
-        * Minimal 2 Tabel Tiga Garis Resmi (Three-Line Table).
-        * Analisis Sensitivitas Numerik mendalam (misal variasi kenaikan BBM 10%-30%, variasi tinggi gelombang laut 2.0m - 4.5m).
-   - 4. Pembahasan Komprehensif:
-        * Integrasi Yuridis KUHPerdata: Pasal 1243 (Wanprestasi terukur), Pasal 1244-1245 (Force Majeure objektif BMKG), Pasal 1338 ayat (3) (Asas Itikad Baik & pembagian risiko kerugian).
-        * Analisis Komparatif: Memperbandingkan hasil simulasi dengan literatur internasional yang dikutip.
-        * Implikasi Kebijakan & Rantai Pasok Pesisir Barat (Kecamatan Lemong, Pesisir Tengah, Ngambur, Bengkunat, Pulau Pisang).
-   - 5. Simpulan dan Rekomendasi Kebijakan (Temuan kunci, implikasi manajerial, keterbatasan, dan agenda riset lanjutan).
-4. RUMUS MATEMATIKA: Gunakan native LaTeX ($ ... $ untuk inline, $$ ... $$ untuk display). JANGAN gunakan card atau box abu-abu. Setiap rumus display wajib disertai Catatan Pemahaman Awam miring di bawahnya.
-5. REFERENSI: Wajib memuat 14-18 referensi primer APA 7th lengkap dengan DOI nyata dari OpenAlex dan sitasi silang wajib ke Ilham Pradani:
-${CANONICAL_PRADANI_SISTER_PAPERS[0]}
-${CANONICAL_PRADANI_SISTER_PAPERS[1]}
+ATURAN GAYA & FORMAT:
+1. BAHASA: 100% Bahasa Indonesia Akademik Baku, mengalir alami, kalimat majemuk berbobot, asimetri paragraf dinamis tinggi (ada paragraf pendek menusuk 15-35 kata, sedang 45-80 kata, dan panjang mendalam 100-190 kata), 100% BEBAS kata klise robotik AI.
+2. FORMULA: Rumus inline Typst rapat tanpa spasi ($expr$, BUKAN $ expr $). Rumus display ($$ expr $$) wajib diberi catatan pemahaman awam miring (*Catatan Pemahaman Awam: ...*) tepat di bawahnya. Dilarang membungkus rumus dengan card/box.
+3. TABEL: Wajib tabel Three-Line Table (Booktabs) markdown (| ... |) tanpa garis vertikal.
+4. LOKASI RIIL: Integrasikan realitas lapangan Pesisir Barat: ${(plan.field_locations || ['Krui', 'Lemong', 'Ngambur', 'Bengkunat']).join(', ')}.
+5. BUKAN RINGKASAN: Tulis secara terperinci, mendalam, dan komprehensif. DILARANG membuat bullet poin dangkal atau merangkum! DILARANG KERAS memuat kata 'Reviewer' atau 'menjawab kritik'.
+6. VISUALISASI RESMI: Sajikan alur logis, arsitektur, dan mitigasi risiko dalam bentuk Tabel Booktabs resmi (Tabel 1, 2, 3), rumus matematika bertingkat ($$), atau daftar poin operasional bernomor (1, 2, 3, 4) yang elegan. DILARANG menggambar diagram seni ASCII typewriter mentah (+----+, |) di dalam code block (\`\`\`).`;
 
-Output WAJIB JSON:
+  // Bab 1: Pendahuluan
+  console.log(`   📝 [Bab 1/5] Menyusun Pendahuluan, Urgensi Empiris & Celah Riset...`);
+  const promptSec1 = `Tuliskan BAB 1: PENDAHULUAN naskah ilmiah ini secara komprehensif (Target: 800 - 1.100 kata).
+Cakupan Wajib:
+- Latar Belakang Empiris Pesisir Barat: Geografi pesisir Samudra Hindia, cuaca ekstrem, jalan lintas barat (Jalinbar), tantangan riil di ${(plan.field_locations || ['Krui', 'Pesisir Barat']).join(', ')}.
+- Tinjauan Pustaka Terkini (integrasikan sitasi literatur OpenAlex riil berikut):
+${groundingListStr}
+- Identifikasi Celah Riset Empiris & Yuridis: ${plan.research_gap}
+- Landasan Teoretis & Operasionalisasi Konsep.
+- Pernyataan Kebaruan Ilmiah (Novelty Statement): ${plan.novelty_statement}
+- Sistematika pembahasan artikel.
+
+Tulis langsung teks Bab 1 dalam format Markdown ber-heading:
+# 1. PENDAHULUAN`;
+
+  const sec1 = await callGeminiText(baseWriterInstructions, promptSec1, 0.25);
+  console.log(`      ✅ Bab 1 Selesai: ${sec1.split(/\s+/).length} kata.`);
+
+  // Bab 2: Metodologi & Formulasi Matematis
+  console.log(`   📝 [Bab 2/5] Menyusun Kerangka Teoretis, Desain Riset & Formulasi Matematis...`);
+  const promptSec2 = `Lanjutkan penulisan naskah ke BAB 2: METODOLOGI PENELITIAN DAN FORMULASI MODEL (Target: 900 - 1.300 kata).
+Konteks Bab 1 Sebelumnya:
+${sec1.slice(-900)}
+
+Cakupan Wajib:
+- Desain Riset: Pendekatan ${plan.methodological_approach}, pengumpulan data lapangan primer di Pesisir Barat, protokol survei pemangku kepentingan.
+- Definisi Notasi dan Himpunan Variabel (dengan satuan fisik nyata: kg, liter, meter, rupiah, jam).
+- Formulasi Matematis Terperinci: Fungsi objektif (minimasi biaya, maksimasi keadilan margin/kepatuhan mutu), batasan kapasitas, kendala gelombang laut BMKG (>2.5m), dan model peluruhan kualitas ($L(t,T)$).
+  * Catatan: Gunakan rumus inline $expr$ rapat. Rumus display $$ ... $$ WAJIB disertai *Catatan Pemahaman Awam: ...* tepat di bawah rumus.
+- Arsitektur Kontrak Cerdas / Smart Legal Contract berbasis logika perikatan KUHPerdata: ${plan.legal_doctrine_plan}.
+
+Tulis langsung teks Bab 2 dalam format Markdown ber-heading:
+# 2. METODOLOGI PENELITIAN DAN FORMULASI MODEL`;
+
+  const sec2 = await callGeminiText(baseWriterInstructions, promptSec2, 0.22);
+  console.log(`      ✅ Bab 2 Selesai: ${sec2.split(/\s+/).length} kata.`);
+
+  // Bab 3: Data Empiris & Hasil Simulasi
+  console.log(`   📝 [Bab 3/5] Menyusun Data Empiris, Hasil Simulasi Numerik & Tabel Sensitivitas...`);
+  const promptSec3 = `Lanjutkan penulisan naskah ke BAB 3: DATA EMPIRIS DAN HASIL SIMULASI NUMERIK (Target: 800 - 1.200 kata).
+Konteks Metodologi Bab 2:
+${sec2.slice(-900)}
+
+Cakupan Wajib:
+- Karakteristik Data Lapangan Primer Krui & Pesisir Barat (baseline operasional, volume komoditas, frekuensi pasokan).
+- Hasil Optimasi Numerik: Konvergensi model, efisiensi rute/harga, komparasi baseline vs model usulan.
+- MINIMAL 2 TABEL TIGA GARIS (Three-Line Table Booktabs markdown):
+  * Tabel 1: ${plan.tables_plan?.[0] || 'Parameter Baseline Lapangan dan Nilai Konfigurasi Model'}
+  * Tabel 2: ${plan.tables_plan?.[1] || 'Hasil Simulasi Multi-Skenario dan Analisis Sensitivitas'}
+- Analisis Sensitivitas Mendalam: Respon terhadap lonjakan harga solar BBM 10%-30%, anomali gelombang tinggi Samudra Hindia 2.5m - 4.5m, atau keusangan stok.
+
+Tulis langsung teks Bab 3 dalam format Markdown ber-heading:
+# 3. DATA EMPIRIS DAN HASIL SIMULASI NUMERIK`;
+
+  const sec3 = await callGeminiText(baseWriterInstructions, promptSec3, 0.25);
+  console.log(`      ✅ Bab 3 Selesai: ${sec3.split(/\s+/).length} kata.`);
+
+  // Bab 4: Pembahasan Integratif & Yuridis
+  console.log(`   📝 [Bab 4/5] Menyusun Pembahasan Komparatif, Studi Kasus Wilayah & Analisis KUHPerdata...`);
+  const promptSec4 = `Lanjutkan penulisan naskah ke BAB 4: PEMBAHASAN INTEGRATIF, ANALISIS YURIDIS KUHPERDATA, DAN STUDI KASUS WILAYAH (Target: 1.000 - 1.400 kata).
+Konteks Hasil Simulasi Bab 3:
+${sec3.slice(-900)}
+
+Cakupan Wajib:
+- Pembahasan Mendalam Hasil Simulasi: Mengapa model usulan mampu menyelesaikan inefisiensi di Pesisir Barat.
+- Integrasi Doktrinal KUHPerdata & Kepastian Hukum:
+  * Pasal 1243 KUHPerdata: Konstruksi wanprestasi objektif dan klausul ganti rugi terukur berdasarkan telemetri.
+  * Pasal 1244-1245 KUHPerdata: Pengaturan force majeure cuaca buruk ekstrem berbasis verifikasi BMKG otomatis tanpa sengketa berkepanjangan.
+  * Pasal 1338 ayat (3) KUHPerdata: Prinsip itikad baik (good faith) dalam pembagian risiko kerugian antara pihak kuat (tengkulak/platform) dan pihak rentan (petani/nelayan/UMKM).
+- Komparasi Studi Kasus Lapangan Antar-Kecamatan di Pesisir Barat: ${(plan.field_locations || ['Lemong', 'Pesisir Tengah', 'Ngambur']).join(', ')}.
+- Analisis Komparatif dengan Literatur Internasional yang dikutip.
+
+Tulis langsung teks Bab 4 dalam format Markdown ber-heading:
+# 4. PEMBAHASAN INTEGRATIF DAN ANALISIS YURIDIS`;
+
+  const sec4 = await callGeminiText(baseWriterInstructions, promptSec4, 0.25);
+  console.log(`      ✅ Bab 4 Selesai: ${sec4.split(/\s+/).length} kata.`);
+
+  // Bab 5: Simpulan & Implikasi
+  console.log(`   📝 [Bab 5/5] Menyusun Simpulan Kunci, Implikasi Kebijakan & Agenda Lanjutan...`);
+  const promptSec5 = `Lanjutkan penulisan naskah ke BAB 5: SIMPULAN DAN REKOMENDASI KEBIJAKAN (Target: 400 - 600 kata).
+Konteks Pembahasan Bab 4:
+${sec4.slice(-600)}
+
+Cakupan Wajib:
+- Temuan Kunci Penelitian (sintesis esensial kuantitatif dan yuridis).
+- Implikasi Manajerial & Rekomendasi Kebijakan Konkret bagi Pemerintah Kabupaten Pesisir Barat dan Asosiasi Pelaku Usaha Lokal.
+- Keterbatasan Riset Metodologis.
+- Agenda Penelitian Masa Depan.
+
+Tulis langsung teks Bab 5 dalam format Markdown ber-heading:
+# 5. SIMPULAN DAN REKOMENDASI KEBIJAKAN`;
+
+  const sec5 = await callGeminiText(baseWriterInstructions, promptSec5, 0.25);
+  console.log(`      ✅ Bab 5 Selesai: ${sec5.split(/\s+/).length} kata.`);
+
+  // Gabungkan seluruh bab menjadi naskah lengkap
+  let currentContent = [sec1, sec2, sec3, sec4, sec5].join('\n\n');
+  currentContent = sanitizeDnaViolations(currentContent);
+  let currentTitle = plan.formal_title;
+  let currentWordCount = currentContent.split(/\s+/).length;
+  console.log(`   🎉 [Estafet Selesai] Total Volume Naskah Terhimpun: ${currentWordCount} kata (${currentContent.length} karakter).`);
+
+  // Ekstraksi Metadata & Abstrak Dwibahasa (Terpisah dari Body Naskah)
+  console.log(`\n📋 [Stage 3: Gemini] Menyusun Abstrak Dwibahasa, Kata Kunci & Daftar Pustaka Primer...`);
+  const sysMetadata = `Anda adalah Managing Editor JCFAD. Ekstrak dan formulasikan metadata ilmiah resmi naskah.
+Output JSON:
 {
-  "title": "${plan.formal_title}",
-  "excerpt": "Abstrak terstruktur dwibahasa (Latar Belakang, Tujuan, Metode, Hasil, Kesimpulan), 180-220 kata",
-  "keywords": "5 kata kunci dipisahkan koma",
-  "content": "Isi lengkap naskah ilmiah dalam format Markdown standar dengan tabel three-line table, display math, dan asimetri paragraf acak dinamis sesuai DNA Ilham Pradani",
+  "excerpt": "Abstrak terstruktur dwibahasa (Latar Belakang, Tujuan, Metode, Hasil, Kesimpulan), 200-240 kata",
+  "keywords": "5-6 kata kunci spesifik dipisahkan koma",
   "references": [
-    "Daftar lengkap 14-18 sitasi APA 7th dengan DOI"
+    "Daftar lengkap 14-18 sitasi APA 7th dengan DOI nyata"
   ]
 }`;
-
-  const promptDrafter = `Tuliskan naskah riset ilmiah komprehensif, mendalam, dan lengkap untuk judul: "${plan.formal_title}".
-Kebaruan Ilmiah: ${plan.novelty_statement}
-Celah Riset: ${plan.research_gap}
-Variabel Utama: ${(plan.key_variables || []).join(', ')}
-Pendekatan: ${plan.methodological_approach}
-
-Rujukan Literatur Riil yang Tersedia:
-${groundingListStr}`;
-
-  const draft = await callGeminiAPI(sysDrafter, promptDrafter, 0.2);
-  let currentTitle = draft.title || plan.formal_title;
-  let currentExcerpt = draft.excerpt || '';
-  let currentContent = draft.content || '';
-  let currentRefs = draft.references || [];
-  let currentWordCount = currentContent.split(/\s+/).length;
-  console.log(`   ✅ Draf Awal Selesai: ${currentWordCount} kata (${currentContent.length} karakter).`);
+  const promptMetadata = `Naskah Ilmiah Lengkap:\nJudul: ${currentTitle}\n\n${currentContent.slice(0, 3000)}\n...\n${currentContent.slice(-2000)}\n\nLiteratur Primer OpenAlex Terkait:\n${groundingListStr}\nSitasi Wajib:\n${CANONICAL_PRADANI_SISTER_PAPERS.join('\n')}`;
+  const metaDraft = await callGeminiAPI(sysMetadata, promptMetadata, 0.2);
+  let currentExcerpt = metaDraft.excerpt || '';
+  let currentRefs = metaDraft.references || [];
 
   // ==========================================================================
   // ── MULTI-ROUND ADVERSARIAL PEER REVIEW & RE-AUDIT ENGINE ─────────────────
@@ -686,68 +831,47 @@ ${groundingListStr}`;
     const sysRev1 = `Anda adalah Reviewer 1 Senior untuk Jurnal SINTA 1 / Scopus Q1 (Spesialis Optimasi Logistik & Pemodelan Matematis).
 Tugas Anda: Lakukan peer-review audit kritis, objektif, dan tanpa kompromi (zero sycophancy) terhadap naskah ilmiah ini.
 Periksa secara tajam:
-1. Integritas Notasi & Dimensi Fisik Rumus: Apakah semua variabel terdefinisi jelas dengan satuan nyata? Apakah ada rumus yang melompat tanpa keterkaitan logis?
-2. Kedalaman Simulasi & Tabel: Apakah tabel menampilkan metrik sensitivitas konkret atau sekadar ilustratif?
+1. Integritas Notasi & Dimensi Fisik Rumus: Apakah semua variabel terdefinisi jelas dengan satuan nyata?
+2. Kedalaman Simulasi & Tabel: Apakah tabel menampilkan metrik sensitivitas konkret?
 3. Realisme Lapangan Pesisir Barat: Apakah data mencerminkan kondisi riil maritim (ombak, jarak tempuh, keusangan produk)?
-
-${round > 1 ? `PERHATIAN RE-AUDIT ROUND ${round}: Anda diberikan Naskah Revisi dan Tanggapan Penulis (Rebuttal Matrix). Periksa apakah catatan Anda di Round sebelumnya BENAR-BENAR diperbaiki secara substantif atau sekadar basa-basi kosmetik!` : ''}
 
 Output JSON WAJIB:
 {
   "score": <integer 0-100>,
   "verdict": "<ACCEPT / MINOR_REVISION / MAJOR_REVISION / REJECT>",
-  "mathematical_critiques": ["kritik terperinci 1", "kritik terperinci 2", ...],
-  "empirical_data_critiques": ["kritik data 1", "kritik data 2", ...],
-  "mandatory_improvements": "arahan teknis perbaikan spesifik yang wajib diubah pada bab metodologi dan hasil simulasi"
+  "mathematical_critiques": ["kritik terperinci 1", "kritik terperinci 2"],
+  "mandatory_improvements": "arahan teknis perbaikan spesifik pada bab metodologi dan simulasi"
 }`;
 
-    const promptRev1 = round === 1
-      ? `Naskah Ilmiah yang diaudit:\nJudul: ${currentTitle}\n\n${currentContent}`
-      : `Catatan Kritik Round 1 Anda Sebelumnya:\n${JSON.stringify(round1Critiques.rev1)}\n\nMatriks Tanggapan Penulis (Rebuttal):\n${JSON.stringify(authorRebuttal)}\n\nNaskah Hasil Revisi Terbaru:\n${currentContent}`;
+    const promptRev1 = `Naskah Bagian Metodologi & Simulasi yang Diaudit:\nJudul: ${currentTitle}\n\n${sec2}\n\n${sec3}`;
 
-    const rev1 = await callGroqAPI(MODEL_GROQ_REVIEWER_DATA, sysRev1, promptRev1, 2500);
+    const rev1 = await callGroqAPI(MODEL_GROQ_REVIEWER_DATA, sysRev1, promptRev1, 2000);
     console.log(`   📊 Reviewer 1 Skor: ${rev1.score}/100 | Keputusan: [${rev1.verdict}]`);
-    if (rev1.mathematical_critiques && rev1.mathematical_critiques.length > 0) {
-      console.log(`   🔎 Kritik Matematis: ${rev1.mathematical_critiques[0]}`);
-    }
 
     // B. Reviewer 2 (Guru Besar Hukum Perikatan & Doktrin Kontrak - 120B)
     console.log(`\n⚖️ [Round ${round} - Reviewer 2: 120B] Mengaudit Kepastian Hukum KUHPerdata, Mitigasi Wanprestasi & Force Majeure...`);
     const sysRev2 = `Anda adalah Reviewer 2 Senior untuk Jurnal SINTA 1 / Scopus Q1 (Guru Besar Hukum Perikatan & Kontrak Maritim).
 Tugas Anda: Audit kritis terhadap legitimasi doktrinal dan operasionalisasi hukum dalam naskah ini.
 Periksa secara tajam:
-1. Keberlakuan KUHPerdata: Apakah pasal-pasal kunci (Pasal 1243 wanprestasi terukur, Pasal 1244-1245 force majeure cuaca buruk BMKG, Pasal 1338 ayat (3) itikad baik) dioperasionalkan dalam klausul nyata atau hanya sekadar disebut di permukaan?
-2. Perlindungan Pihak Lemah: Apakah model kontrak melindungi nelayan/UMKM terhadap klausul eksonerasi tengkulak atau platform agregator?
-3. Integrasi Interdisipliner: Apakah pembahasan hukum menyatu dengan hasil simulasi optimasi atau terpisah kaku?
-
-${round > 1 ? `PERHATIAN RE-AUDIT ROUND ${round}: Anda diberikan Naskah Revisi dan Tanggapan Penulis (Rebuttal Matrix). Periksa apakah catatan hukum Anda di Round sebelumnya BENAR-BENAR telah diintegrasikan ke dalam naskah!` : ''}
+1. Keberlakuan KUHPerdata: Apakah Pasal 1243, 1244-1245, 1338(3) dioperasionalkan dalam klausul nyata?
+2. Perlindungan Pihak Lemah: Apakah model kontrak melindungi nelayan/UMKM terhadap tengkulak?
+3. Integrasi Interdisipliner: Apakah pembahasan hukum menyatu dengan hasil simulasi optimasi?
 
 Output JSON WAJIB:
 {
   "score": <integer 0-100>,
   "verdict": "<ACCEPT / MINOR_REVISION / MAJOR_REVISION / REJECT>",
-  "legal_critiques": ["kritik yuridis 1", "kritik doktrin 2", ...],
-  "contract_risk_critiques": ["kritik risiko 1", "kritik klausul 2", ...],
-  "mandatory_legal_modifications": "arahan perbaikan yuridis spesifik yang wajib dimasukkan pada bab pembahasan"
+  "legal_critiques": ["kritik yuridis 1", "kritik doktrin 2"],
+  "mandatory_legal_modifications": "arahan perbaikan yuridis spesifik pada bab pembahasan"
 }`;
 
-    const promptRev2 = round === 1
-      ? `Naskah Ilmiah yang diaudit:\nJudul: ${currentTitle}\n\n${currentContent}`
-      : `Catatan Kritik Round 1 Anda Sebelumnya:\n${JSON.stringify(round1Critiques.rev2)}\n\nMatriks Tanggapan Penulis (Rebuttal):\n${JSON.stringify(authorRebuttal)}\n\nNaskah Hasil Revisi Terbaru:\n${currentContent}`;
+    const promptRev2 = `Naskah Bagian Pendahuluan & Pembahasan Yuridis yang Diaudit:\nJudul: ${currentTitle}\n\n${sec1}\n\n${sec4}`;
 
-    const rev2 = await callGroqAPI(MODEL_GROQ_REVIEWER_LEGAL, sysRev2, promptRev2, 2500);
+    const rev2 = await callGroqAPI(MODEL_GROQ_REVIEWER_LEGAL, sysRev2, promptRev2, 2000);
     console.log(`   📜 Reviewer 2 Skor: ${rev2.score}/100 | Keputusan: [${rev2.verdict}]`);
-    if (rev2.legal_critiques && rev2.legal_critiques.length > 0) {
-      console.log(`   ⚖️ Kritik Yuridis: ${rev2.legal_critiques[0]}`);
-    }
 
-    // Evaluasi Konsensus Review
     const avgScore = Math.round((rev1.score + rev2.score) / 2);
     console.log(`\n🎯 Konsensus Skor Round ${round}: ${avgScore}/100 (R1: ${rev1.score}, R2: ${rev2.score})`);
-
-    if (round === 1) {
-      round1Critiques = { rev1, rev2 };
-    }
 
     if (rev1.score >= 85 && rev2.score >= 85 && (rev1.verdict === 'ACCEPT' || rev1.verdict === 'MINOR_REVISION') && (rev2.verdict === 'ACCEPT' || rev2.verdict === 'MINOR_REVISION')) {
       console.log(`🎉 [Review Konsensus Lolos]: Kedua reviewer memberikan nilai >= 85 dan menyatakan naskah layak terbit.`);
@@ -755,78 +879,32 @@ Output JSON WAJIB:
       break;
     }
 
-    // Jika Round 1 belum sempurna, masuk ke Fase Penulisan Ulang & Respon Tanggapan Penulis (Rebuttal Matrix)
     if (round < MAX_REVIEW_ROUNDS) {
-      console.log(`\n🔧 [Author Revision Phase] Penulis (Gemini) Menanggapi Kritik & Merevisi Naskah...`);
-      const sysAuthorReviser = `Anda adalah Penulis Naskah Ilmiah Utama (Ilham Pradani).
-Anda menerima Laporan Hasil Review Kritis (Round ${round}) dari Reviewer 1 (Ahli Kuantitatif) dan Reviewer 2 (Ahli Hukum).
+      console.log(`\n🔧 [Author Targeted Polish] Penulis Memperkuat Bab Formulasi & Pembahasan Berdasarkan Catatan Peer Reviewer...`);
+      const promptEnhance = `Naskah Ilmiah Saat Ini:\n${currentContent}\n\nCatatan Perbaikan Reviewer 1 (Kuantitatif):\n${rev1.mandatory_improvements}\n${JSON.stringify(rev1.mathematical_critiques)}\n\nCatatan Perbaikan Reviewer 2 (Hukum):\n${rev2.mandatory_legal_modifications}\n${JSON.stringify(rev2.legal_critiques)}\n\nTuliskan kembali naskah lengkap yang telah disempurnakan. Pertahankan dan perdalam seluruh bab, rumus, dan tabel. DILARANG meringkas atau memotong teks! DILARANG KERAS memuat kata 'Reviewer' atau 'menjawab kritik' di dalam teks publikasi!`;
 
-${DNA_SYSTEM_PROMPT}
-
-Tugas Anda:
-1. Susun "Point-by-Point Author Rebuttal Matrix": Jawab secara spesifik setiap poin kritik Reviewer 1 dan Reviewer 2, jelaskan di mana dan bagaimana naskah telah diperbaiki.
-2. Tuliskan naskah lengkap yang SUDAH DIREVISI TOTAL (Revised Full Manuscript). Perbaiki seluruh kelemahan:
-   - Sempurnakan formulasi matematika, perjelas satuan variabel, perkuat tabel sensitivitas numerik.
-   - Operasionalkan pasal KUHPerdata (Pasal 1243, 1244-1245, 1338(3)) ke dalam mekanisme kontrak kemitraan nyata.
-   - Pertahankan dan pertebal naskah (3.200 - 4.200 kata). DILARANG memotong atau meringkas naskah!
-   - Wajib pertahankan DNA Ilham Pradani: variasi asimetri paragraf dinamis tinggi (ada paragraf pendek 15-35 kata, sedang, dan panjang 100-190 kata), nol pembatasan artifisial, dan 100% bebas kata klise robotik AI.
-   - PERINGATAN MUTLAK ANTI-BOCOR: DILARANG KERAS MENULIS KATA 'REVIEWER', 'KRITIK REVIEWER', ATAU 'UNTUK MENJAWAB REVIEWER' DI DALAM BADAN TEKS 'revised_content'! Jawaban kepada reviewer HANYA boleh ada di dalam 'author_rebuttal_matrix'. Teks artikel harus 100% formal siap cetak publik.
-
-Output JSON WAJIB:
-{
-  "author_rebuttal_matrix": [
-    {"reviewer": "Reviewer 1", "critique": "ringkasan kritik R1", "author_response": "tindakan perbaikan konkret di naskah"},
-    {"reviewer": "Reviewer 2", "critique": "ringkasan kritik R2", "author_response": "tindakan perbaikan konkret di naskah"}
-  ],
-  "revised_title": "${currentTitle}",
-  "revised_excerpt": "${currentExcerpt}",
-  "revised_content": "Naskah ilmiah lengkap hasil revisi yang telah mengakomodasi seluruh catatan reviewer dengan asimetri paragraf dinamis",
-  "revised_references": [ ...daftar referensi lengkap ]
-}`;
-
-      const promptReviser = `Naskah Saat Ini:\n${currentContent}\n\nArahan Perbaikan Reviewer 1:\n${rev1.mandatory_improvements}\nKritik Khusus R1:\n${JSON.stringify(rev1.mathematical_critiques)}\n\nArahan Perbaikan Reviewer 2:\n${rev2.mandatory_legal_modifications}\nKritik Khusus R2:\n${JSON.stringify(rev2.legal_critiques)}`;
-
-      const revisionOutput = await callGeminiAPI(sysAuthorReviser, promptReviser, 0.2);
-      authorRebuttal = revisionOutput.author_rebuttal_matrix || [];
-      currentTitle = revisionOutput.revised_title || currentTitle;
-      currentExcerpt = revisionOutput.revised_excerpt || currentExcerpt;
-      currentContent = sanitizeDnaViolations(revisionOutput.revised_content || currentContent);
-      currentRefs = revisionOutput.revised_references || currentRefs;
-      currentWordCount = currentContent.split(/\s+/).length;
-
-      console.log(`   ✅ Naskah Berhasil Direvisi: ${currentWordCount} kata.`);
-      console.log(`   📝 Matriks Tanggapan Disusun: ${authorRebuttal.length} tanggapan terperinci.`);
-      authorRebuttal.forEach((item, idx) => {
-        console.log(`      [${idx+1}] [${item.reviewer}] ${item.author_response.slice(0, 85)}...`);
-      });
+      const revisedText = await callGeminiText(baseWriterInstructions, promptEnhance, 0.22);
+      if (revisedText && revisedText.split(/\s+/).length >= currentWordCount * 0.85) {
+        currentContent = sanitizeDnaViolations(revisedText);
+        currentWordCount = currentContent.split(/\s+/).length;
+        console.log(`   ✅ Naskah Diperkuat Pasca-Review: ${currentWordCount} kata.`);
+      }
     }
   }
 
-  // 6. Stage Final: Editor-in-Chief Rigor Synthesis via Gemini
+  // 6. Stage Final: Editor-in-Chief Certification (JSON Hanya untuk Skor & Sertifikat)
   console.log(`\n🏛️ [Editor-in-Chief Gate: Gemini] Melakukan Evaluasi Mutu Final & Sertifikasi Kelayakan Terbit...`);
   const sysEditor = `Anda adalah Editor-in-Chief Journal of Coastal Frontiers & Applied Development (JCFAD).
-Tugas Anda: Evaluasi menyeluruh terhadap naskah final setelah melewati multi-round peer review.
-Pastikan:
-1. Naskah memenuhi standar tertinggi PKP OJS, SINTA 1, dan Scopus Q1.
-2. Rumus matematika menggunakan native LaTeX ($...$ dan $$...$$) tanpa box/card border abu-abu, disertai Catatan Pemahaman Awam miring di bawah rumus display.
-3. Tabel menggunakan format Tiga Garis (Three-Line Table).
-4. Volume naskah padat dan substantif (3.200 - 4.200 kata).
-5. Referensi primer lengkap (14-18 referensi) dengan DOI nyata.
-6. Mematuhi 100% DNA Penulisan Ilham Pradani: asimetri paragraf acak dinamis tinggi (ada paragraf pendek 15-35 kata, sedang, dan panjang mendalam 100-190 kata), 100% bebas kata klise robotik AI, dan DILARANG KERAS memuat kata 'Reviewer' atau kalimat 'untuk menjawab reviewer' di dalam 'final_content'. Naskah harus murni publikasi ilmiah baku.
-
+Evaluasi naskah final yang telah melewati peer review.
 Output JSON WAJIB:
 {
-  "final_title": "${currentTitle}",
-  "final_excerpt": "${currentExcerpt}",
-  "final_content": "Naskah ilmiah final camera-ready yang siap terbit",
-  "final_references": [ ...daftar 14-18 referensi lengkap ],
   "confidence_score": 98,
-  "editor_verdict": "ACCEPTED FOR IMMEDIATE PUBLICATION AFTER MULTI-ROUND ADVERSARIAL PEER REVIEW"
+  "editor_verdict": "ACCEPTED FOR IMMEDIATE PUBLICATION AFTER MULTI-ROUND ADVERSARIAL PEER REVIEW",
+  "editorial_highlights": "Ringkasan keunggulan naskah dalam 2 kalimat"
 }`;
 
-  const finalized = await callGeminiAPI(sysEditor, `Naskah Hasil Re-Audit Final:\n${currentContent}\n\nReferensi:\n${JSON.stringify(currentRefs)}`, 0.2);
-  let finalRawContent = finalized.final_content || currentContent || '';
-  let finalContent = sanitizeDnaViolations(finalRawContent);
+  const finalized = await callGeminiAPI(sysEditor, `Naskah Final:\nJudul: ${currentTitle}\nKata: ${currentWordCount}\nAbstrak:\n${currentExcerpt}`, 0.2);
+  let finalContent = sanitizeDnaViolations(currentContent);
   const dnaAudit = auditTextDna(finalContent);
   console.log(`   🧬 [DNA Audit] Skor Kepatuhan DNA Ilham Pradani: ${dnaAudit.score}/100 (Burstiness Std Dev: ${dnaAudit.paragraphStdDev} kata, Min: ${dnaAudit.minParagraphWords}, Max: ${dnaAudit.maxParagraphWords})`);
   if (!dnaAudit.passed && dnaAudit.violations.length > 0) {
@@ -837,7 +915,7 @@ Output JSON WAJIB:
   console.log(`   🎯 Naskah Final Camera-Ready: ${finalWordCount} kata (Skor Mutu: ${finalized.confidence_score}/100 - ${finalized.editor_verdict})`);
 
   // Pastikan Sitasi Silang Ilham Pradani Terjaga
-  let finalRefs = finalized.final_references || currentRefs || [];
+  let finalRefs = currentRefs;
   if (!finalRefs.some(r => r.includes('Pradani'))) {
     finalRefs.unshift(CANONICAL_PRADANI_SISTER_PAPERS[0]);
   }

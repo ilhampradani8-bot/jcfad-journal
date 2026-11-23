@@ -88,18 +88,24 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
     s = s.replace(r"\begin{aligned}", "").replace(r"\end{aligned}", "")
     s = re.sub(r"\\(?:left|right|bigl|bigr|Bigl|Bigr|big|Big|!)", "", s)
 
+    # 1. Stash all text literals (\text{...}, \operatorname{...}, \mathrm{...}, \textbf{...}, \textit{...})
+    # Menggunakan token huruf kecil 'zztxt{idx}zz' agar tidak tersentuh regex uppercase identifier [A-Z]{2,}
+    text_placeholders = []
+    def stash_text(m):
+        content = m.group(1).strip()
+        content = content.replace('"', '').replace('\\', '')
+        idx = len(text_placeholders)
+        text_placeholders.append(f'"{content}"')
+        return f"zztxt{idx}zz"
+
+    s = re.sub(r'\\(?:text|operatorname|mathrm|textbf|textit|ext)\{([^{}]+)\}', stash_text, s)
+
     # Fractions & Form-Feed Corrupted Fractions (\x0crac or rac{a}{b})
     s = re.sub(r'[\x0c]?rac\{([^{}]+)\}\{([^{}]+)\}', r'(\1)/(\2)', s)
     s = replace_fractions(s)
 
-    # Text & operatorname -> quoted string
     # Corrupted escaped greek letters / math symbols (\b eaten into backspace or \t into tab)
     s = s.replace('\x08eta', ' beta ')
-    s = re.sub(r'(?:\\|\b|\s)(?:text|ext|operatorname)\{([^{}]+)\}', r' "\1" ', s)
-
-    # Subscripts with corrupted text/ext like _( ext{daily),t} or _( \text{actual} )
-    s = re.sub(r"_[\{\(]\s*(?:\\?text|ext)?\{?([^}),]+)[\}\)]\s*,\s*([a-zA-Z0-9_]+)\s*[\}\)]", r'_("\1", \2)', s)
-    s = re.sub(r"_[\{\(]\s*(?:\\?text|ext)?\{?([^}),]+)[\}\)]\s*[\}\)]", r'_("\1")', s)
 
     # Calligraphic, Blackboard, and Bold
     s = re.sub(r"\\mathcal\{([^{}]+)\}", r"cal(\1)", s)
@@ -151,16 +157,22 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
         for ev in extra_quote_vars:
             s = re.sub(rf'(?<![a-zA-Z"]){re.escape(ev)}(?![a-zA-Z"])', f'"{ev}"', s)
 
+    # Subscripts & Superscripts with text placeholders
+    s = re.sub(r'\^[\{\(]\s*(zztxt\d+zz)\s*[\}\)]', r'^(\1)', s)
+    s = re.sub(r'_[\{\(]\s*(zztxt\d+zz)\s*[\}\)]', r'_(\1)', s)
+    s = re.sub(r'_[\{\(]\s*(zztxt\d+zz)\s*,\s*([a-zA-Z0-9_]+)\s*[\}\)]', r'_(\1, \2)', s)
+    s = re.sub(r'_[\{\(]\s*([a-zA-Z0-9_]+)\s*,\s*(zztxt\d+zz)\s*[\}\)]', r'_(\1, \2)', s)
+
     # Common units & descriptive words inside math -> auto quote
     common_math_words = [
         "kg", "km", "hr", "sec", "min", "day", "days", "year", "years", "month", "months",
         "USD", "IDR", "SD", "CI", "ha", "liters", "liter", "fuel", "labour", "storage",
         "trans", "total", "max", "min", "obs", "ref", "wave", "for", "daily", "actual",
         "threshold", "event", "loss", "base", "risk", "rate", "cost", "price", "penalty",
-        "vs", "kn"
+        "vs", "kn", "suhu", "micro", "macro"
     ]
     for w in common_math_words:
-        s = re.sub(rf'(?<![a-zA-Z"])\b{re.escape(w)}\b(?![a-zA-Z"])', f'"{w}"', s)
+        s = re.sub(rf'(?<![a-zA-Z"_\^])\b{re.escape(w)}\b(?![a-zA-Z"_\^])', f'"{w}"', s)
 
     # Unit divisions in math: prevent vertical fraction rendering (e.g. 1850 / kg)
     s = re.sub(r'/\s*"(kg|km|hr|h|sec|min|day|year|month|t|ha|L|nmi|degC|°C)"', r' slash "\1"', s)
@@ -169,9 +181,6 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
     # Merge compound subscript and superscript: c_i^{fuel} -> c_("fuel", i)
     s = re.sub(r'([a-zA-Z])_([a-zA-Z0-9]+)\^[\{\(]"?([a-zA-Z]{2,})"?[\}\)]', r'\1_("\3", \2)', s)
     s = re.sub(r'([a-zA-Z])\^[\{\(]"?([a-zA-Z]{2,})"?[\}\)]_([a-zA-Z0-9]+)', r'\1_("\2", \3)', s)
-
-    # Clean redundant double quotes ""word"" -> "word"
-    s = re.sub(r'""+([^"]+)""+', r'"\1"', s)
 
     # Greek letters (semua huruf Yunani lowercase & uppercase)
     greek = ["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega", "Phi", "Delta", "Gamma", "Lambda", "Sigma", "Omega"]
@@ -198,8 +207,18 @@ def clean_to_typst_math(raw, extra_quote_vars=None, failsafe_text_mode=False):
     s = s.replace(r"\,", " ").replace(r"\;", " ").replace(r"\qquad", " ").replace(r"\quad", " ")
     s = s.replace(r"\\", " ").replace(r"&", " ")
 
+    # Restore stashed text literals
+    for idx, p in enumerate(text_placeholders):
+        s = s.replace(f"zztxt{idx}zz", p)
+
     # Clean remaining stray backslashes
     s = s.replace("\\", "")
+
+    # Clean redundant double quotes and spaces around quotes
+    s = re.sub(r'"\s*"', '', s)
+    s = re.sub(r'""+', '"', s)
+    s = re.sub(r'\^\(\s*""?([^"^)"]+)""?\s*\)', r'^("\1")', s)
+    s = re.sub(r'_\(\s*""?([^"_)]+)""?\s*\)', r'_("\1")', s)
 
     # Clean redundant whitespace
     s = re.sub(r"\s+", " ", s).strip()
@@ -245,23 +264,34 @@ def clean_inline(text, is_body=False, aggressive_unbold=False, extra_quote_vars=
     # Dollar math: $ ... $ (Hanya yang berisi ekspresi matematika/variabel, bukan harga $100 / US$ 50)
     t = re.sub(r'(?<![\\a-zA-Z0-9])\$([^\$\n]+?)\$(?![0-9])', stash_inline_math, t)
 
-    # 3. Academic Bold Management: In body text, strip non-structural bolding
+    # 3. Academic Bold & Italic Management: Convert Markdown formatting to Typst standard
+    # Di Typst: *word* = BOLD, _word_ = ITALIC. Di Markdown: *word* = ITALIC, **word** = BOLD.
+    # Konversi ini memastikan istilah botani (*Shorea javanica*), latin, dan hukum adat menjadi murni italic.
     if is_body:
         if aggressive_unbold:
             t = re.sub(r'\*\*\*(.*?)\*\*\*', r'_\1_', t)
             t = re.sub(r'\*\*(.*?)\*\*', r'\1', t)
+            t = re.sub(r'(?<!\*)\*([^*\n]+)\*(?!\*)', r'_\1_', t)
         else:
+            struct_bolds = []
             def preserve_structural_bold(m):
                 inner = m.group(1).strip()
-                if re.match(r'^(?:Table|Tabel|Figure|Gambar|Theorem|Lemma|Definition|Corollary|Case|Equation|Model|Step)\s+\d+[:.]', inner, re.IGNORECASE) or \
+                if re.match(r'^(?:Table|Tabel|Figure|Gambar|Bagan|Theorem|Lemma|Definition|Corollary|Case|Equation|Model|Step)\s+\d+[:.]', inner, re.IGNORECASE) or \
                    re.match(r'^(?:Background|Objectives|Methods|Results|Conclusion)[:.]', inner, re.IGNORECASE):
-                    return f'*{inner}*'
+                    idx = len(struct_bolds)
+                    struct_bolds.append(f'*{inner}*')
+                    return f"__STR_BOLD_{idx}__"
                 return inner
             t = re.sub(r'\*\*\*(.*?)\*\*\*', r'_\1_', t)
             t = re.sub(r'\*\*(.*?)\*\*', preserve_structural_bold, t)
+            # Konversi sisa single asterisk (*term*) menjadi Typst italic (_term_)
+            t = re.sub(r'(?<!\*)\*([^*\n]+)\*(?!\*)', r'_\1_', t)
+            for idx, sb in enumerate(struct_bolds):
+                t = t.replace(f"__STR_BOLD_{idx}__", sb)
     else:
         t = re.sub(r'\*\*\*(.*?)\*\*\*', r'*_\1_*', t)
         t = re.sub(r'\*\*(.*?)\*\*', r'*\1*', t)
+        t = re.sub(r'(?<!\*)\*([^*\n]+)\*(?!\*)', r'_\1_', t)
 
     # Clean stray AI notes/artifacts
     t = re.sub(r'\(?.*(?:the subsequent sentences|the translation continues).*?\)?\*?', '', t, flags=re.IGNORECASE)
@@ -390,6 +420,46 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
     # Clean duplicate reference sections in markdown body (since template appends official references at end)
     md_text = re.sub(r'(?ims)(?:^|\n)#{1,3}\s*(?:\d+\.?\s*)?(?:References|Referensi|Daftar\s*Pustaka|Bibliography)[\s\S]*$', '', md_text)
 
+    # 0a. Protect multi-line fenced code blocks ```...``` before any table or math conversion
+    fenced_blocks = []
+    def stash_fenced_block(m):
+        raw_block = m.group(1).strip()
+        idx = len(fenced_blocks)
+        lines = [l for l in raw_block.split("\n") if l.strip()]
+        max_line_len = max((len(l) for l in lines), default=0)
+        is_wide = max_line_len > 48
+
+        # Clean typography for diagrams (panah formal, monospace rapi, zero uncompiled LaTeX)
+        clean_diagram = raw_block.replace('--->', ' → ').replace('-->', ' → ')
+        clean_diagram = re.sub(r'\\text\{([^}]+)\}', r'\1', clean_diagram)
+        clean_diagram = clean_diagram.replace(r'\le', '≤').replace(r'\ge', '≥').replace(r'\times', '×')
+        clean_diagram = clean_diagram.replace('$', '')
+
+        # ensure_ascii=False ensures true Unicode rendering without \u2502 / \u25bc escape artifacts
+        json_str = json.dumps(clean_diagram, ensure_ascii=False)
+        font_sz = "5.8pt" if is_wide else "5.0pt"
+        leading = "0.22em"
+
+        # Standar AGENTS.md: Bagan Kotak Tipis Resmi (0.6pt black, radius 0pt)
+        block_typst = (
+            f"\n#v(0.5em)\n#align(center)[\n"
+            f"  #block(width: 98%, stroke: 0.6pt + luma(100), inset: (x: 5pt, y: 4pt), radius: 0pt)[\n"
+            f"    #set text(size: {font_sz}, font: \"DejaVu Sans Mono\")\n"
+            f"    #set par(leading: {leading}, justify: false)\n"
+            f"    #align(left)[\n"
+            f"      #raw(block: true, {json_str})\n"
+            f"    ]\n"
+            f"  ]\n"
+            f"]\n#v(0.5em)\n"
+        )
+        if is_wide:
+            block_typst = f"\n#place(top, float: true, scope: \"parent\")[\n{block_typst}\n]\n"
+
+        fenced_blocks.append(block_typst)
+        return f"\n__FENCED_CODE_BLOCK_{idx}__\n"
+
+    md_text = re.sub(r'```(?:[a-zA-Z0-9_-]*\n)?(.*?)```', stash_fenced_block, md_text, flags=re.DOTALL)
+
     # Protect inline code `...` before any math conversions
     code_inlines = []
     def stash_inline_code(m):
@@ -483,7 +553,7 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
         if cleaned:
             cleaned_split = split_long_math_equation(cleaned)
             if failsafe_text_mode:
-                math_blocks.append(f"\n#align(center)[#text(size: 8.2pt)[_{cleaned_split}_]]\n")
+                math_blocks.append(f"\n#align(center)[#text(size: 8.2pt, style: \"italic\")[{cleaned_split}]]\n")
             elif len(cleaned) > 48:
                 math_blocks.append(f"\n#v(0.65em)\n#align(center)[\n  #text(size: 8.0pt)[\n    $ {cleaned_split} $\n  ]\n]\n#v(0.65em)\n")
             else:
@@ -562,6 +632,15 @@ def markdown_to_typst(md_text, aggressive_unbold=False, relax_notes=False, extra
                 in_table = False
                 table_rows = []
             out.append(math_blocks[int(math_match.group(1))])
+            continue
+
+        fenced_match = re.match(r'^__FENCED_CODE_BLOCK_(\d+)__$', s)
+        if fenced_match:
+            if in_table and table_rows:
+                out.append(render_table(table_rows, extra_quote_vars=extra_quote_vars, failsafe_text_mode=failsafe_text_mode))
+                in_table = False
+                table_rows = []
+            out.append(fenced_blocks[int(fenced_match.group(1))])
             continue
 
         if s.startswith("|") and s.endswith("|"):
@@ -1049,8 +1128,14 @@ def review_pdf(pdf_path, article, attempt=1):
 
         # 8c. Integritas Struktur Abstrak (5 Komponen Wajib & Tuntas)
         abstract_text = article.get('excerpt', '')
-        abs_sections = ['Background', 'Objectives', 'Methods', 'Results', 'Conclusion']
-        found_abs_sec = [s for s in abs_sections if s.lower() in abstract_text.lower()]
+        abs_patterns = [
+            r'\b(?:Background|Latar\s*Belakang)\b',
+            r'\b(?:Objectives?|Tujuan)\b',
+            r'\b(?:Methods?|Metode)\b',
+            r'\b(?:Results?|Temuan|Hasil)\b',
+            r'\b(?:Conclusions?|Simpulan|Kesimpulan)\b'
+        ]
+        found_abs_sec = [p for p in abs_patterns if re.search(p, abstract_text, re.IGNORECASE)]
         abs_words = len(abstract_text.split())
         abs_ends_clean = abstract_text.strip().endswith(('.', '!', '?'))
 
